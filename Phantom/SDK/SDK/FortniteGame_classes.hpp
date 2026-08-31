@@ -53228,7 +53228,12 @@ public:
 	bool IsQuestInProgress(const class UFortQuestItemDefinition* Definition) const;
 	void MarkQuestsSeen(bool bOnlyMarkPendingSeenQuests) const;
 	void RerollDailyQuest(const class UFortQuestItem* QuestToDiscard) const;
-
+public:
+	void UpdateStatsForSingleMatchQuests()
+	{
+		static void (*UpdateStatsForSingleMatchQuests)(UFortQuestManager*) = decltype(UpdateStatsForSingleMatchQuests)(InSDKUtils::GetImageBase() + 0x13743B0);
+		UpdateStatsForSingleMatchQuests(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -53525,7 +53530,12 @@ public:
 public:
 	class UAbilitySystemComponent* GetAbilitySystemComponent() const;
 	class FString GetPlayerName() const;
-
+public:
+	AFortPlayerController* GetPlayerController()
+	{
+		static AFortPlayerController* (*GetPlayerController)(UFortRegisteredPlayerInfo*) = decltype(GetPlayerController)(InSDKUtils::GetImageBase() + 0xFD1630);
+		return GetPlayerController(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

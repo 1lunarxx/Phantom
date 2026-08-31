@@ -232,7 +232,7 @@ namespace UC
 		static void* Realloc(void* Original, SIZE_T Count, uint32 Alignment = 0)
 		{
 			static void* (*Realloc)(void*, SIZE_T, uint32) = decltype(Realloc)(ImageBase + 0x1738770);
-			Realloc(Original, Count, Alignment);
+			return Realloc(Original, Count, Alignment);
 		}
 
 		static void Free(void* Original)
@@ -310,7 +310,7 @@ namespace UC
 		FORCEINLINE int32 Emplace(ArgsType&&... Args)
 		{
 			const int32 Index = AddUninitialized(1);
-			new(GetData() + Index) ArrayElementType(Forward<ArgsType>(Args)...);
+			new(GetData() + Index) ArrayElementType(static_cast<ArgsType&&>(Args)...);
 			return Index;
 		}
 

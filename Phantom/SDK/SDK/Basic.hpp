@@ -448,8 +448,8 @@ class FText final
 {
 public:
 	class FTextImpl::FTextData*                   TextData;                                          // 0x0000(0x0008)(NOT AUTO-GENERATED PROPERTY)
-	uint8                                         Pad_8[0x10];                                       // 0x0008(0x0010)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+	uint32 Flags;                         // 0x0008(0x0004)
+	uint8 Pad_C[0xC];                     // 0x000C(0x000C)
 public:
 	const class FString& GetStringRef() const
 	{

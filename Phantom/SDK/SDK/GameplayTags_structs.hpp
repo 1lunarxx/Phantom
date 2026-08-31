@@ -79,6 +79,75 @@ struct FGameplayTagContainer final
 public:
 	TArray<struct FGameplayTag>                   GameplayTags;                                      // 0x0000(0x0010)(BlueprintVisible, ZeroConstructor, SaveGame, Protected, NativeAccessSpecifierProtected)
 	TArray<struct FGameplayTag>                   ParentTags;                                        // 0x0010(0x0010)(ZeroConstructor, Transient, Protected, NativeAccessSpecifierProtected)
+public:
+    void AppendTags(FGameplayTagContainer* InOther)
+    {
+        static void(*AppendTags)(FGameplayTagContainer*, FGameplayTagContainer*) = decltype(AppendTags)(InSDKUtils::GetImageBase() + 0x23D11F0);
+        AppendTags(this, InOther);
+    }
+
+    bool HasAll(const FGameplayTagContainer& Other) const
+    {
+        for (const auto& OtherGameplayTag : Other.GameplayTags)
+        {
+            bool bFound = false;
+
+            for (const auto& GameplayTag : GameplayTags)
+            {
+                if (GameplayTag.TagName == OtherGameplayTag.TagName)
+                {
+                    bFound = true;
+                    break;
+                }
+            }
+
+            if (!bFound)
+            {
+                for (const auto& ParentTag : ParentTags)
+                {
+                    if (ParentTag.TagName == OtherGameplayTag.TagName)
+                    {
+                        bFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!bFound)
+                return false;
+        }
+
+        for (const auto& OtherParentTag : Other.ParentTags)
+        {
+            bool bFound = false;
+
+            for (const auto& GameplayTag : GameplayTags)
+            {
+                if (GameplayTag.TagName == OtherParentTag.TagName)
+                {
+                    bFound = true;
+                    break;
+                }
+            }
+
+            if (!bFound)
+            {
+                for (const auto& ParentTag : ParentTags)
+                {
+                    if (ParentTag.TagName == OtherParentTag.TagName)
+                    {
+                        bFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!bFound)
+                return false;
+        }
+
+        return true;
+    }
 };
 static_assert(alignof(FGameplayTagContainer) == 0x000008, "Wrong alignment on FGameplayTagContainer");
 static_assert(sizeof(FGameplayTagContainer) == 0x000020, "Wrong size on FGameplayTagContainer");

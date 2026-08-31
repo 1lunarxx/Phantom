@@ -152,3 +152,10 @@ static T* Cast(UObject* Object)
 {
     return Object && (Object->IsA(T::StaticClass())) ? (T*)Object : NULL;
 }
+
+static AFortGameStateAthena* GetGameState()
+{
+    return Cast<AFortGameStateAthena>(UWorld::GetWorld()->GameState);
+}
+
+#define GGameState GetGameState()

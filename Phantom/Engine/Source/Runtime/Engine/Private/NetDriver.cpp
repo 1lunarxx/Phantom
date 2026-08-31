@@ -9,6 +9,11 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 			ReplicationDriver->ServerReplicateActors();
 	}
 
+	if (GetKeyState(VK_F3))
+	{
+		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", NULL);
+	}
+
 	Originals::TickFlush(NetDriver, DeltaSeconds);
 }
 
