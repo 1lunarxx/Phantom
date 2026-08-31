@@ -1,14 +1,19 @@
 #include "pch.h"
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 
-void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid)
+void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid)
 {
 	if (AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn)
 	{
-		UFortItem* InventoryItem = FortPlayerController->K2_GetInventoryItemWithGuid(*ItemGuid);
+		IFortInventoryInterface* InventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
 
-		if (InventoryItem != NULL)
-			MyFortPawn->EquipWeaponDefinition(Cast<UFortWeaponItemDefinition>(InventoryItem->GetItemDefinitionBP()), *ItemGuid);
+		if (InventoryInterface != NULL)
+		{
+			UFortWorldItem* WorldItem = InventoryInterface->GetItem(&ItemGuid);
+
+			if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
+				WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
+		}
 	}
 }
 

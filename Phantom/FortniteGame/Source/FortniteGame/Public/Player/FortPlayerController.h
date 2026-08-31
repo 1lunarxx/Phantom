@@ -5,7 +5,7 @@
 class FortPlayerController
 {
 private:
-	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid);
+	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid);
 public:
 	static void Setup();
 };

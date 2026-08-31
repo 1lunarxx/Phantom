@@ -19676,7 +19676,12 @@ public:
 	const bool HasUniqueAmmo() const;
 	bool ShouldAllowTargetingDuringReload() const;
 	bool TargetingPreventsReload() const;
-
+public:
+	char ServerExecute(UFortItem* Item, AFortPlayerController* Instigator)
+	{
+		static char(*ServerExecute)(UFortWeaponItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(InSDKUtils::GetImageBase() + 0x145BDA0);
+		return ServerExecute(this, Item, Instigator);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -46042,6 +46047,12 @@ static_assert(sizeof(IFortInteractInterface) == 0x000028, "Wrong size on IFortIn
 // 0x0000 (0x0028 - 0x0028)
 class IFortInventoryInterface final : public IInterface
 {
+public:
+	UFortWorldItem* GetItem(FGuid* ItemGuid)
+	{
+		static UFortWorldItem* (*GetItem)(IFortInventoryInterface*, FGuid*) = decltype(GetItem)(InSDKUtils::GetImageBase() + 0x1064570);
+		return GetItem(this, ItemGuid);
+	}
 public:
 	static class UClass* StaticClass()
 	{

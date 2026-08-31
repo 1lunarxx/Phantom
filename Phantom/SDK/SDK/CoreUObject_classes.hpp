@@ -40,7 +40,12 @@ public:
 	bool IsDefaultObject() const;
 
 	void ExecuteUbergraph(int32 EntryPoint);
-
+public:
+	template<typename T>
+	T* GetInterfaceAddress()
+	{
+		return ((T * (*)(UObject*, UClass*))(*(uint64_t*)(__readgsqword(0x60) + 0x10) + 0x19BAC70))(this, T::StaticClass());
+	}
 public:
 	static class UClass* FindClass(const std::string& ClassFullName)
 	{
