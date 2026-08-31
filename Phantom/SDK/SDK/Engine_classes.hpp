@@ -3163,10 +3163,10 @@ public:
 	void ReceiveInit();
 	void ReceiveShutdown();
 public:
-	bool RemoveLocalPlayer(ULocalPlayer* ExistingPlayer)
+	bool RemoveLocalPlayer()
 	{
 		static bool(*RemoveLocalPlayer)(UGameInstance*, ULocalPlayer*) = decltype(RemoveLocalPlayer)(InSDKUtils::GetImageBase() + 0x269E020);
-		return RemoveLocalPlayer(this, ExistingPlayer);
+		return RemoveLocalPlayer(this, LocalPlayers[0]);
 	}
 public:
 	static class UClass* StaticClass()

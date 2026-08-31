@@ -337,8 +337,8 @@ public:
 	uint8                                         Pad_3FC[0x4];                                      // 0x03FC(0x0004)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<class AGameplayAbilityTargetActor*>    SpawnedTargetActors;                               // 0x0400(0x0010)(ZeroConstructor, NativeAccessSpecifierPublic)
 	uint8                                         Pad_410[0x28];                                     // 0x0410(0x0028)(Fixing Size After Last Property [ Dumper-7 ])
-	class AActor*                                 OwnerActor;                                        // 0x0438(0x0008)(Net, ZeroConstructor, IsPlainOldData, RepNotify, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class AActor*                                 AvatarActor;                                       // 0x0440(0x0008)(Net, ZeroConstructor, IsPlainOldData, RepNotify, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class AActor* OwnerActor;                                        // 0x0438(0x0008)(Net, ZeroConstructor, IsPlainOldData, RepNotify, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class AActor* AvatarActor;                                       // 0x0440(0x0008)(Net, ZeroConstructor, IsPlainOldData, RepNotify, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_448[0x10];                                     // 0x0448(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
 	struct FGameplayAbilitySpecContainer          ActivatableAbilities;                              // 0x0458(0x00C8)(BlueprintVisible, BlueprintReadOnly, Net, RepNotify, ContainsInstancedReference, Protected, NativeAccessSpecifierProtected)
 	uint8                                         Pad_520[0x30];                                     // 0x0520(0x0030)(Fixing Size After Last Property [ Dumper-7 ])
@@ -426,7 +426,24 @@ public:
 	bool IsGameplayCueActive(const struct FGameplayTag& GameplayCueTag) const;
 	struct FGameplayEffectContextHandle MakeEffectContext() const;
 	struct FGameplayEffectSpecHandle MakeOutgoingSpec(TSubclassOf<class UGameplayEffect> GameplayEffectClass, float Level, const struct FGameplayEffectContextHandle& Context) const;
+public:
+	FGameplayAbilitySpec* FindAbilitySpecFromHandle(FGameplayAbilitySpecHandle Handle)
+	{
+		static FGameplayAbilitySpec* (*FindAbilitySpecFromHandle)(UAbilitySystemComponent*, FGameplayAbilitySpecHandle) = decltype(FindAbilitySpecFromHandle)(InSDKUtils::GetImageBase() + 0x663D10);
+		return FindAbilitySpecFromHandle(this, Handle);
+	}
 
+	char InternalTryActivateAbility(FGameplayAbilitySpecHandle Handle, FPredictionKey InPredictionKey, UGameplayAbility** OutInstancedAbility, void* OnGameplayAbilityEndedDelegate, const FGameplayEventData* TriggerEventData)
+	{
+		static char (*InternalTryActivateAbility)(UAbilitySystemComponent*, FGameplayAbilitySpecHandle, FPredictionKey, UGameplayAbility**, void*, const FGameplayEventData*) = decltype(InternalTryActivateAbility)(InSDKUtils::GetImageBase() + 0x66DBD0);
+		return InternalTryActivateAbility(this, Handle, InPredictionKey, OutInstancedAbility, OnGameplayAbilityEndedDelegate, TriggerEventData);
+	}
+	
+	void MarkAbilitySpecDirty(FGameplayAbilitySpec* Spec, bool WasAddOrRemove = false)
+	{
+		static void(*MarkAbilitySpecDirty)(UAbilitySystemComponent*, FGameplayAbilitySpec*, bool) = decltype(MarkAbilitySpecDirty)(InSDKUtils::GetImageBase() + 0x671060);
+		MarkAbilitySpecDirty(this, Spec, WasAddOrRemove);
+	}
 public:
 	static class UClass* StaticClass()
 	{

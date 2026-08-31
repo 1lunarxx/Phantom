@@ -52,8 +52,7 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 		}
 	}
 
-	static APawn* (*SpawnDefaultPawnFor)(AFortGameModeAthena*, AController*, AActor*) = decltype(SpawnDefaultPawnFor)(AFortGameMode::GetDefaultObj()->VTable[0x610 / 8]);
-	return SpawnDefaultPawnFor(FortGameModeAthena, NewPlayer, StartSpot);
+	return FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
 }
 
 void FortGameModeAthena::Setup()

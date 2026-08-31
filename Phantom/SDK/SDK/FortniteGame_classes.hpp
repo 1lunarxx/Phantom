@@ -1623,7 +1623,12 @@ public:
 	void OnEndOfDay();
 
 	void DumpReservations() const;
-
+public:
+	APawn* SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot)
+	{
+		static APawn* (*SpawnDefaultPawnFor)(AFortGameMode*, AController*, AActor*) = decltype(SpawnDefaultPawnFor)(AFortGameMode::GetDefaultObj()->VTable[0x610 / 8]);
+		return SpawnDefaultPawnFor(this, NewPlayer, StartSpot);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -15030,7 +15035,6 @@ public:
 	void SetSpawnWithinStormShield(bool bSpawnInStormShield);
 
 	bool IsGameReadyToSelectLoot() const;
-
 public:
 	static class UClass* StaticClass()
 	{
@@ -43322,7 +43326,12 @@ public:
 	static bool ShouldShowSkillTreeMovies();
 	static bool ShouldStreamOutTextureDataWhenPlayerIsTeleportedAtEndOfZone();
 	static bool UninstallAllOnDemandChunks();
-
+public:
+	static void InitializePlayerGameplayAbilities(IAbilitySystemInterface* PlayerStateOrProxy)
+	{
+		static void (*InitializePlayerGameplayAbilities)(IAbilitySystemInterface*) = decltype(InitializePlayerGameplayAbilities)(InSDKUtils::GetImageBase() + 0x0);
+		InitializePlayerGameplayAbilities(PlayerStateOrProxy);
+	}
 public:
 	static class UClass* StaticClass()
 	{

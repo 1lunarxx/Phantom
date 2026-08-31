@@ -3,6 +3,7 @@
 #include "Engine/World.h"
 #include "Engine/Restricted/NotForLicensees/Plugins/OnlineGameplayFramework/Source/McpProfileSys/Public/McpProfileGroup.h"
 #include "Engine/NetDriver.h"
+#include "GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h"
 
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
@@ -34,6 +35,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     NetDriver::Setup();
     FortPlayerControllerZone::Setup();
     FortPlayerController::Setup();
+    AbilitySystemComponent::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xCFD880, 0xC3);
 
@@ -41,7 +43,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     *GIsServer = true;
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
-    GWorld->OwningGameInstance->RemoveLocalPlayer(GWorld->OwningGameInstance->LocalPlayers[0]);
+    GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;
 }
