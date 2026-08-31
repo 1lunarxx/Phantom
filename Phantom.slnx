@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Phantom/Phantom.vcxproj" Id="b0e6f91d-d4d4-4765-a44d-6b13dbfaf4a3" />
+</Solution>
