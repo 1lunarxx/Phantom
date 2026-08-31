@@ -28,6 +28,31 @@ public:
         VirtualProtect(&VTable[(int)Target], sizeof(void*), dwProt, &dwTemp);
     }
 
+    static void Virtual(UObject* Object, uintptr_t Target, void* Detour, void** Original = NULL)
+    {
+        for (int32 i = 0; i < UObject::GObjects->Num(); i++)
+        {
+            UObject* GObject = UObject::GObjects->GetByIndex(i);
+
+            if (GObject == NULL)
+                continue;
+
+            if (GObject->IsA(Object->Class))
+            {
+                if (Original)
+                    *Original = GObject->VTable[(int)Target];
+
+                DWORD dwProt;
+                VirtualProtect(&GObject->VTable[(int)Target], sizeof(void*), PAGE_EXECUTE_READWRITE, &dwProt);
+
+                GObject->VTable[(int)Target] = Detour;
+
+                DWORD dwTemp;
+                VirtualProtect(&GObject->VTable[(int)Target], sizeof(void*), dwProt, &dwTemp);
+            }
+        }
+    }
+
     template <typename _Is>
     static void Patch(uintptr_t Target, _Is Byte)
     {

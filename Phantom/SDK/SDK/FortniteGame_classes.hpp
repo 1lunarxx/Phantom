@@ -6299,7 +6299,14 @@ public:
 
 public:
 	void HandleInventoryLocalUpdate();
-
+public:
+	void AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
+public:
+	void InitializeExistingItem(UFortWorldItem* ExistingItem)
+	{
+		static void (*InitializeExistingItem)(AFortInventory*, UFortWorldItem*) = decltype(InitializeExistingItem)(InSDKUtils::GetImageBase() + 0x106E710);
+		InitializeExistingItem(this, ExistingItem);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -13956,7 +13963,8 @@ public:
 	bool IsUsingTouch() const;
 	class UFortItem* K2_FindExistingItemForDefinition(const class UFortItemDefinition* ItemDefinition, bool bInStorageVault) const;
 	class UFortItem* K2_GetInventoryItemWithGuid(const struct FGuid& ItemGuid) const;
-
+public:
+	AFortInventory* GetWorldInventory() { return this->WorldInventory; };
 public:
 	static class UClass* StaticClass()
 	{
@@ -22346,7 +22354,12 @@ public:
 	class FName GetPlayerOSSName() const;
 	struct FUniqueNetIdRepl GetUniqueID() const;
 	bool IsConsolePlayer() const;
-
+public:
+	void ApplyCharacterCustomization(AFortPlayerPawn* FortPlayerPawn)
+	{
+		static void (*ApplyCharacterCustomization)(AFortPlayerState*, AFortPlayerPawn*) = decltype(ApplyCharacterCustomization)(InSDKUtils::GetImageBase() + 0x133D8A0);
+		ApplyCharacterCustomization(this, FortPlayerPawn);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -56657,7 +56670,12 @@ public:
 
 	void GetOwnedGameplayTags(struct FGameplayTagContainer* TagContainer) const;
 	bool SeenInFrontend() const;
-
+public:
+	static UFortWorldItem* New(AFortInventory* OwnerInventory, FFortItemEntry ItemDescription)
+	{
+		static UFortWorldItem* (*New)(AFortInventory*, FFortItemEntry*) = decltype(New)(InSDKUtils::GetImageBase() + 0x10CC7B0);
+		return New(OwnerInventory, &ItemDescription);
+	}
 public:
 	static class UClass* StaticClass()
 	{

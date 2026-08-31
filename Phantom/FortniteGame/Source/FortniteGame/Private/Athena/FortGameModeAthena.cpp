@@ -41,6 +41,17 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 
 APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot)
 {
+	if (AFortPlayerControllerAthena* FortPlayerController = Cast<AFortPlayerControllerAthena>(NewPlayer))
+	{
+		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
+		{
+			for (const FItemAndCount& StartingItem : FortGameModeAthena->StartingItems)
+				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
+
+			WorldInventory->AddItem(FortPlayerController->CustomizationLoadout.Pickaxe->WeaponDefinition, 1);
+		}
+	}
+
 	static APawn* (*SpawnDefaultPawnFor)(AFortGameModeAthena*, AController*, AActor*) = decltype(SpawnDefaultPawnFor)(AFortGameMode::GetDefaultObj()->VTable[0x610 / 8]);
 	return SpawnDefaultPawnFor(FortGameModeAthena, NewPlayer, StartSpot);
 }

@@ -7478,6 +7478,14 @@ public:
 	uint8                                         Pad_AC[0x4];                                       // 0x00AC(0x0004)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<class UFortAlterationItemDefinition*>  AlterationInstances;                               // 0x00B0(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPrivate)
 	TArray<float>                                 GenericAttributeValues;                            // 0x00C0(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPrivate)
+public:
+	FFortItemEntry() = default;
+
+	FFortItemEntry(UFortItemDefinition* InItemDefinition, int InCount, int InLevel)
+	{
+		static void (*Construct)(FFortItemEntry*, UFortItemDefinition*, int, int) = decltype(Construct)(InSDKUtils::GetImageBase() + 0x1084530);
+		Construct(this, InItemDefinition, InCount, InLevel);
+	}
 };
 static_assert(alignof(FFortItemEntry) == 0x000008, "Wrong alignment on FFortItemEntry");
 static_assert(sizeof(FFortItemEntry) == 0x0000D0, "Wrong size on FFortItemEntry");

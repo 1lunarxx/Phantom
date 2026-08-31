@@ -7,6 +7,8 @@
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
 #include "FortniteGame/Public/Online/FortGameSession.h"
+#include "FortniteGame/Public/Player/FortPlayerControllerZone.h"
+#include "FortniteGame/Public/Player/FortPlayerController.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -30,6 +32,8 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     McpProfileGroup::Setup();
     FortGameSession::Setup();
     NetDriver::Setup();
+    FortPlayerControllerZone::Setup();
+    FortPlayerController::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xCFD880, 0xC3);
 
