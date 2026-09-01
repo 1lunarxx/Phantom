@@ -167,36 +167,3 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 		return;
 	}
 }
-
-bool FortLootPackage::SpawnLoot(ABuildingContainer* BuildingContainer)
-{
-	if (BuildingContainer->bAlreadySearched)
-		return false;
-
-	if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
-		BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaTreasure");
-	else if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Ammo"))
-		BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaAmmoLarge");
-
-	TArray<FFortItemEntry> LootDrops;
-	FortLootPackage::PickLootDrops(&LootDrops, GGameState->WorldLevel, BuildingContainer->SearchLootTierGroup);
-
-	for (FFortItemEntry& LootDrop : LootDrops)
-	{
-		FVector Location = BuildingContainer->K2_GetActorLocation() + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
-
-		if (AFortPickup* Pickup = AFortPickup::SpawnPickup(LootDrop, Location, LootDrop.Count, EFortPickupSourceTypeFlag::Container, false, true, NULL, BuildingContainer))
-		{
-			Pickup->bTossedFromContainer = true;
-			Pickup->OnRep_TossedFromContainer();
-		}
-	}
-
-	BuildingContainer->bAlreadySearched = true;
-	BuildingContainer->OnRep_bAlreadySearched();
-
-	BuildingContainer->SearchBounceData.SearchAnimationCount++;
-	BuildingContainer->BounceContainer();
-
-	return true;
-}

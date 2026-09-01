@@ -8,7 +8,7 @@
 	AmmoBox = 4,
 */
 
-AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, bool bRandomRotation, bool bToss, AFortPlayerPawn* PlayerPawn, ABuildingContainer* Container)
+AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation, bool bToss, AFortPlayerPawn* PlayerPawn, ABuildingContainer* Container)
 {
 	if (Count)
 		ItemEntry.Count = Count;
@@ -22,7 +22,7 @@ AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocati
 	CreationData->OverrideClass = NULL;
 	CreationData->OwnerContainer = Container;
 	CreationData->SourceTypeFlags = PickupSourceTypeFlag;
-	CreationData->SpawnSource = Container != NULL ? Container->SearchLootTierGroup.ToString().contains("Treasure") ? 2 : Container->SearchLootTierGroup.ToString().contains("Ammo") ? 4 : 0 : 0;CreationData->bRandomRotation = bRandomRotation;
+	CreationData->SpawnSource = SpawnSource;
 	CreationData->bPickupOnlyRelevantToOwner = bToss;
 
 	AFortPickup* Pickup = AFortPickup::CreateFromData(CreationData);

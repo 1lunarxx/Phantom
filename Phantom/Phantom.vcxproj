@@ -159,6 +159,8 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
@@ -190,6 +192,8 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Quests\FortQuestManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootPackage.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootTier.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPoiVolume.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingContainer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

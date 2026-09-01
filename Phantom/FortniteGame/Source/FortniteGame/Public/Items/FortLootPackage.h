@@ -45,6 +45,4 @@ public:
 public:
 	static void PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName);
 	static void PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLootToDrop, FName LootPackage, int32 ForcedLootTier, int32 LootPackageCategory, int32 WorldLevel);
-
-    static bool SpawnLoot(ABuildingContainer* BuildingContainer);
 };

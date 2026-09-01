@@ -15412,7 +15412,12 @@ public:
 	void OnSearchInterrupted();
 	void OnSetSearched();
 	void RaiseTreasure();
-
+public:
+	bool SpawnLoot(AFortPlayerPawn* PlayerPawn)
+	{
+		static bool(*SpawnLoot)(ABuildingContainer*, AFortPlayerPawn*) = decltype(SpawnLoot)(InSDKUtils::GetImageBase() + 0xD867F0);
+		return SpawnLoot(this, PlayerPawn);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -29378,7 +29383,13 @@ public:
 		SetPickupItems(this, PrimaryEntry, &AdditionalEntries, bInSplitOnPickup);
 	}
 
-	static AFortPickup* SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, bool bRandomRotation = true, bool bToss = true, AFortPlayerPawn* PlayerPawn = NULL, ABuildingContainer* Container = NULL);
+	void SetPickupTarget(AFortPawn* PickupTarget, double InFlyTime, FVector InStartDirection)
+	{
+		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, double, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
+		SetPickupTarget(this, PickupTarget, InFlyTime, InStartDirection);
+	}
+
+	static AFortPickup* SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation = true, bool bToss = true, AFortPlayerPawn* PlayerPawn = NULL, ABuildingContainer* Container = NULL);
 public:
 	static class UClass* StaticClass()
 	{

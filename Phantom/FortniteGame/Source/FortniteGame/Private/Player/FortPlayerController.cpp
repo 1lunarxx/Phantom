@@ -18,16 +18,6 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 	}
 }
 
-void FortPlayerController::ServerAttemptInteract(AFortPlayerController* FortPlayerController, AActor* ReceivingActor, UPrimitiveComponent* InteractComponent, ETInteractionType InteractType, UObject* OptionalObjectData)
-{
-	Originals::ServerAttemptInteract(FortPlayerController, ReceivingActor, InteractComponent, InteractType, OptionalObjectData);
-
-	if (ABuildingContainer* BuildingContainer = Cast<ABuildingContainer>(ReceivingActor))
-	{
-		FortLootPackage::SpawnLoot(BuildingContainer);
-	}
-}
-
 bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* PlayerController, FBuildingClassData* BuildingClassData)
 {
 	if (BuildingClassData == NULL || BuildingClassData->BuildingClass.Get() == NULL)
@@ -200,7 +190,6 @@ void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
 
-	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x1218 / 8, ServerAttemptInteract, (void**)&Originals::ServerAttemptInteract);
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10A0 / 8, ServerEditBuildingActor);
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10C0 / 8, ServerBeginEditingBuildingActor);
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10B0 / 8, ServerEndEditingBuildingActor);

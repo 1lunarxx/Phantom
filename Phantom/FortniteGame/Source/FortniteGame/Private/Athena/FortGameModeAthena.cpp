@@ -10,13 +10,13 @@ void FortGameModeAthena::FinishWorldInitialization(AFortGameModeAthena* FortGame
 	if (Tiered_Athena_FloorLoot != NULL)
 	{
 		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot))
-			FortLootPackage::SpawnLoot(BuildingContainer);
+			BuildingContainer->SpawnLoot(NULL);
 	}
 
 	if (Tiered_Athena_FloorLoot_Warmup != NULL)
 	{
 		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot_Warmup))
-			FortLootPackage::SpawnLoot(BuildingContainer);
+			BuildingContainer->SpawnLoot(NULL);
 	}
 
 	SetConsoleTitleA("Phantom | Ready");
@@ -63,7 +63,6 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
 
 			WorldInventory->AddItem(FortPlayerController->CustomizationLoadout.Pickaxe->WeaponDefinition, 1);
-			WorldInventory->AddItem(GetGameData()->MetalItemDefinition.Get(), 100);
 		}
 	}
 

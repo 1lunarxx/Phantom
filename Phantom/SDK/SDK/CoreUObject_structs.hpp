@@ -460,7 +460,12 @@ public:
 	}
 	FVector GetNormalized() const
 	{
-		return *this / Magnitude();
+		float Size = Magnitude();
+
+		if (Size == 0.0f)
+			return { 0.0f, 0.0f, 0.0f };
+
+		return *this / Size;
 	}
 	bool IsZero() const
 	{
