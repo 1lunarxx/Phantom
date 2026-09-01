@@ -189,5 +189,11 @@ static AFortGameModeAthena* GetGameMode()
     return Cast<AFortGameModeAthena>(UWorld::GetWorld()->AuthorityGameMode);
 }
 
+static UFortGameData* GetGameData()
+{
+    static UFortGameData* (*GetGameData)() = decltype(GetGameData)(InSDKUtils::GetImageBase() + 0xEE89F0);
+    return GetGameData();
+}
+
 #define GGameState GetGameState()
 #define GGameMode GetGameMode()

@@ -15,3 +15,14 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 
 	InitializeExistingItem(WorldItem);
 }
+
+UFortWorldItem* AFortInventory::FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault)
+{
+	for (UFortWorldItem* ItemInstance : Inventory.ItemInstances)
+	{
+		if (ItemInstance->ItemEntry.ItemDefinition == ItemDefinition)
+			return ItemInstance;
+	}
+
+	return NULL;
+}

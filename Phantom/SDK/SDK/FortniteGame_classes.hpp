@@ -2615,7 +2615,29 @@ public:
 	bool IsSupportedByWorld() const;
 	bool IsUnderConstruction() const;
 	bool WillRegisterWithStructuralGrid() const;
+public:
+	ABuildingSMActor* ReplaceBuildingActor(EBuildingReplacementType ReplacementType, UClass* ReplacementClass, int32 ReplacementUpgradeLevel, int32 RotationInterations, bool InbMirrored, AFortPlayerController* EditingController)
+	{
+		static ABuildingSMActor* (*ReplaceBuildingActor)(ABuildingSMActor*, EBuildingReplacementType, UClass*, int32, int32, bool, AFortPlayerController*) = decltype(ReplaceBuildingActor)(InSDKUtils::GetImageBase() + 0xDAA200);
+		return ReplaceBuildingActor(this, ReplacementType, ReplacementClass, ReplacementUpgradeLevel, RotationInterations, InbMirrored, EditingController);
+	}
 
+	void SetEditingPlayer(AFortPlayerStateZone* NewEditingPlayer)
+	{
+		static void (*SetEditingPlayer)(ABuildingSMActor*, AFortPlayerStateZone*) = decltype(SetEditingPlayer)(InSDKUtils::GetImageBase() + 0xDABDE0);
+		SetEditingPlayer(this, NewEditingPlayer);
+	}
+
+	bool CanBePlayerEdited(AFortPlayerController* EditingPC)
+	{
+		return true;
+	}
+
+	int GetCostToRepair(AFortPlayerController* FPC)
+	{
+		static bool (*GetCostToRepair)(ABuildingSMActor*, AFortPlayerController*) = decltype(GetCostToRepair)(InSDKUtils::GetImageBase() + 0xD9B4C0);
+		return GetCostToRepair(this, FPC);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -6312,6 +6334,8 @@ public:
 		static void (*InitializeExistingItem)(AFortInventory*, UFortWorldItem*) = decltype(InitializeExistingItem)(InSDKUtils::GetImageBase() + 0x106E710);
 		InitializeExistingItem(this, ExistingItem);
 	}
+
+	UFortWorldItem* FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault = false);
 public:
 	static class UClass* StaticClass()
 	{
@@ -9256,7 +9280,12 @@ public:
 	bool IsUsingUmbrella() const;
 	void ListCharacterParts(const class FString& GenderAndOrPartString) const;
 	float TimeFromJumpApex() const;
-
+public:
+	void OnBlueprintPlace()
+	{
+		static void(*OnBlueprintPlace)(AFortPlayerPawn*) = decltype(OnBlueprintPlace)(InSDKUtils::GetImageBase() + 0x128B390);
+		OnBlueprintPlace(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -13970,6 +13999,30 @@ public:
 	class UFortItem* K2_GetInventoryItemWithGuid(const struct FGuid& ItemGuid) const;
 public:
 	AFortInventory* GetWorldInventory() { return this->WorldInventory; };
+
+	bool CanAffordToPlaceBuildableClass(FBuildingClassData* ClassToBuildData)
+	{
+		static bool(*CanAffordToPlaceBuildableClass)(AFortPlayerController*, FBuildingClassData*) = decltype(CanAffordToPlaceBuildableClass)(InSDKUtils::GetImageBase() + 0x12B0350);
+		return CanAffordToPlaceBuildableClass(this, ClassToBuildData);
+	}
+
+	void PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
+	{
+		static void(*PayBuildableClassPlacementCost)(AFortPlayerController*, FBuildingClassData*) = decltype(PayBuildableClassPlacementCost)(InSDKUtils::GetImageBase() + 0x12DF940);
+		PayBuildableClassPlacementCost(this, BuildingClassData);
+	}
+
+	char HasRequiredBuildingLevel(int NewLevel, EFortResourceType ResourceType)
+	{
+		static char (*HasRequiredBuildingLevel)(AFortPlayerController*, int, EFortResourceType) = decltype(HasRequiredBuildingLevel)(InSDKUtils::GetImageBase() + 0x12CC6D0);
+		return HasRequiredBuildingLevel(this, NewLevel, ResourceType);
+	}
+
+	EFortStructuralGridQueryResults CanPlaceBuildableClassInStructuralGrid(TSubclassOf<ABuildingActor> ClassToBuild, FVector* WorldLocation, FRotator* WorldRotation, bool bMirrored, TArray<ABuildingActor*>* ExistingBuildings)
+	{
+		static EFortStructuralGridQueryResults(*CanPlaceBuildableClassInStructuralGrid)(AFortPlayerController*, TSubclassOf<ABuildingActor>, FVector*, FRotator*, bool, TArray<ABuildingActor*>*, void*) = decltype(CanPlaceBuildableClassInStructuralGrid)(InSDKUtils::GetImageBase() + 0x12B0F10);
+		return CanPlaceBuildableClassInStructuralGrid(this, ClassToBuild, WorldLocation, WorldRotation, bMirrored, ExistingBuildings, NULL);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -17899,7 +17952,12 @@ public:
 	bool GetPlaylistTeams(TArray<EFortTeam>* OutTeams) const;
 	class AFortSafeZoneIndicator* GetSafeZoneIndicator() const;
 	bool IsTeamSwitchAllowed() const;
-
+public:
+	void GetPlayerBuildableClasses(TArray<TSubclassOf<ABuildingSMActor>>* OutBuildableClasses, const FPlayerBuildableClassFilter* ClassFilter)
+	{
+		static void (*GetPlayerBuildableClasses)(AFortGameStateAthena*, TArray<TSubclassOf<ABuildingSMActor>>*, const FPlayerBuildableClassFilter*) = decltype(GetPlayerBuildableClasses)(InSDKUtils::GetImageBase() + 0xF6BA30);
+		GetPlayerBuildableClasses(this, OutBuildableClasses, ClassFilter);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -22605,7 +22663,12 @@ public:
 public:
 	void OnBlueprintPaperPulseUpdate(float InCurveVal);
 	void OnRep_DefaultMetadata(class UBuildingEditModeMetadata* OldMetadata);
-
+public:
+	void PlayWeaponFireFX_Internal(bool bSecondaryFire)
+	{
+		static void (*PlayWeaponFireFX)(AFortWeap_BuildingTool*, bool) = decltype(PlayWeaponFireFX)(InSDKUtils::GetImageBase() + 0x14591B0);
+		PlayWeaponFireFX(this, bSecondaryFire);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -41200,7 +41263,18 @@ public:
 	void SetTimeOfDayManagerGameplayOverride(TSubclassOf<class AFortTimeOfDayManager> TimeOfDayManagerClass);
 	void UpdateStormCapDamage();
 	void UpdateStormCapWarning();
+public:
+	void ScoreBuildingConstruction(AController* ConstructingController, ABuildingSMActor* ConstructedBuilding)
+	{
+		static void (*ScoreBuildingConstruction)(AFortGameMode*, AController*, ABuildingActor*) = decltype(ScoreBuildingConstruction)(InSDKUtils::GetImageBase() + 0xF2F290);
+		ScoreBuildingConstruction(this, ConstructingController, ConstructedBuilding);
+	}
 
+	void ScoreBuildingEdit(AController* EditingController, ABuildingSMActor* EditedBuilding)
+	{
+		static void(*ScoreBuildingEdit)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingEdit)(InSDKUtils::GetImageBase() + 0xF2FAE0);
+		ScoreBuildingEdit(this, EditingController, EditedBuilding);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -47917,6 +47991,15 @@ public:
 static_assert(alignof(UFortMatchmakingCriticalMission) == 0x000008, "Wrong alignment on UFortMatchmakingCriticalMission");
 static_assert(sizeof(UFortMatchmakingCriticalMission) == 0x000140, "Wrong size on UFortMatchmakingCriticalMission");
 
+class UFortAnalytics
+{
+public:
+	static void FireEvent_BuildingAction(class AFortPlayerController* FortPC, const wchar_t* ActionName, class ABuildingSMActor* Building, int ResourcesSpent)
+	{
+		static void (*FireEvent_BuildingAction)(class AFortPlayerController*, const wchar_t*, class ABuildingSMActor*, int) = decltype(FireEvent_BuildingAction)(InSDKUtils::GetImageBase() + 0xBBE400);
+		FireEvent_BuildingAction(FortPC, ActionName, Building, ResourcesSpent);
+	}
+};
 // Class FortniteGame.FortMatchmakingSingleSession
 // 0x0040 (0x0170 - 0x0130)
 class UFortMatchmakingSingleSession final : public UFortMatchmakingPolicy
@@ -56534,7 +56617,17 @@ public:
 
 public:
 	void OnRep_EditActor();
+public:
+	void SetEditActor(ABuildingSMActor* NewEditActor)
+	{
+		if (Role == SDK::ENetRole::ROLE_Authority)
+		{
+			EditActor = NewEditActor;
 
+			ForceNetUpdate();
+			OnRep_EditActor();
+		}
+	}
 public:
 	static class UClass* StaticClass()
 	{

@@ -6879,6 +6879,37 @@ enum class ELevelCollectionType : uint8
 	MAX
 };
 
+struct FActorSpawnParameters
+{
+public:
+	class FName Name;
+
+	class AActor* Template;
+	class AActor* Owner;
+	class AActor* Instigator;
+	class ULevel* OverrideLevel;
+	class UObject* OverrideParentComponent;
+	uint8_t SpawnCollisionHandlingOverride;
+
+private:
+	uint8 bRemoteOwned : 1;
+
+public:
+	uint8 bNoFail : 1;
+	uint8 bDeferConstruction : 1;
+	uint8 bAllowDuringConstructionScript : 1;
+	uint8_t NameMode;
+	uint32_t ObjectFlags;
+	void* CallbackSum_Callable;
+	void* CallbackSum_HeapAllocation;
+public:
+	FActorSpawnParameters()
+	{
+		static void(*Construct)(FActorSpawnParameters*) = decltype(Construct)(InSDKUtils::GetImageBase() + 0x2AA4F60);
+		Construct(this);
+	}
+};
+
 #define GWorld UWorld::GetWorld()
 // Class Engine.World
 // 0x0670 (0x0698 - 0x0028)
@@ -6944,6 +6975,11 @@ public:
 		return FindCollectionByType(this, InType);
 	}
 
+	AActor* SpawnActor(UClass* Class, const FVector* Location, const FRotator* Rotation, const struct FActorSpawnParameters* SpawnParameters)
+	{
+		static AActor* (*SpawnActor)(UWorld*, UClass*, const FVector*, const FRotator*, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
+		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
+	}
 public:
 	static class UClass* StaticClass()
 	{

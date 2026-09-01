@@ -63,6 +63,7 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
 
 			WorldInventory->AddItem(FortPlayerController->CustomizationLoadout.Pickaxe->WeaponDefinition, 1);
+			WorldInventory->AddItem(GetGameData()->MetalItemDefinition.Get(), 100);
 		}
 	}
 

@@ -386,7 +386,7 @@ public:
 		return ClassPtr;
 	}
 
-	inline operator UClass*() const
+	inline operator UClass* () const
 	{
 		return ClassPtr;
 	}
