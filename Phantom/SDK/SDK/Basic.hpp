@@ -324,7 +324,9 @@ public:
 	{
 		return ComparisonIndex;
 	}
-	
+
+	bool IsNone() { return !ComparisonIndex; };
+
 	std::string GetRawString() const
 	{
 		thread_local FAllocatedString TempString(1024);
@@ -572,6 +574,12 @@ static_assert(offsetof(FSoftObjectPath, SubPathString) == 0x000008, "Member 'FSo
 
 class FSoftObjectPtr : public TPersistentObjectPtr<FakeSoftObjectPtr::FSoftObjectPath>
 {
+public:
+	UObject* LoadSynchronous() const
+	{
+		static UObject* (*LoadSynchronous)(const FSoftObjectPtr*) = decltype(LoadSynchronous)(InSDKUtils::GetImageBase() + 0x2CAFF0);
+		return LoadSynchronous(this);
+	}
 };
 
 template<typename UEType>
@@ -582,6 +590,12 @@ public:
 	{
 		return static_cast<UEType*>(TPersistentObjectPtr::Get());
 	}
+
+	UEType* LoadSynchronous() const
+	{
+		return static_cast<UEType*>(FSoftObjectPtr::LoadSynchronous());
+	}
+
 	UEType* operator->() const
 	{
 		return static_cast<UEType*>(TPersistentObjectPtr::Get());

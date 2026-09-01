@@ -29224,6 +29224,22 @@ static_assert(offsetof(UFortAmbientOneShotInstance, Controller) == 0x000028, "Me
 static_assert(offsetof(UFortAmbientOneShotInstance, Data) == 0x000030, "Member 'UFortAmbientOneShotInstance::Data' has a wrong offset!");
 static_assert(offsetof(UFortAmbientOneShotInstance, RetriggerTimer) == 0x000058, "Member 'UFortAmbientOneShotInstance::RetriggerTimer' has a wrong offset!");
 
+struct FortPickupCreationData
+{
+	UWorld* World;
+	FFortItemEntry* PickupDataItemEntry;
+	FVector* Position;
+	FRotator* Rotation;
+	AFortPlayerController* OptionalPCOwner;
+	UClass* OverrideClass;
+	AActor* OwnerContainer;
+	EFortPickupSourceTypeFlag SourceTypeFlags;
+	uint8 Pad_39[0x3];
+	uint8 SpawnSource;
+	uint8 bRandomRotation : 1;
+	uint8 bPickupOnlyRelevantToOwner : 1;
+};
+
 // Class FortniteGame.FortPickup
 // 0x02A8 (0x05D0 - 0x0328)
 class AFortPickup : public AActor
@@ -29284,7 +29300,22 @@ public:
 	void TossPickup(const struct FVector& FinalLocation, class AFortPawn* ItemOwner, int32 OverrideMaxStackCount, bool bToss, const EFortPickupSourceTypeFlag InPickupSourceTypeFlags);
 
 	bool PickedUp() const;
+public:
+	static AFortPickup* CreateFromData(const FortPickupCreationData* CreationData)
+	{
+		static AFortPickup* (*CreateFromData)(const FortPickupCreationData*) = decltype(CreateFromData)(InSDKUtils::GetImageBase() + 0x1089EC0);
+		return CreateFromData(CreationData);
+	}
 
+	void SetPickupItems(FFortItemEntry* PrimaryEntry, bool bInSplitOnPickup)
+	{
+		TArray<FFortItemEntry> AdditionalEntries{};
+
+		static void (*SetPickupItems)(AFortPickup*, FFortItemEntry*, TArray<FFortItemEntry>*, bool) = decltype(SetPickupItems)(InSDKUtils::GetImageBase() + 0x10A16B0);
+		SetPickupItems(this, PrimaryEntry, &AdditionalEntries, bInSplitOnPickup);
+	}
+
+	static AFortPickup* SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, bool bRandomRotation = true, bool bToss = true, AFortPlayerPawn* PlayerPawn = NULL, ABuildingContainer* Container = NULL);
 public:
 	static class UClass* StaticClass()
 	{

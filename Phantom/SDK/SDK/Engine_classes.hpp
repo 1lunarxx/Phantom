@@ -4253,7 +4253,6 @@ public:
 	TMap<class FName, uint8*>                     RowMap;                                            // 0x0030(0x0050)(So, here's a RowMap. Good luck with it.)
 	uint8                                         bStripFromClientBuilds : 1;                        // 0x0080(0x0001)(BitIndex: 0x00, PropSize: 0x0001 (Edit, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
 	uint8                                         Pad_81[0x1F];                                      // 0x0081(0x001F)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
 public:
 	static class UClass* StaticClass()
 	{

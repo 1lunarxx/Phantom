@@ -70,6 +70,32 @@ public:
         return (T*)StaticFindObject(ObjectClass, InObjectPackage, OrigInName, false);
     }
 
+    template<typename T = UObject>
+    static T* StaticLoadObject(const wchar_t* Path, UClass* InClass = T::StaticClass(), UObject* InOuter = NULL)
+    {
+        static UObject* (*StaticLoadObject)(UClass*, UObject*, const wchar_t*, const wchar_t*, uint32, UObject*, bool, void*) = decltype(StaticLoadObject)(InSDKUtils::GetImageBase() + 0x19c9cf0);
+        return (T*)StaticLoadObject(InClass, InOuter, Path, nullptr, 0, nullptr, false, nullptr);
+    }
+
+    template<typename T>
+    static TArray<T*> GetAllActors(UClass* InClass = NULL)
+    {
+        TArray<AActor*> OutActors;
+        UGameplayStatics::GetAllActorsOfClass(UWorld::GetWorld(), InClass ? InClass : T::StaticClass(), &OutActors);
+
+        TArray<T*> Actors;
+
+        for (AActor* Actor : OutActors)
+        {
+            if (T* CastedActor = Cast<T>(Actor))
+            {
+                Actors.Add(CastedActor);
+            }
+        }
+
+        return Actors;
+    }
+
     static uint8_t* AllocateNearbyPage(void* targetAddr)
     {
         SYSTEM_INFO SysInfo;
@@ -158,4 +184,10 @@ static AFortGameStateAthena* GetGameState()
     return Cast<AFortGameStateAthena>(UWorld::GetWorld()->GameState);
 }
 
+static AFortGameModeAthena* GetGameMode()
+{
+    return Cast<AFortGameModeAthena>(UWorld::GetWorld()->AuthorityGameMode);
+}
+
 #define GGameState GetGameState()
+#define GGameMode GetGameMode()

@@ -161,6 +161,8 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerController.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
@@ -181,10 +183,13 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameState.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameModeAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventory.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortPickup.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSession.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerControllerZone.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerController.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Quests\FortQuestManager.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootPackage.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootTier.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

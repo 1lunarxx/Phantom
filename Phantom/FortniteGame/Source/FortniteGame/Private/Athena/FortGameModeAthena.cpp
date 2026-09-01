@@ -1,13 +1,27 @@
 #include "pch.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
+#include "FortniteGame/Public/Items/FortLootPackage.h"
 
 void FortGameModeAthena::FinishWorldInitialization(AFortGameModeAthena* FortGameModeAthena, AFortWorldManager* WorldManager)
 {
-	if (!FortGameModeAthena->bWorldIsReady)
+	UClass* Tiered_Athena_FloorLoot = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_01.Tiered_Athena_FloorLoot_01_C"));
+	UClass* Tiered_Athena_FloorLoot_Warmup = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C"));
+
+	if (Tiered_Athena_FloorLoot != NULL)
 	{
-		FortGameModeAthena->bWorldIsReady = true;
-		SetConsoleTitleA("Phantom | Ready");
+		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot))
+			FortLootPackage::SpawnLoot(BuildingContainer);
 	}
+
+	if (Tiered_Athena_FloorLoot_Warmup != NULL)
+	{
+		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot_Warmup))
+			FortLootPackage::SpawnLoot(BuildingContainer);
+	}
+
+	SetConsoleTitleA("Phantom | Ready");
+
+	FortGameModeAthena->bWorldIsReady = true;
 
 	Originals::FinishWorldInitialization(FortGameModeAthena, WorldManager);
 }

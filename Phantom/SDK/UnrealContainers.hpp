@@ -165,7 +165,27 @@ namespace UC
 			inline bool IsValidIndex(int32 Index) const { return Index >= 0 && Index < NumBits; }
 
 			inline bool IsValid() const { return GetData() && NumBits > 0; }
+		public:
+			inline void Set(int32 Index, bool Value)
+			{
+				uint32* DataPtr = const_cast<uint32*>(GetData());
+				uint32 Mask = 1 << (Index & (NumBitsPerDWORD - 1));
 
+				if (Value)
+					DataPtr[Index / NumBitsPerDWORD] |= Mask;
+				else
+					DataPtr[Index / NumBitsPerDWORD] &= ~Mask;
+			}
+
+			inline void Add(bool Value)
+			{
+				if (NumBits >= MaxBits)
+					return;
+
+				int32 Index = NumBits++;
+
+				Set(Index, Value);
+			}
 		public:
 			inline bool operator[](int32 Index) const { VerifyIndex(Index); return GetData()[Index / NumBitsPerDWORD] & (1 << (Index & (NumBitsPerDWORD - 1))); }
 
@@ -200,9 +220,14 @@ namespace UC
 			SetType Value;
 			int32 HashNextId;
 			int32 HashIndex;
+
+		public:
+			SetElement(const SetType& InValue)
+				: Value(InValue), HashNextId(-1), HashIndex(0)
+			{
+			}
 		};
 	}
-
 
 	template <typename KeyType, typename ValueType>
 	class TPair
@@ -212,16 +237,21 @@ namespace UC
 		ValueType Second;
 
 	public:
+		TPair()
+			: First(), Second()
+		{
+		}
+
 		TPair(KeyType Key, ValueType Value)
 			: First(Key), Second(Value)
 		{
 		}
 
 	public:
-		inline       KeyType& Key()       { return First; }
+		inline       KeyType& Key() { return First; }
 		inline const KeyType& Key() const { return First; }
 
-		inline       ValueType& Value()       { return Second; }
+		inline       ValueType& Value() { return Second; }
 		inline const ValueType& Value() const { return Second; }
 	};
 
@@ -520,7 +550,37 @@ namespace UC
 		inline bool IsValidIndex(int32 Index) const { return Data.IsValidIndex(Index) && AllocationFlags[Index]; }
 
 		inline bool IsValid() const { return Data.IsValid() && AllocationFlags.IsValid(); }
+	public:
+		inline int32 Add(const SparseArrayElementType& Value)
+		{
+			int32 Index;
 
+			if (NumFreeIndices > 0)
+			{
+				Index = FirstFreeIndex;
+
+				auto& FreeElement = Data.GetUnsafe(Index);
+
+				FirstFreeIndex = FreeElement.NextFreeIndex;
+				NumFreeIndices--;
+
+				new (&FreeElement.ElementData) SparseArrayElementType(Value);
+				AllocationFlags.Set(Index, true);
+
+				return Index;
+			}
+
+			Index = Data.Num();
+
+			FElementOrFreeListLink Element;
+
+			new (&Element.ElementData) SparseArrayElementType(Value);
+
+			Data.Add(Element);
+			AllocationFlags.Add(true);
+
+			return Index;
+		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return AllocationFlags; }
 
@@ -577,7 +637,13 @@ namespace UC
 		inline bool IsValidIndex(int32 Index) const { return Elements.IsValidIndex(Index); }
 
 		inline bool IsValid() const { return Elements.IsValid(); }
+	public:
+		inline int32 Add(const SetElementType& Value)
+		{
+			SetDataType Element(Value);
 
+			return Elements.Add(Element);
+		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }
 
@@ -628,6 +694,11 @@ namespace UC
 			}
 		
 			return end(*this);
+		}
+
+		inline int32 Add(const KeyElementType& Key, const ValueElementType& Value)
+		{
+			return Elements.Add(ElementType(Key, Value));
 		}
 
 	public:
