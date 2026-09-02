@@ -4014,9 +4014,9 @@ public:
 		SetWorld(this, InWorld);
 	}
 
-	bool InitListen(UWorld* InNotify, FURL* LocalURL, bool bReuseAddressAndPort, FString* Error)
+	bool InitListen(UWorld* InNotify, FURL LocalURL, bool bReuseAddressAndPort, FString Error)
 	{
-		static bool (*InitListen)(UNetDriver*, UWorld*, FURL*, bool, FString*) = decltype(InitListen)(InSDKUtils::GetImageBase() + 0x44B020);
+		static bool (*InitListen)(UNetDriver*, UWorld*, FURL, bool, FString) = decltype(InitListen)(InSDKUtils::GetImageBase() + 0x44B020);
 		return InitListen(this, InNotify, LocalURL, bReuseAddressAndPort, Error);
 	}
 public:

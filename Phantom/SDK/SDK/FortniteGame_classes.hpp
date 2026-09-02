@@ -41286,6 +41286,12 @@ public:
 		static void(*ScoreBuildingEdit)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingEdit)(InSDKUtils::GetImageBase() + 0xF2FAE0);
 		ScoreBuildingEdit(this, EditingController, EditedBuilding);
 	}
+
+	void CreateAIGoalManager()
+	{
+		static void(*CreateAIGoalManager)(AFortGameModeAthena*) = decltype(CreateAIGoalManager)(InSDKUtils::GetImageBase() + 0xC98EB0);
+		CreateAIGoalManager(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

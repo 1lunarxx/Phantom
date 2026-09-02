@@ -13,16 +13,12 @@ bool World::Listen(UWorld* World, FURL& InURL)
 		return false;
 	}
 
-	FName NAME_GameNetDriver = UKismetStringLibrary::Conv_StringToName(L"GameNetDriver"); // temp
-
 	// Create net driver.
 	if (GEngine->CreateNamedNetDriver(World, NAME_GameNetDriver, NAME_GameNetDriver))
 	{
 		World->NetDriver = GEngine->FindNamedNetDriver(World, NAME_GameNetDriver);
-
 		World->NetDriver->World = World;
 		World->NetDriver->NetDriverName = NAME_GameNetDriver;
-
 		FLevelCollection* const SourceCollection = World->FindCollectionByType(ELevelCollectionType::DynamicSourceLevels);
 		if (SourceCollection)
 		{
@@ -41,7 +37,7 @@ bool World::Listen(UWorld* World, FURL& InURL)
 	}
 
 	FString Error;
-	if (!World->NetDriver->InitListen(World, &InURL, false, &Error))
+	if (!World->NetDriver->InitListen(World, InURL, false, Error))
 	{
 		World->NetDriver->SetWorld(NULL);
 		World->NetDriver = NULL;
@@ -56,6 +52,11 @@ bool World::Listen(UWorld* World, FURL& InURL)
 			StaticCollection->SetNetDriver(nullptr);
 		}
 		return false;
+	}
+
+	if ((World->NetDriver->MaxInternetClientRate < World->NetDriver->MaxClientRate) && (World->NetDriver->MaxInternetClientRate > 2500))
+	{
+		World->NetDriver->MaxClientRate = World->NetDriver->MaxInternetClientRate;
 	}
 
 	World->NetDriver->SetWorld(World);

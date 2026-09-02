@@ -840,17 +840,31 @@ static_assert(sizeof(FAITeamStimulusEvent) == 0x000038, "Wrong size on FAITeamSt
 static_assert(offsetof(FAITeamStimulusEvent, Broadcaster) == 0x000028, "Member 'FAITeamStimulusEvent::Broadcaster' has a wrong offset!");
 static_assert(offsetof(FAITeamStimulusEvent, Enemy) == 0x000030, "Member 'FAITeamStimulusEvent::Enemy' has a wrong offset!");
 
+struct FEnvQueryItem
+{
+	/** total score of item */
+	float Score;
+
+	/** raw data offset */
+	int32 DataOffset : 31;
+
+	/** has this item been discarded? */
+	uint32 bIsDiscarded : 1;
+};
+
 // ScriptStruct AIModule.EnvQueryResult
 // 0x0040 (0x0040 - 0x0000)
 struct FEnvQueryResult final
 {
 public:
-	uint8                                         Pad_0[0x10];                                       // 0x0000(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
-	TSubclassOf<class UEnvQueryItemType>          ItemType;                                          // 0x0010(0x0008)(BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_18[0x14];                                      // 0x0018(0x0014)(Fixing Size After Last Property [ Dumper-7 ])
-	int32                                         OptionIndex;                                       // 0x002C(0x0004)(BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	int32                                         QueryID;                                           // 0x0030(0x0004)(BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_34[0xC];                                       // 0x0034(0x000C)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	TArray<FEnvQueryItem> Items;
+	TSubclassOf<class UEnvQueryItemType> ItemType;
+	TArray<uint8> RawData;
+	uint8 Status;
+	uint8 Pad_29[0x3];
+	int32 OptionIndex;
+	int32 QueryID;
+	uint8 Pad_34[0xC];
 };
 static_assert(alignof(FEnvQueryResult) == 0x000008, "Wrong alignment on FEnvQueryResult");
 static_assert(sizeof(FEnvQueryResult) == 0x000040, "Wrong size on FEnvQueryResult");

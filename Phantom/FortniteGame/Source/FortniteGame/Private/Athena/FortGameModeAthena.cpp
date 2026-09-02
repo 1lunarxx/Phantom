@@ -30,12 +30,18 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 {
 	Originals::InitGameState(FortGameModeAthena);
 
-	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_DefaultSolo")))
+/*	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_Deimos_50v50")))
+	{*/
+	if (UFortPlaylistAthena* Playlist = Utils::StaticFindObject<UFortPlaylistAthena>(TEXT("Playlist_Deimos_50v50"), ANY_PACKAGE))
 	{
 		FortGameModeAthena->CurrentPlaylistId = Playlist->PlaylistId;
 		FortGameModeAthena->CurrentPlaylistName = Playlist->PlaylistName;
 
 		FortGameModeAthena->GameSession->MaxPlayers = Playlist->MaxPlayers;
+		FortGameModeAthena->AISettings = Playlist->AISettings;
+
+		if (FortGameModeAthena->AIGoalManager == NULL)
+			FortGameModeAthena->CreateAIGoalManager();
 
 		if (AFortGameStateAthena* FortGameStateAthena = Cast<AFortGameStateAthena>(FortGameModeAthena->GameState))
 		{
@@ -47,6 +53,18 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 			FortGameStateAthena->CurrentPlaylistInfo.MarkArrayDirty();
 
 			FortGameStateAthena->OnRep_CurrentPlaylistInfo();
+
+			FortGameStateAthena->AirCraftBehavior = Playlist->AirCraftBehavior;
+			FortGameStateAthena->CachedSafeZoneStartUp = Playlist->SafeZoneStartUp;
+		}
+
+		for (TSoftObjectPtr<UWorld>& AdditionalLevel : Playlist->AdditionalLevels)
+		{
+			bool bSuccess = false;
+			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(UWorld::GetWorld(), AdditionalLevel, FVector(), FRotator(), &bSuccess);
+
+			if (bSuccess)
+				GGameState->AdditionalPlaylistLevelsStreamed.Add(AdditionalLevel.ObjectID.AssetPathName);
 		}
 	}
 

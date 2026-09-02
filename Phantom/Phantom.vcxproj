@@ -158,9 +158,12 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIDirector.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIGoalManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameModeZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
@@ -182,6 +185,8 @@
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\Engine.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\NetDriver.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\World.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIDirector.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIGoalManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameState.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameModeAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventory.cpp" />
@@ -194,6 +199,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootTier.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPoiVolume.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingContainer.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameModeZone.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

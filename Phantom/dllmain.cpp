@@ -3,6 +3,7 @@
 #include "Engine/World.h"
 #include "Engine/Restricted/NotForLicensees/Plugins/OnlineGameplayFramework/Source/McpProfileSys/Public/McpProfileGroup.h"
 #include "Engine/NetDriver.h"
+
 #include "GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h"
 
 #include "FortniteGame/Public/FortGameState.h"
@@ -13,6 +14,11 @@
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
+#include "FortniteGame/Public/FortGameModeZone.h"
+
+#include "FortniteAI/Public/FortAIDirector.h"
+
+bool ReturnTrue() { return true; }
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -42,9 +48,15 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortQuestManager::Setup();
     FortPoiVolume::Setup();
     BuildingContainer::Setup();
+    FortGameModeZone::Setup();
+    FortAIDirector::Setup();
+
+    Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
 
     *GIsClient = false;
     *GIsServer = true;
+
+    UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"log LogFortAIDirector VeryVerbose", NULL);
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

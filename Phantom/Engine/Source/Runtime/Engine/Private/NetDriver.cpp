@@ -14,6 +14,16 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", NULL);
 	}
 
+	if (GetKeyState(VK_F4))
+	{
+		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"demospeed 100", NULL);
+	}
+
+	if (GetKeyState(VK_F5))
+	{
+		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"demospeed 1", NULL);
+	}
+
 	Originals::TickFlush(NetDriver, DeltaSeconds);
 }
 

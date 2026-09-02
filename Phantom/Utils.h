@@ -173,6 +173,8 @@ public:
 
 #define ANY_PACKAGE (UObject*)-1
 
+static FName NAME_GameNetDriver = UKismetStringLibrary::Conv_StringToName(L"GameNetDriver"); // temp
+
 template<class T>
 static T* Cast(UObject* Object)
 {
