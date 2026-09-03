@@ -2,6 +2,14 @@
 #include "FortniteGame/Public/Building/BuildingContainer.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
+void BuildingContainer::PostUpdate(ABuildingContainer* BuildingContainer, EFortBuildingPersistentState PersistentState, const void* ReservedRandomValues)
+{
+	Originals::PostUpdate(BuildingContainer, PersistentState, ReservedRandomValues);
+
+	if (BuildingContainer->bStartAlreadySearched_Athena)
+		BuildingContainer->SpawnLoot();
+}
+
 bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPlayerPawn* PlayerPawn, const EFortPickupSourceTypeFlag InSourceTypeFlag, const uint8 InSpawnSource)
 {
 	if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
@@ -43,4 +51,5 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 void BuildingContainer::Setup()
 {
     Utils::Hook(InSDKUtils::GetImageBase() + 0xD867F0, SpawnLoot);
+	Utils::Hook(InSDKUtils::GetImageBase() + 0xD7FB30, PostUpdate, (void**)&Originals::PostUpdate);
 }

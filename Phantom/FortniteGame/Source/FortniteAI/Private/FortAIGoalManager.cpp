@@ -8,5 +8,4 @@ AFortAIGoalManager* FortAIGoalManager::GetCurrent(UWorld* World)
 
 void FortAIGoalManager::Setup()
 {
-	TArray<uintptr_t> GetCurrent_NullSubs;
 }

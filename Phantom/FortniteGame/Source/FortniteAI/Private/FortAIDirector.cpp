@@ -3,9 +3,6 @@
 
 AFortAIDirector* FortAIDirector::GetCurrent(UWorld* World)
 {
-	if (GGameMode->AIDirector == NULL)
-		printf("null sutff\n");
-
 	return GGameMode->AIDirector;
 }
 

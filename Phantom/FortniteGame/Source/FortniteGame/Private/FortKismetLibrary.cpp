@@ -1,12 +1,23 @@
 #include "pch.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
 
-AFortAIGoalManager* FortKismetLibrary::GetAIGoalManager(UObject* WorldContextObject)
+AFortAIGoalManager* FortKismetLibrary::GetAIGoalManager(UFortKismetLibrary* FortKismetLibrary, FFrame& Stack, AFortAIGoalManager** Ret)
 {
-    return GGameMode->AIGoalManager;
+    UObject* WorldContextObject;
+
+    Stack.StepCompiledIn(&WorldContextObject);
+    Stack.IncrementCode();
+
+    if (AActor* WorldContext = Cast<AActor>(WorldContextObject))
+    {
+        if (UWorld* World = WorldContext->GetWorld())
+            return *Ret = Cast<AFortGameModeZone>(World->AuthorityGameMode)->AIGoalManager;
+    }
+
+    return *Ret = GGameMode->AIGoalManager;
 }
 
 void FortKismetLibrary::Setup()
 {
-    Utils::Rel32(InSDKUtils::GetImageBase() + 0x159CD08, GetAIGoalManager);
+    Utils::Exec(TEXT("/Script/FortniteGame.FortKismetLibrary.GetAIGoalManager"), GetAIGoalManager);
 }

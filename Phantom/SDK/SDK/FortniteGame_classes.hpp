@@ -15413,7 +15413,7 @@ public:
 	void OnSetSearched();
 	void RaiseTreasure();
 public:
-	bool SpawnLoot(AFortPlayerPawn* PlayerPawn)
+	bool SpawnLoot(AFortPlayerPawn* PlayerPawn = NULL)
 	{
 		static bool(*SpawnLoot)(ABuildingContainer*, AFortPlayerPawn*) = decltype(SpawnLoot)(InSDKUtils::GetImageBase() + 0xD867F0);
 		return SpawnLoot(this, PlayerPawn);

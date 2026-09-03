@@ -22,16 +22,6 @@
 
 bool ReturnTrue() { return true; }
 
-static void (*ProcessEventOG)(UObject* Obj, UFunction* Func, void* Parms);
-
-void ProcessEvent(UObject* Obj, UFunction* Func, void* Parms)
-{
-    if (Func->GetFullName().contains("CheatManager"))
-        std::cout << "Func: " << Func->GetFullName() << std::endl;
-
-    ProcessEventOG(Obj, Func, Parms);
-}
-
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
     AllocConsole();
@@ -67,8 +57,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
     Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);
-
-    Utils::Hook(InSDKUtils::GetImageBase() + Offsets::ProcessEvent, ProcessEvent, (void**)&ProcessEventOG);
 
     *GIsClient = false;
     *GIsServer = true;

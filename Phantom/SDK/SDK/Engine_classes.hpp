@@ -2581,7 +2581,12 @@ public:
 	struct FRotator K2_GetActorRotation() const;
 	class USceneComponent* K2_GetRootComponent() const;
 	bool WasRecentlyRendered(float Tolerance) const;
-
+public:
+	class UWorld* GetWorld()
+	{
+		static UWorld* (*GetWorld)(AActor*) = decltype(GetWorld)(InSDKUtils::GetImageBase() + 0x24628B0);
+		return GetWorld(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

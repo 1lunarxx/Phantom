@@ -2,50 +2,12 @@
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
-void FortGameModeAthena::FinishWorldInitialization(AFortGameModeAthena* FortGameModeAthena, AFortWorldManager* WorldManager)
-{
-	UClass* Tiered_Athena_FloorLoot = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_01.Tiered_Athena_FloorLoot_01_C"));
-	UClass* Tiered_Athena_FloorLoot_Warmup = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Environments/Blueprints/Tiered_Athena_FloorLoot_Warmup.Tiered_Athena_FloorLoot_Warmup_C"));
-
-	if (Tiered_Athena_FloorLoot != NULL)
-	{
-		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot))
-			BuildingContainer->SpawnLoot(NULL);
-	}
-
-	if (Tiered_Athena_FloorLoot_Warmup != NULL)
-	{
-		for (ABuildingContainer* BuildingContainer : Utils::GetAllActors<ABuildingContainer>(Tiered_Athena_FloorLoot_Warmup))
-			BuildingContainer->SpawnLoot(NULL);
-	}
-
-	SetConsoleTitleA("Phantom | Ready");
-
-	FortGameModeAthena->bWorldIsReady = true;
-
-	Originals::FinishWorldInitialization(FortGameModeAthena, WorldManager);
-}
-
 void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 {
 	Originals::InitGameState(FortGameModeAthena);
 
 	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_DefaultSolo")))
 	{
-		UCurveTable* GameData = Playlist->GameData.LoadSynchronous();
-
-		if (GameData != NULL && Playlist->AISettings != NULL)
-		{
-			for (const auto& [RowName, RowValue] : GameData->RowMap)
-			{
-				if (RowName == FName(L"Default.PermaRift.ShouldSpawn"))
-				{
-					GameData->RowMap.Add(FName(L"Default.Portal.ShouldSpawn"), (FRealCurve*)RowValue);
-					break;
-				}
-			}
-		}
-
 		FortGameModeAthena->CurrentPlaylistId = Playlist->PlaylistId;
 		FortGameModeAthena->CurrentPlaylistName = Playlist->PlaylistName;
 
@@ -104,8 +66,6 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 
 void FortGameModeAthena::Setup()
 {
-	Utils::Hook(InSDKUtils::GetImageBase() + 0xC9FA50, FinishWorldInitialization, (void**)&Originals::FinishWorldInitialization);
 	Utils::Hook(InSDKUtils::GetImageBase() + 0xCA8320, InitGameState, (void**)&Originals::InitGameState);
-
 	Utils::Hook(InSDKUtils::GetImageBase() + 0xCB8C30, SpawnDefaultPawnFor_Implementation);
 }
