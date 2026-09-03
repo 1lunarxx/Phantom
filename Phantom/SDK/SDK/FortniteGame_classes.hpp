@@ -855,9 +855,13 @@ static_assert(offsetof(UAIHotSpotSlotGenerator_OnBoundingBox, SlotDirectionCalcu
 class AFortAthenaMutator_Barrier final : public AFortAthenaMutator
 {
 public:
-	TSubclassOf<class AAthenaBigBaseWall>         BigBaseWallClass;                                  // 0x0370(0x0008)(Edit, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierProtected)
-	TSubclassOf<class AAthenaBarrierFlag>         ObjectiveFlag;                                     // 0x0378(0x0008)(Edit, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierProtected)
-	uint8                                         Pad_380[0x10];                                     // 0x0380(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
+	TSubclassOf<class AAthenaBigBaseWall> BigBaseWallClass;
+	TSubclassOf<class AAthenaBarrierFlag> ObjectiveFlag;
+	bool bGameEndsWhenObjectiveIsDestroyed;
+	EFortTeam WinningTeam;
+	bool bMatchCompleted;
+	bool bSpawnedModeObjects;
+	uint8 Pad_384[0x0C];
 	struct FBarrierHeadData                       FoodHeadData[0x2];                                 // 0x0390(0x0010)(Edit, Protected, NativeAccessSpecifierProtected)
 	struct FBarrierMountedTurretData              MountedTurretOverrideMaterials[0x2];               // 0x03B0(0x0018)(Edit, Protected, NativeAccessSpecifierProtected)
 	class AAthenaBigBaseWall*                     BigBaseWall;                                       // 0x03E0(0x0008)(Net, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
@@ -895,7 +899,14 @@ public:
 	void CheckHealthThreshold(EFortTeam TeamNum);
 	void OnGamePhaseStepChanged(EAthenaGamePhaseStep GamePhaseStep);
 	void OnMutatorGameplayEvent(int32 EventId, int32 EventParam1, int32 EventParam2, int32 EventParam3);
+public:
+	void SetupTeamStates();
+	void SpawnModeObjectives();
 
+	void OnObjectiveDestroyed(AAthenaBarrierObjective* Objective);
+	void SpawnBarrier(const FVector* WallStart, const FVector* WallEnd);
+
+	AAthenaBarrierFlag* SpawnObjectiveActor(TSubclassOf<AAthenaBarrierFlag> InActorClass, const FVector* InActorLocation, const FRotator* InActorRotation);
 public:
 	static class UClass* StaticClass()
 	{
@@ -1249,7 +1260,8 @@ public:
 	bool IsDamaged() const;
 	bool IsPlayerBuilt() const;
 	bool UseDefaultHealthBar() const;
-
+public:
+	void SetTeam(EFortTeam InTeam) { Team = InTeam; OnRep_Team(); };
 public:
 	static class UClass* StaticClass()
 	{
@@ -1407,7 +1419,8 @@ public:
 	void ShowOrHideTimer(bool bNewVisibleState);
 	void UpdateWallTime(float Digit_0, float Digit_1, float Digit_2, float Digit_3);
 	void WallStartingToComeDown(bool bIsOnBurgerSide);
-
+public:
+	static AAthenaBigBaseWall* CreateWall(UWorld* World, TSubclassOf<AAthenaBigBaseWall> BigBaseWallClass, const FVector* MidlineStart, const FVector* MidlineEnd, float ZLevel);
 public:
 	static class UClass* StaticClass()
 	{
@@ -6449,7 +6462,9 @@ public:
 	class UStaticMesh* GetHeadMesh() const;
 	struct FVector GetMeshScale() const;
 	class AAthenaBarrierObjective* GetObjectiveActor() const;
-
+public:
+	void SetFoodTeam(EBarrierFoodTeam NewFoodTeam);
+	void SetCurrentState(EBarrierFlagState NewState);
 public:
 	static class UClass* StaticClass()
 	{
@@ -6546,7 +6561,10 @@ public:
 	EBarrierFoodTeam GetFoodTeam() const;
 	EBarrierObjectiveDamageState GetObjectiveDamageState() const;
 	bool IsFriendlyTeam() const;
-
+public:
+	void SetFoodTeam(EBarrierFoodTeam NewFoodTeam);
+	void SetAllowDamage(bool bNewDamageState);
+	void SetObjectiveDamageState(EBarrierObjectiveDamageState NewState);
 public:
 	static class UClass* StaticClass()
 	{

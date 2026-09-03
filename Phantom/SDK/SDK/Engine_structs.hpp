@@ -7012,12 +7012,45 @@ static_assert(offsetof(FConvolutionBloomSettings, BufferScale) == 0x000020, "Mem
 struct alignas(0x08) FFastArraySerializer
 {
 public:
-	uint8                                         Pad_0[0xB0];                                       // 0x0000(0x00B0)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	uint8 ItemMap[0x50];
+	int32                IDCounter;
+	int32                ArrayReplicationKey;
+	uint8 GuidReferencesMap[0x50];
+	int32                CachedNumItems;
+	int32                CachedNumItemsToConsiderForWriting;
 public:
-	void MarkArrayDirty()
+	void MarkItemDirty(FFastArraySerializerItem& Item)
+	{
+		if (Item.ReplicationID == -1)
+		{
+			Item.ReplicationID = ++IDCounter;
+			if (IDCounter == -1)
+				IDCounter++;
+		}
+
+		Item.ReplicationKey++;
+		MarkArrayDirty();
+	}
+
+/*	void MarkArrayDirty()
 	{
 		static void(*MarkArrayDirty)(FFastArraySerializer*) = decltype(MarkArrayDirty)(InSDKUtils::GetImageBase() + 0x35AC00);
 		MarkArrayDirty(this);
+	}*/
+
+	void MarkArrayDirty()
+	{
+		IncrementArrayReplicationKey();
+
+		CachedNumItems = -1;
+		CachedNumItemsToConsiderForWriting = -1;
+	}
+
+	void IncrementArrayReplicationKey()
+	{
+		ArrayReplicationKey++;
+		if (ArrayReplicationKey == -1)
+			ArrayReplicationKey++;
 	}
 };
 static_assert(alignof(FFastArraySerializer) == 0x000008, "Wrong alignment on FFastArraySerializer");

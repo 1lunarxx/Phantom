@@ -6940,6 +6940,8 @@ public:
 	float                                         TimeTillFlightEnd;                                 // 0x001C(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	float                                         TimeTillDropStart;                                 // 0x0020(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	float                                         TimeTillDropEnd;                                   // 0x0024(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+public:
+	FVector GetFlightEnd();
 };
 static_assert(alignof(FAircraftFlightInfo) == 0x000004, "Wrong alignment on FAircraftFlightInfo");
 static_assert(sizeof(FAircraftFlightInfo) == 0x000028, "Wrong size on FAircraftFlightInfo");

@@ -17,6 +17,9 @@
 #include "FortniteGame/Public/FortGameModeZone.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
 #include "FortniteGame/Public/Missions/FortMission_RiftSpawners.h"
+#include "FortniteGame/Public/Athena/Modifiers/FortAthenaMutator_Barrier.h"
+#include "FortniteGame/Public/Athena/Building/AthenaBarrierFlag.h"
+#include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
 
@@ -54,9 +57,14 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortAIDirector::Setup();
     FortKismetLibrary::Setup();
     FortMission_RiftSpawners::Setup();
+    FortAthenaMutator_Barrier::Setup();
+    AthenaBarrierFlag::Setup();
+    FortPlayerControllerAthena::Setup();
 
     Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
     Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);
+
+    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85);
 
     *GIsClient = false;
     *GIsServer = true;
