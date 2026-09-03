@@ -30,10 +30,22 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 {
 	Originals::InitGameState(FortGameModeAthena);
 
-/*	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_Deimos_50v50")))
-	{*/
-	if (UFortPlaylistAthena* Playlist = Utils::StaticFindObject<UFortPlaylistAthena>(TEXT("Playlist_Deimos_50v50"), ANY_PACKAGE))
+	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_DefaultSolo")))
 	{
+		UCurveTable* GameData = Playlist->GameData.LoadSynchronous();
+
+		if (GameData != NULL && Playlist->AISettings != NULL)
+		{
+			for (const auto& [RowName, RowValue] : GameData->RowMap)
+			{
+				if (RowName == FName(L"Default.PermaRift.ShouldSpawn"))
+				{
+					GameData->RowMap.Add(FName(L"Default.Portal.ShouldSpawn"), (FRealCurve*)RowValue);
+					break;
+				}
+			}
+		}
+
 		FortGameModeAthena->CurrentPlaylistId = Playlist->PlaylistId;
 		FortGameModeAthena->CurrentPlaylistName = Playlist->PlaylistName;
 
@@ -56,15 +68,18 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 
 			FortGameStateAthena->AirCraftBehavior = Playlist->AirCraftBehavior;
 			FortGameStateAthena->CachedSafeZoneStartUp = Playlist->SafeZoneStartUp;
-		}
 
-		for (TSoftObjectPtr<UWorld>& AdditionalLevel : Playlist->AdditionalLevels)
-		{
-			bool bSuccess = false;
-			ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(UWorld::GetWorld(), AdditionalLevel, FVector(), FRotator(), &bSuccess);
+			for (TSoftObjectPtr<UWorld>& AdditionalLevel : Playlist->AdditionalLevels)
+			{
+				bool bSuccess = false;
 
-			if (bSuccess)
-				GGameState->AdditionalPlaylistLevelsStreamed.Add(AdditionalLevel.ObjectID.AssetPathName);
+				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(UWorld::GetWorld(), AdditionalLevel, FVector(), FRotator(), &bSuccess);
+
+				if (bSuccess)
+					FortGameStateAthena->AdditionalPlaylistLevelsStreamed.Add(AdditionalLevel.ObjectID.AssetPathName);
+			}
+
+			FortGameStateAthena->OnRep_AdditionalPlaylistLevelsStreamed();
 		}
 	}
 

@@ -53,6 +53,19 @@ public:
         }
     }
 
+    template <class T>
+    static inline T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL)
+    {
+        FTransform Transform = UKismetMathLibrary::MakeTransform(Location, Rotation, FVector(1, 1, 1));
+
+        AActor* Actor = UGameplayStatics::BeginDeferredActorSpawnFromClass(UWorld::GetWorld(), InClass, Transform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn, Owner);
+
+        if (Actor)
+            UGameplayStatics::FinishSpawningActor(Actor, Transform);
+
+        return (T*)Actor;
+    }
+
     template <typename _Is>
     static void Patch(uintptr_t Target, _Is Byte)
     {
@@ -61,6 +74,20 @@ public:
 
         *(_Is*)Target = Byte;
         VirtualProtect(LPVOID(Target), sizeof(_Is), OldProtect, &OldProtect);
+    }
+
+    template <typename T = void*>
+    static void Exec(const TCHAR* Name, void* Detour, T* Original = NULL)
+    {
+        UFunction* Func = StaticFindObject<UFunction>(Name);
+
+        if (Func == NULL)
+            return;
+
+        if (Original)
+            *Original = reinterpret_cast<T>(Func->ExecFunction);
+
+        Func->ExecFunction = reinterpret_cast<UFunction::FNativeFuncPtr>(Detour);
     }
 
     template<typename T = UObject>
@@ -169,6 +196,51 @@ public:
             memset(Impl, 0x90, sizeof(int) + 1);
         }
     }
+};
+
+class FOutputDevice
+{
+public:
+    void** VTable;
+    bool bSuppressEventTag;
+    bool bAutoEmitLineTerminator;
+};
+
+class FFrame : public FOutputDevice
+{
+public:
+    UFunction* Node;
+    UObject* Object;
+    uint8* Code;
+    uint8* Locals;
+    void* MostRecentProperty;
+    uint8_t* MostRecentPropertyAddress;
+    uint8_t _Padding1[0x40];
+    UField* PropertyChainForCompiledIn;
+
+public:
+    inline void StepCompiledIn(void* const Result = NULL)
+    {
+        if (Code)
+        {
+            static void(*StepCompiledInCode)(FFrame*, UObject*, void* const) = decltype(StepCompiledInCode)(InSDKUtils::GetImageBase() + 0x19A35F0);
+            StepCompiledInCode(this, Object, Result);
+        }
+        else
+        {
+            const UField* Prop = *(const UField**)(__int64(this) + 0x80);
+
+            if (Prop != NULL)
+            {
+                *(const UField**)(__int64(this) + 0x80) = *(const UField**)(__int64(Prop) + 0x28);
+
+                static void(*StepExplicitProperty)(FFrame*, void* const, const UField*) = decltype(StepExplicitProperty)(InSDKUtils::GetImageBase() + 0x19A3620);
+                StepExplicitProperty(this, Result, Prop);
+            }
+        }
+    }
+
+    void IncrementCode() { Code += !!Code; }
 };
 
 #define ANY_PACKAGE (UObject*)-1

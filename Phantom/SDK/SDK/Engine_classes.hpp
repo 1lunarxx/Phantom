@@ -9477,14 +9477,21 @@ public:
 };
 static_assert(alignof(ULocalMessage) == 0x000008, "Wrong alignment on ULocalMessage");
 static_assert(sizeof(ULocalMessage) == 0x000028, "Wrong size on ULocalMessage");
-
+struct FRealCurve
+{
+};
 // Class Engine.CurveTable
 // 0x0070 (0x0098 - 0x0028)
 class UCurveTable : public UObject
 {
 public:
 	uint8                                         Pad_28[0x70];                                      // 0x0028(0x0070)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	TMap<FName, FRealCurve*>& GetRowMap() const
+	{
+		return *(TMap<FName, FRealCurve*>*)(__int64(this) + 0x30);
+	}
 
+	__declspec(property(get = GetRowMap)) TMap<FName, FRealCurve*> RowMap;
 public:
 	static class UClass* StaticClass()
 	{

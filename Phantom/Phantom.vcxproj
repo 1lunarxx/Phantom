@@ -165,9 +165,11 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameModeZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortKismetLibrary.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission_RiftSpawners.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerController.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
@@ -200,6 +202,8 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPoiVolume.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingContainer.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameModeZone.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortKismetLibrary.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission_RiftSpawners.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

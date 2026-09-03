@@ -15,10 +15,22 @@
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
+#include "FortniteGame/Public/FortKismetLibrary.h"
+#include "FortniteGame/Public/Missions/FortMission_RiftSpawners.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
 
 bool ReturnTrue() { return true; }
+
+static void (*ProcessEventOG)(UObject* Obj, UFunction* Func, void* Parms);
+
+void ProcessEvent(UObject* Obj, UFunction* Func, void* Parms)
+{
+    if (Func->GetFullName().contains("CheatManager"))
+        std::cout << "Func: " << Func->GetFullName() << std::endl;
+
+    ProcessEventOG(Obj, Func, Parms);
+}
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -50,13 +62,19 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     BuildingContainer::Setup();
     FortGameModeZone::Setup();
     FortAIDirector::Setup();
+    FortKismetLibrary::Setup();
+    FortMission_RiftSpawners::Setup();
 
     Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
+    Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);
+
+    Utils::Hook(InSDKUtils::GetImageBase() + Offsets::ProcessEvent, ProcessEvent, (void**)&ProcessEventOG);
 
     *GIsClient = false;
     *GIsServer = true;
 
     UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"log LogFortAIDirector VeryVerbose", NULL);
+    UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"log LogFortMission VeryVerbose", NULL);
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

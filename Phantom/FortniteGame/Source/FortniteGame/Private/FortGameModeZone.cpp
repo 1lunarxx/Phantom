@@ -3,18 +3,8 @@
 
 void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 {
-	FActorSpawnParameters SpawnParams = FActorSpawnParameters();
-	SpawnParams.SpawnCollisionHandlingOverride = 1;
-
-	AActor* FortAIDirector = UWorld::GetWorld()->SpawnActor(AFortAIDirector::StaticClass(), NULL, NULL, &SpawnParams);
-
-	if (FortAIDirector != NULL)
-	{
-		UGameplayStatics::FinishSpawningActor(FortAIDirector, FTransform());
-
-		FortGameModeZone->AIDirector = Cast<AFortAIDirector>(FortAIDirector);
-		FortGameModeZone->AIDirector->Activate();
-	}
+	FortGameModeZone->AIDirector = Utils::SpawnActor<AFortAIDirector>(FVector(), FRotator(), AFortAIDirector::StaticClass(), FortGameModeZone);
+	FortGameModeZone->AIDirector->Activate();
 }
 
 void FortGameModeZone::Setup()
