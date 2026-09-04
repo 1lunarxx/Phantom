@@ -24,6 +24,8 @@
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
 
+#include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
+
 #include "FortniteAI/Public/FortAIDirector.h"
 
 bool ReturnTrue() { return true; }
@@ -65,6 +67,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortPlayerControllerAthena::Setup();
     BuildingActor::Setup();
     BuildingSMActor::Setup();
+    FortInventoryOwnerInterface::Setup();
 
     Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
     Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);

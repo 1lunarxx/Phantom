@@ -6341,6 +6341,7 @@ public:
 	void HandleInventoryLocalUpdate();
 public:
 	void AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
+	void RemoveItem(FGuid& ItemGuid);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
 public:
 	void InitializeExistingItem(UFortWorldItem* ExistingItem)

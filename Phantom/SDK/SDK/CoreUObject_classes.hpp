@@ -242,6 +242,20 @@ static_assert(sizeof(UUInt64Property) == 0x000070, "Wrong size on UUInt64Propert
 class IInterface : public UObject
 {
 public:
+	template<typename T>
+	T* GetOwner()
+	{
+		UObject* Object = reinterpret_cast<UObject * (*)(IInterface*)>(this->VTable[0x1])(this);
+
+		if (Object == NULL)
+			return NULL;
+
+		if (Object->IsA(T::StaticClass()))
+			return static_cast<T*>(Object);
+
+		return NULL;
+	}
+public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"Interface">();

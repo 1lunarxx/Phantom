@@ -19,7 +19,28 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 	InitializeExistingItem(WorldItem);
 }
 
-// def a better way i just dont care enough
+// def a better way for all these functions, just dont care to be proper.
+
+void AFortInventory::RemoveItem(FGuid& ItemGuid)
+{
+	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
+
+	if (ItemEntry == NULL)
+		return;
+
+	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
+
+	if (WorldItem == NULL)
+		return;
+
+	Inventory.ReplicatedEntries.Remove(ItemEntry);
+	Inventory.ItemInstances.Remove(&WorldItem);
+
+	Inventory.MarkArrayDirty();
+
+	bRequiresLocalUpdate = true;
+	HandleInventoryLocalUpdate();
+}
 
 void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
 {

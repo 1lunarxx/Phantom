@@ -366,6 +366,20 @@ namespace UC
 			return true;
 		}
 
+		inline bool Remove(ArrayElementType* ElementToRemove)
+		{
+			if (ElementToRemove == NULL)
+				return false;
+
+			for (int32 i = 0; i < NumElements; i++)
+			{
+				if (&Data[i] == ElementToRemove)
+					return Remove(i);
+			}
+
+			return false;
+		}
+
 		inline void Clear()
 		{
 			NumElements = 0;

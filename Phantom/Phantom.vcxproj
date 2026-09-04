@@ -172,6 +172,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortKismetLibrary.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventoryOwnerInterface.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission_RiftSpawners.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingActor.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerControllerAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingSMActor.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventoryOwnerInterface.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
