@@ -39,7 +39,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     MH_Initialize();
 
-    Engine::Setup();
+/*    Engine::Setup();*/
 
     World::Setup();
     FortGameState::Setup();
@@ -68,9 +68,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     *GIsClient = false;
     *GIsServer = true;
-
-    UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"log LogFortAIDirector VeryVerbose", NULL);
-    UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"log LogFortMission VeryVerbose", NULL);
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

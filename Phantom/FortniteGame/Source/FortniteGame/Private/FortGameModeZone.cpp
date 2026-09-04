@@ -9,10 +9,10 @@ void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 
 void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameModeZone, AFortWorldManager* WorldManager)
 {
-	if (!FortGameModeZone->bWorldIsReady)
-		FortGameModeZone->bWorldIsReady = true;
+	FortGameModeZone->bWorldIsReady = true;
 
-	WorldManager->WorldManagerState = EFortWorldManagerState::WMS_Running;
+	if (WorldManager != NULL)
+		WorldManager->WorldManagerState = EFortWorldManagerState::WMS_Running; // ngl im just doing some bullshit to do it
 
 	SetConsoleTitleA("Phantom | Ready");
 }
