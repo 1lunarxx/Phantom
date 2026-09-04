@@ -30,9 +30,7 @@ AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocati
 	if (Pickup != NULL)
 	{
 		Pickup->PawnWhoDroppedPickup = PlayerPawn;
-
-		Pickup->SetPickupItems(&Pickup->PrimaryPickupItemEntry, false);
-		Pickup->TossPickup(InLocation, PlayerPawn, -1, bToss, PickupSourceTypeFlag);
+		Pickup->TossPickup(InLocation, Pickup->PawnWhoDroppedPickup, -1, bToss, PickupSourceTypeFlag);
 	}
 
 	return Pickup;

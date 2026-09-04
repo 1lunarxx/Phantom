@@ -39,7 +39,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     MH_Initialize();
 
-/*    Engine::Setup();*/
+/*  Engine::Setup();*/
 
     World::Setup();
     FortGameState::Setup();
