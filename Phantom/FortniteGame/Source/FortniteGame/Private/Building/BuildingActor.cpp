@@ -7,6 +7,10 @@ void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, 
 
 	if (AAthenaBarrierObjective* BarrierObjective = Cast<AAthenaBarrierObjective>(BuildingActor))
 	{
+		printf(__FUNCTION__);
+
+		// TODO: not be lazy and find something like GetMutatorByClass in this season
+
 /*		AFortAthenaMutator_Barrier* BarrierMutator = Cast<AFortAthenaMutator_Barrier>(GGameState->GetMutatorByClass(GGameState, AFortAthenaMutator_Barrier::StaticClass()));
 
 		if (BarrierMutator != NULL)
@@ -16,5 +20,5 @@ void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, 
 
 void BuildingActor::Setup()
 {
-	//Utils::Hook(InSDKUtils::GetImageBase() + 0x225AE10, OnDeathServer, (void**)&Originals::OnDeathServer);
+	Utils::Hook(InSDKUtils::GetImageBase() + 0x149E410, OnDeathServer, (void**)&Originals::OnDeathServer);
 }

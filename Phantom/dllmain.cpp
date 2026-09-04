@@ -13,13 +13,16 @@
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
-#include "FortniteGame/Public/Building/BuildingContainer.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
 #include "FortniteGame/Public/Missions/FortMission_RiftSpawners.h"
 #include "FortniteGame/Public/Athena/Modifiers/FortAthenaMutator_Barrier.h"
 #include "FortniteGame/Public/Athena/Building/AthenaBarrierFlag.h"
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
+
+#include "FortniteGame/Public/Building/BuildingActor.h"
+#include "FortniteGame/Public/Building/BuildingSMActor.h"
+#include "FortniteGame/Public/Building/BuildingContainer.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
 
@@ -60,6 +63,8 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortAthenaMutator_Barrier::Setup();
     AthenaBarrierFlag::Setup();
     FortPlayerControllerAthena::Setup();
+    BuildingActor::Setup();
+    BuildingSMActor::Setup();
 
     Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
     Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);

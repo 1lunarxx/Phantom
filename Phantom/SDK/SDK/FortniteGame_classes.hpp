@@ -6341,6 +6341,7 @@ public:
 	void HandleInventoryLocalUpdate();
 public:
 	void AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
+	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
 public:
 	void InitializeExistingItem(UFortWorldItem* ExistingItem)
 	{
@@ -6349,6 +6350,7 @@ public:
 	}
 
 	UFortWorldItem* FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault = false);
+	FFortItemEntry* GetReplicatedItemEntry(FGuid* ItemGuid);
 public:
 	static class UClass* StaticClass()
 	{
