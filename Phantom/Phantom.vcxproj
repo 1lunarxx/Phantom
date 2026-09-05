@@ -161,7 +161,6 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />
     <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIDirector.h" />
-    <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIGoalManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Building\AthenaBarrierFlag.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPlayerControllerAthena.h" />
@@ -177,7 +176,6 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventoryOwnerInterface.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission_RiftSpawners.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerController.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
@@ -196,7 +194,6 @@
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\NetDriver.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\World.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIDirector.cpp" />
-    <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIGoalManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierFlag.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierObjective.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBigBaseWall.cpp" />
@@ -214,7 +211,6 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingContainer.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameModeZone.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortKismetLibrary.cpp" />
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission_RiftSpawners.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Modifiers\FortAthenaMutator_Barrier.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingActor.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerControllerAthena.cpp" />

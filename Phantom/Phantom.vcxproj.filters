@@ -81,13 +81,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIDirector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIGoalManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortKismetLibrary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission_RiftSpawners.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Modifiers\FortAthenaMutator_Barrier.h">
@@ -197,13 +191,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIDirector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIGoalManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortKismetLibrary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission_RiftSpawners.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Modifiers\FortAthenaMutator_Barrier.cpp">

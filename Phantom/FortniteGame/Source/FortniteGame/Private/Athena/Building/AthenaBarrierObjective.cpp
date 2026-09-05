@@ -31,7 +31,4 @@ void AAthenaBarrierObjective::SetObjectiveDamageState(EBarrierObjectiveDamageSta
 {
 	if (Role == ENetRole::ROLE_Authority)
 		ObjectiveDamageState = NewState;
-
-	if (NewState == EBarrierObjectiveDamageState::Health_50)
-		SetHealth(GetHealth() / 2.f);
 }

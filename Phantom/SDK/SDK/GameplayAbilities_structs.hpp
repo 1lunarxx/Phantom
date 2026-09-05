@@ -389,6 +389,19 @@ struct FGameplayEffectAttributeCaptureSpec final
 public:
 	struct FGameplayEffectAttributeCaptureDefinition BackingDefinition;                                 // 0x0000(0x0028)(HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_28[0x10];                                      // 0x0028(0x0010)(Fixing Struct Size After Last Property [ Dumper-7 ])
+public:
+	FGameplayEffectAttributeCaptureSpec() = default;
+	FGameplayEffectAttributeCaptureSpec(FGameplayEffectAttributeCaptureDefinition& InDefinition)
+	{
+		static void(*FGameplayEffectAttributeCaptureSpec_Construct)(FGameplayEffectAttributeCaptureSpec*, FGameplayEffectAttributeCaptureDefinition&) = decltype(FGameplayEffectAttributeCaptureSpec_Construct)(InSDKUtils::GetImageBase() + 0x692C00);
+		FGameplayEffectAttributeCaptureSpec_Construct(this, InDefinition);
+	}
+
+	char AttemptCalculateAttributeMagnitudeWithBase(const void* InEvalParams, double InBaseValue, float* OutMagnitude)
+	{
+		static char (*AttemptCalculateAttributeMagnitudeWithBase)(FGameplayEffectAttributeCaptureSpec*, const void*, double, float*) = decltype(AttemptCalculateAttributeMagnitudeWithBase)(InSDKUtils::GetImageBase() + 0x69C760);
+		return AttemptCalculateAttributeMagnitudeWithBase(this, InEvalParams, InBaseValue, OutMagnitude);
+	}
 };
 static_assert(alignof(FGameplayEffectAttributeCaptureSpec) == 0x000008, "Wrong alignment on FGameplayEffectAttributeCaptureSpec");
 static_assert(sizeof(FGameplayEffectAttributeCaptureSpec) == 0x000038, "Wrong size on FGameplayEffectAttributeCaptureSpec");

@@ -1,61 +1,69 @@
 #include "pch.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
-#include "Core/Public/Math/UnrealMathUtility.h"
+
+// unfinished
 
 void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, AFortPlayerPawn* InstigatorPawn, float ActualDamageDealt, bool bJustHitWeakspot)
 {
-	AFortPlayerController* PlayerController = Cast<AFortPlayerController>(InstigatorPawn->Controller);
-
-	if (PlayerController == NULL)
-		return;
-
-	FCurveTableRowHandle& BuildingResourceAmountOverride = BuildingSMActor->BuildingResourceAmountOverride;
-
-	if (!BuildingResourceAmountOverride.RowName.ComparisonIndex)
-		return;
-
-	float Result = 0.f;
-
-	UFortKismetLibrary::EvaluateCurveTableRow(BuildingResourceAmountOverride, 0.f, &Result, FString());
-
-	int32 ResourceCount = FMath::RoundToInt(Result / (BuildingSMActor->GetMaxHealth() / ActualDamageDealt));
-
-	if (ResourceCount <= 0)
-		return;
-
-	UFortResourceItemDefinition* ResourceItemDefinition = UFortKismetLibrary::K2_GetResourceItemDefinition(BuildingSMActor->ResourceType);
-
-	if (ResourceItemDefinition == NULL)
-		return;
-
-	int32 MaxResourcesToSpawn = ResourceItemDefinition->MaxStackSize;
-
-	if (MaxResourcesToSpawn <= 0)
-		return;
-
-	UFortWorldItem* ExistingWorldItem = PlayerController->WorldInventory->FindExistingItemForDefinition(ResourceItemDefinition);
-
-	if (ExistingWorldItem != NULL)
+	if (InstigatorPawn != NULL)
 	{
-		ExistingWorldItem->ItemEntry.Count += ResourceCount;
-
-		if (ExistingWorldItem->ItemEntry.Count >= MaxResourcesToSpawn)
+		if (ActualDamageDealt > 0.0f && BuildingSMActor->Role == ENetRole::ROLE_Authority)
 		{
-			AFortPickup::SpawnPickup(ExistingWorldItem->ItemEntry, InstigatorPawn->K2_GetActorLocation(), ExistingWorldItem->ItemEntry.Count - MaxResourcesToSpawn, EFortPickupSourceTypeFlag::Player, 0, InstigatorPawn);
-			ExistingWorldItem->ItemEntry.Count = MaxResourcesToSpawn;
+			AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(InstigatorPawn->Controller);
+
+			if (FortPlayerController != NULL)
+			{
+				EFortResourceType ResourceType = BuildingSMActor->ResourceType;
+
+				UFortGameData* GameData = GetGameData();
+				UFortResourceItemDefinition* ResourceItemDefinition = GameData->GetResourceItemDefinition(ResourceType);
+
+				if (ResourceItemDefinition != NULL)
+				{
+					if (BuildingSMActor->MaxResourcesToSpawn < 0)
+						BuildingSMActor->MaxResourcesToSpawn = BuildingSMActor->DetermineMaxResourcesToSpawn(true);
+
+					float MaxResourcesToSpawn = BuildingSMActor->MaxResourcesToSpawn;
+					int32 ResourceCount = (int32)((MaxResourcesToSpawn / BuildingSMActor->GetMaxHealth()) * ActualDamageDealt);
+
+/*					ResourceCount = ResourceCount + BuildingSMActor->UndistributedResources;
+					BuildingSMActor->UndistributedResources = ResourceCount - (float)(int32)ResourceCount;*/
+
+					bool bDestroyed = false;
+
+					if (!BuildingSMActor->HasHealthLeft())
+						bDestroyed = true;
+
+					if (ResourceCount > 0)
+					{
+						UFortWorldItem* ExistingWorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(ResourceItemDefinition);
+
+						if (ExistingWorldItem != NULL)
+						{
+							ExistingWorldItem->ItemEntry.Count += ResourceCount;
+
+							if (ExistingWorldItem->ItemEntry.Count >= ResourceItemDefinition->MaxStackSize)
+							{
+								AFortPickup::SpawnPickup(ExistingWorldItem->ItemEntry, InstigatorPawn->K2_GetActorLocation(), ExistingWorldItem->ItemEntry.Count - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
+								ExistingWorldItem->ItemEntry.Count = ResourceItemDefinition->MaxStackSize;
+							}
+
+							FortPlayerController->WorldInventory->UpdateItemEntry(&ExistingWorldItem->ItemEntry);
+						}
+						else
+						{
+							if (ResourceCount >= ResourceItemDefinition->MaxStackSize)
+								AFortPickup::SpawnPickup(FFortItemEntry(ResourceItemDefinition, ResourceCount - ResourceItemDefinition->MaxStackSize, 0), InstigatorPawn->K2_GetActorLocation(), ResourceCount - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
+
+							FortPlayerController->WorldInventory->AddItem(ResourceItemDefinition, ResourceCount);
+						}
+
+						FortPlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, ResourceType, ResourceCount, bDestroyed, bJustHitWeakspot);
+					}
+				}
+			}
 		}
-
-		PlayerController->WorldInventory->UpdateItemEntry(&ExistingWorldItem->ItemEntry);
 	}
-	else
-	{
-		if (ResourceCount >= MaxResourcesToSpawn)
-			AFortPickup::SpawnPickup(FFortItemEntry(ResourceItemDefinition, ResourceCount - MaxResourcesToSpawn, 0), InstigatorPawn->K2_GetActorLocation(), ResourceCount - MaxResourcesToSpawn, EFortPickupSourceTypeFlag::Player, 0, InstigatorPawn);
-
-		PlayerController->WorldInventory->AddItem(ResourceItemDefinition, ResourceCount);
-	}
-
-	PlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, BuildingSMActor->ResourceType, ResourceCount, BuildingSMActor->bDestroyed, bJustHitWeakspot);
 }
 
 void BuildingSMActor::Setup()

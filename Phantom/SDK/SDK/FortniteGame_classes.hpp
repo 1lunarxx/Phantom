@@ -2477,7 +2477,7 @@ public:
 	class FName                                   DestructionLootTierKey;                            // 0x0850(0x0008)(ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	struct FCurveTableRowHandle                   BuildingResourceAmountOverride;                    // 0x0858(0x0010)(Edit, BlueprintVisible, BlueprintReadOnly, DisableEditOnInstance, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	int32                                         MaxResourcesToSpawn;                               // 0x0868(0x0004)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
-	uint8                                         Pad_86C[0x4];                                      // 0x086C(0x0004)(Fixing Size After Last Property [ Dumper-7 ])
+	float                                         UndistributedResources;                                      // 0x086C(0x0004)(Fixing Size After Last Property [ Dumper-7 ])
 	TSoftObjectPtr<class UCurveLinearColor>       WindSpeedCurve;                                    // 0x0870(0x0028)(Edit, DisableEditOnInstance, Protected, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	TSoftObjectPtr<class UCurveLinearColor>       WindPannerSpeedCurve;                              // 0x0898(0x0028)(Edit, DisableEditOnInstance, Protected, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	TArray<TSoftObjectPtr<class UMaterialInterface>> IntenseWindMaterials;                              // 0x08C0(0x0010)(Edit, ZeroConstructor, DisableEditOnInstance, Protected, UObjectWrapper, NativeAccessSpecifierProtected)
@@ -2650,6 +2650,12 @@ public:
 	{
 		static bool (*GetCostToRepair)(ABuildingSMActor*, AFortPlayerController*) = decltype(GetCostToRepair)(InSDKUtils::GetImageBase() + 0xD9B4C0);
 		return GetCostToRepair(this, FPC);
+	}
+
+	float DetermineMaxResourcesToSpawn(bool bAllowVariation)
+	{
+		static float (*DetermineMaxResourcesToSpawn)(ABuildingSMActor*, bool) = decltype(DetermineMaxResourcesToSpawn)(InSDKUtils::GetImageBase() + 0xD980E0);
+		return DetermineMaxResourcesToSpawn(this, bAllowVariation);
 	}
 public:
 	static class UClass* StaticClass()
@@ -21387,7 +21393,12 @@ public:
 	static float GetPersonalXpBoost();
 	static float GetTeamXpBoost();
 	static int32 GetXpPerAccountLevel();
-
+public:
+	UFortResourceItemDefinition* GetResourceItemDefinition(EFortResourceType Type)
+	{
+		static UFortResourceItemDefinition* (*GetResourceItemDefinition)(UFortGameData*, EFortResourceType) = decltype(GetResourceItemDefinition)(InSDKUtils::GetImageBase() + 0xEF3390);
+		return GetResourceItemDefinition(this, Type);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -29413,6 +29424,12 @@ public:
 	{
 		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, double, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
 		SetPickupTarget(this, PickupTarget, InFlyTime, InStartDirection);
+	}
+
+	float GetFlyTime()
+	{
+		static float(*GetFlyTime)(AFortPickup*) = decltype(GetFlyTime)(InSDKUtils::GetImageBase() + 0x1093D30);
+		return GetFlyTime(this);
 	}
 
 	static AFortPickup* SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation = true, bool bToss = true, AFortPlayerPawn* PlayerPawn = NULL, ABuildingContainer* Container = NULL);
