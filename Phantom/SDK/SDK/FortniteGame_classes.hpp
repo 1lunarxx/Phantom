@@ -6350,7 +6350,12 @@ public:
 		InitializeExistingItem(this, ExistingItem);
 	}
 
-	UFortWorldItem* FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault = false);
+	UFortWorldItem* FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault = false)
+	{
+		static UFortWorldItem*(*FindExistingItemForDefinition)(AFortInventory*, UFortItemDefinition*, bool) = decltype(FindExistingItemForDefinition)(InSDKUtils::GetImageBase() + 0x105BAE0);
+		return FindExistingItemForDefinition(this, ItemDefinition, bInStorageVault);
+	}
+
 	FFortItemEntry* GetReplicatedItemEntry(FGuid* ItemGuid);
 public:
 	static class UClass* StaticClass()

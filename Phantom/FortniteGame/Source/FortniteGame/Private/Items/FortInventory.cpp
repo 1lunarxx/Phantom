@@ -57,17 +57,6 @@ void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
 	HandleInventoryLocalUpdate();
 }
 
-UFortWorldItem* AFortInventory::FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault)
-{
-	for (UFortWorldItem* ItemInstance : Inventory.ItemInstances)
-	{
-		if (ItemInstance->ItemEntry.ItemDefinition == ItemDefinition)
-			return ItemInstance;
-	}
-
-	return NULL;
-}
-
 FFortItemEntry* AFortInventory::GetReplicatedItemEntry(FGuid* ItemGuid)
 {
 	if (!(ItemGuid->D | ItemGuid->A | ItemGuid->C | ItemGuid->B) || Inventory.ReplicatedEntries.Num() <= 0)
