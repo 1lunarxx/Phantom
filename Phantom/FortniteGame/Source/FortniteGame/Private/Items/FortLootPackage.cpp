@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 #include "FortniteGame/Public/Items/FortLootTier.h"
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 UDataTable* FortLootPackage::GetLootTierData()
 {
@@ -59,7 +60,7 @@ void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int F
 	{
 		if (FortLootTierData->NumLootPackageDrops < 1.0f)
 		{
-			if ((UKismetMathLibrary::RandomFloat() / (float)RAND_MAX) <= FortLootTierData->NumLootPackageDrops)
+			if ((FMath::FRand() / (float)RAND_MAX) <= FortLootTierData->NumLootPackageDrops)
 				NumLootPackageDrops = 1;
 			else
 				NumLootPackageDrops = 0;
@@ -118,7 +119,7 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 	if (TotalWeight <= 0.0f)
 		return;
 
-	float RandomWeight = (UKismetMathLibrary::RandomFloat() / (float)RAND_MAX) * TotalWeight;
+	float RandomWeight = (FMath::FRand() / (float)RAND_MAX) * TotalWeight;
 
 	for (const auto& [RowName, RowValue] : LootPackageData->RowMap)
 	{

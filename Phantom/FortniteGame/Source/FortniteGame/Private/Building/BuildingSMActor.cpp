@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, AFortPlayerPawn* InstigatorPawn, float ActualDamageDealt, bool bJustHitWeakspot)
 {
@@ -17,7 +18,7 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 	UFortKismetLibrary::EvaluateCurveTableRow(BuildingResourceAmountOverride, 0.f, &Result, FString());
 
-	int32 ResourceCount = UKismetMathLibrary::Round(Result / (BuildingSMActor->GetMaxHealth() / ActualDamageDealt));
+	int32 ResourceCount = FMath::RoundToInt(Result / (BuildingSMActor->GetMaxHealth() / ActualDamageDealt));
 
 	if (ResourceCount <= 0)
 		return;

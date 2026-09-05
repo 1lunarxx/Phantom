@@ -140,7 +140,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\FortniteGame\Source;$(ProjectDir)\Engine\Plugins\Runtime;$(ProjectDir)\Engine\RestrictedNotForLicensees\Plugins\OnlineGameplayFramework\Source;$(ProjectDir)\Engine\Source\Runtime\Engine\Classes;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\FortniteGame\Source;$(ProjectDir)\Engine\Plugins\Runtime;$(ProjectDir)\Engine\RestrictedNotForLicensees\Plugins\OnlineGameplayFramework\Source;$(ProjectDir)\Engine\Source\Runtime;$(ProjectDir)\Engine\Source\Runtime\Engine\Classes;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\AbilitySystemComponent.h" />
     <ClInclude Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Public\McpProfileGroup.h" />
+    <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMath.h" />
+    <ClInclude Include="Engine\Source\Runtime\Core\Public\Math\UnrealMathUtility.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />

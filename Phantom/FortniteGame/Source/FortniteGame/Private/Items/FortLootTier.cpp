@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortLootTier.h"
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 // aids
 
@@ -58,7 +59,7 @@ bool FortLootTier::GetNumLootPackageDropsPerCategory(FFortLootTierData* LootTier
 
 	while (v64 < NumLootPackageDrops && v63 > 0.0f)
 	{
-		float v29 = UKismetMathLibrary::RandomFloat() * v63;
+		float v29 = FMath::FRand() * v63;
 		int32 v35 = -1;
 
 		for (int32 v9 = 0; v9 < v70.Num(); v9++)

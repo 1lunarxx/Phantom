@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 bool FortInventoryOwnerInterface::RemoveInventoryItem(IFortInventoryOwnerInterface* FortInventoryOwnerInterface, FGuid& ItemGuid, int32 Count, bool bForceRemoval, bool bForcePersistWhenEmpty)
 {
@@ -18,7 +19,7 @@ bool FortInventoryOwnerInterface::RemoveInventoryItem(IFortInventoryOwnerInterfa
 	if (ItemEntry == NULL)
 		return false;
 
-	int32 NewCount = UKismetMathLibrary::Min(Count, ItemEntry->Count);
+	int32 NewCount = FMath::Min(Count, ItemEntry->Count);
 
 	ItemEntry->Count -= NewCount;
 
