@@ -8,4 +8,4 @@ Most of this gameserver is reversing 1.8 & OT6.5 and just guessing what they rea
 - Food Fight (Scoreboard working, teams, unfinished)
 - Proper Building & Editing (missing some things)
 
-Credits: Andr1ww for some help on Inventory, Building, and Foodfight.
+Credits: Andr1ww for some help on Inventory, and Building.
