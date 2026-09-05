@@ -1,13 +1,6 @@
 #include "pch.h"
 #include "Utils.h"
 
-/*
-	PlayerElimination = 1,
-	Chest = 2,
-	SupplyDrop = 3,
-	AmmoBox = 4,
-*/
-
 AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation, bool bToss, AFortPlayerPawn* PlayerPawn, ABuildingContainer* Container)
 {
 	if (Count)

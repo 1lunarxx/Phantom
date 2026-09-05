@@ -15,7 +15,6 @@
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
-#include "FortniteGame/Public/Missions/FortMission_RiftSpawners.h"
 #include "FortniteGame/Public/Athena/Modifiers/FortAthenaMutator_Barrier.h"
 #include "FortniteGame/Public/Athena/Building/AthenaBarrierFlag.h"
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
@@ -44,8 +43,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     MH_Initialize();
 
-/*  Engine::Setup();*/
-
     World::Setup();
     FortGameState::Setup();
     FortGameModeAthena::Setup();
@@ -61,7 +58,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortGameModeZone::Setup();
     FortAIDirector::Setup();
     FortKismetLibrary::Setup();
-    FortMission_RiftSpawners::Setup();
     FortAthenaMutator_Barrier::Setup();
     AthenaBarrierFlag::Setup();
     FortPlayerControllerAthena::Setup();
