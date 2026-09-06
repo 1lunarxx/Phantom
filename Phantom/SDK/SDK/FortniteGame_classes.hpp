@@ -1644,6 +1644,18 @@ public:
 		static APawn* (*SpawnDefaultPawnFor)(AFortGameMode*, AController*, AActor*) = decltype(SpawnDefaultPawnFor)(AFortGameMode::GetDefaultObj()->VTable[0x610 / 8]);
 		return SpawnDefaultPawnFor(this, NewPlayer, StartSpot);
 	}
+
+	void ScoreBuildingConstruction(AController* ConstructingController, class ABuildingSMActor* ConstructedBuilding)
+	{
+		static void (*ScoreBuildingConstruction)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingConstruction)(InSDKUtils::GetImageBase() + 0xF2F290);
+		ScoreBuildingConstruction(this, ConstructingController, ConstructedBuilding);
+	}
+
+	void ScoreBuildingEdit(AController* EditingController, class ABuildingSMActor* EditedBuilding)
+	{
+		static void(*ScoreBuildingEdit)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingEdit)(InSDKUtils::GetImageBase() + 0xF2FAE0);
+		ScoreBuildingEdit(this, EditingController, EditedBuilding);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -14075,6 +14087,12 @@ public:
 	{
 		static void(*PayBuildableClassPlacementCost)(AFortPlayerController*, FBuildingClassData*) = decltype(PayBuildableClassPlacementCost)(InSDKUtils::GetImageBase() + 0x12DF940);
 		PayBuildableClassPlacementCost(this, BuildingClassData);
+	}
+
+	void PayBuildingRepairCost(ABuildingSMActor* BuildingToRepair)
+	{
+		static void (*PayBuildingRepairCost)(AFortPlayerController*, ABuildingSMActor*) = decltype(PayBuildingRepairCost)(InSDKUtils::GetImageBase() + 0x12DFB50);
+		PayBuildingRepairCost(this, BuildingToRepair);
 	}
 
 	char HasRequiredBuildingLevel(int NewLevel, EFortResourceType ResourceType)
@@ -41357,18 +41375,6 @@ public:
 	void UpdateStormCapDamage();
 	void UpdateStormCapWarning();
 public:
-	void ScoreBuildingConstruction(AController* ConstructingController, ABuildingSMActor* ConstructedBuilding)
-	{
-		static void (*ScoreBuildingConstruction)(AFortGameMode*, AController*, ABuildingActor*) = decltype(ScoreBuildingConstruction)(InSDKUtils::GetImageBase() + 0xF2F290);
-		ScoreBuildingConstruction(this, ConstructingController, ConstructedBuilding);
-	}
-
-	void ScoreBuildingEdit(AController* EditingController, ABuildingSMActor* EditedBuilding)
-	{
-		static void(*ScoreBuildingEdit)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingEdit)(InSDKUtils::GetImageBase() + 0xF2FAE0);
-		ScoreBuildingEdit(this, EditingController, EditedBuilding);
-	}
-
 	void CreateAIGoalManager()
 	{
 		static void(*CreateAIGoalManager)(AFortGameModeAthena*) = decltype(CreateAIGoalManager)(InSDKUtils::GetImageBase() + 0xC98EB0);

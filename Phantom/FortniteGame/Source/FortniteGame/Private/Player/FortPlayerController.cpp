@@ -186,12 +186,28 @@ void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* 
 	}
 }
 
+void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToRepair)
+{
+	if (BuildingActorToRepair == NULL)
+		return;
+
+	int32 CostToRepair = BuildingActorToRepair->GetCostToRepair(PlayerController);
+
+	if (CostToRepair <= 0)
+		return;
+
+	PlayerController->PayBuildingRepairCost(BuildingActorToRepair);
+	BuildingActorToRepair->RepairBuilding(PlayerController, CostToRepair);
+}
+
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
 
-	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10A0 / 8, ServerEditBuildingActor);
-	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10C0 / 8, ServerBeginEditingBuildingActor);
-	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x10B0 / 8, ServerEndEditingBuildingActor);
-	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x1090 / 8, ServerCreateBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10B0 / 8, ServerEndEditingBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor);
+
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor);
 }

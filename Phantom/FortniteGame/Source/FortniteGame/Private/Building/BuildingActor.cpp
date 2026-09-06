@@ -7,8 +7,6 @@ void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, 
 
 	if (AAthenaBarrierObjective* BarrierObjective = Cast<AAthenaBarrierObjective>(BuildingActor))
 	{
-		printf(__FUNCTION__);
-
 		// TODO: not be lazy and find something like GetMutatorByClass in this season
 
 /*		AFortAthenaMutator_Barrier* BarrierMutator = Cast<AFortAthenaMutator_Barrier>(GGameState->GetMutatorByClass(GGameState, AFortAthenaMutator_Barrier::StaticClass()));
