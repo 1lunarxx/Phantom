@@ -350,6 +350,16 @@ namespace UC
 			return Emplace(Element);
 		}
 
+		inline void Free()
+		{
+			if (Data != NULL)
+				FMemory::Free(Data);
+
+			Data = NULL;
+			NumElements = 0;
+			MaxElements = 0;
+		}
+
 		inline bool Remove(int32 Index)
 		{
 			if (!IsValidIndex(Index))

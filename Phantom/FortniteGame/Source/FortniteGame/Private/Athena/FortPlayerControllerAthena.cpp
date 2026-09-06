@@ -7,7 +7,20 @@ void FortPlayerControllerAthena::ServerRestartPlayer_Implementation(AFortPlayerC
 	ServerRestartPlayer(FortPlayerControllerAthena);
 }
 
+void FortPlayerControllerAthena::RemoveAllInventoryItems(AFortPlayerControllerAthena* FortPlayerControllerAthena)
+{
+	if (AFortInventory* WorldInventory = FortPlayerControllerAthena->GetWorldInventory())
+	{
+		WorldInventory->Inventory.ReplicatedEntries.Free();
+		WorldInventory->Inventory.ItemInstances.Free();
+
+		WorldInventory->Inventory.MarkArrayDirty();
+	}
+}
+
 void FortPlayerControllerAthena::Setup()
 {
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x7E8 / 8, ServerRestartPlayer_Implementation);
+
+	Utils::Rel32(InSDKUtils::GetImageBase() + 0xCBAC01, RemoveAllInventoryItems);
 }
