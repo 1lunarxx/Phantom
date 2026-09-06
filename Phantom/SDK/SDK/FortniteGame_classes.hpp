@@ -21690,6 +21690,12 @@ static_assert(offsetof(UFortGameData, BannerColorCategoryData) == 0x004200, "Mem
 static_assert(offsetof(UFortGameData, BannerColorMap) == 0x004228, "Member 'UFortGameData::BannerColorMap' has a wrong offset!");
 static_assert(offsetof(UFortGameData, BannerIconItemDefinition) == 0x004250, "Member 'UFortGameData::BannerIconItemDefinition' has a wrong offset!");
 
+static UFortGameData* GetGameData()
+{
+	static UFortGameData* (*GetGameData)() = decltype(GetGameData)(InSDKUtils::GetImageBase() + 0xEE89F0);
+	return GetGameData();
+}
+
 // Class FortniteGame.BuildingTrapDefender
 // 0x0050 (0x0E10 - 0x0DC0)
 class ABuildingTrapDefender final : public ABuildingTrapFloor

@@ -1,6 +1,27 @@
 #pragma once
 #include "pch.h"
 
+#define ANY_PACKAGE (UObject*)-1
+
+template<class T>
+static T* Cast(UObject* Object)
+{
+    return Object && (Object->IsA(T::StaticClass())) ? (T*)Object : NULL;
+}
+
+static AFortGameStateAthena* GetGameState()
+{
+    return Cast<AFortGameStateAthena>(UWorld::GetWorld()->GameState);
+}
+
+static AFortGameModeAthena* GetGameMode()
+{
+    return Cast<AFortGameModeAthena>(UWorld::GetWorld()->AuthorityGameMode);
+}
+
+#define GGameState GetGameState()
+#define GGameMode GetGameMode()
+
 class Utils
 {
 public:
@@ -76,20 +97,6 @@ public:
         VirtualProtect(LPVOID(Target), sizeof(_Is), OldProtect, &OldProtect);
     }
 
-    template <typename T = void*>
-    static void Exec(const TCHAR* Name, void* Detour, T* Original = NULL)
-    {
-        UFunction* Func = StaticFindObject<UFunction>(Name);
-
-        if (Func == NULL)
-            return;
-
-        if (Original)
-            *Original = reinterpret_cast<T>(Func->ExecFunction);
-
-        Func->ExecFunction = reinterpret_cast<UFunction::FNativeFuncPtr>(Detour);
-    }
-
     template<typename T = UObject>
     static T* StaticFindObject(const TCHAR* OrigInName, UObject* InObjectPackage = NULL, UClass* ObjectClass = NULL)
     {
@@ -102,6 +109,20 @@ public:
     {
         static UObject* (*StaticLoadObject)(UClass*, UObject*, const wchar_t*, const wchar_t*, uint32, UObject*, bool, void*) = decltype(StaticLoadObject)(InSDKUtils::GetImageBase() + 0x19c9cf0);
         return (T*)StaticLoadObject(InClass, InOuter, Path, nullptr, 0, nullptr, false, nullptr);
+    }
+
+    template <typename T = void*>
+    static void Exec(const TCHAR* Name, void* Detour, T* Original = NULL)
+    {
+        UFunction* Func = StaticFindObject<UFunction>(Name);
+
+        if (Func == NULL)
+            return;
+
+        if (Original)
+            *Original = reinterpret_cast<T>(Func->ExecFunction);
+
+        Func->ExecFunction = reinterpret_cast<UFunction::FNativeFuncPtr>(Detour);
     }
 
     template<typename T>
@@ -242,32 +263,3 @@ public:
 
     void IncrementCode() { Code += !!Code; }
 };
-
-#define ANY_PACKAGE (UObject*)-1
-
-static FName NAME_GameNetDriver = UKismetStringLibrary::Conv_StringToName(L"GameNetDriver"); // temp
-
-template<class T>
-static T* Cast(UObject* Object)
-{
-    return Object && (Object->IsA(T::StaticClass())) ? (T*)Object : NULL;
-}
-
-static AFortGameStateAthena* GetGameState()
-{
-    return Cast<AFortGameStateAthena>(UWorld::GetWorld()->GameState);
-}
-
-static AFortGameModeAthena* GetGameMode()
-{
-    return Cast<AFortGameModeAthena>(UWorld::GetWorld()->AuthorityGameMode);
-}
-
-static UFortGameData* GetGameData()
-{
-    static UFortGameData* (*GetGameData)() = decltype(GetGameData)(InSDKUtils::GetImageBase() + 0xEE89F0);
-    return GetGameData();
-}
-
-#define GGameState GetGameState()
-#define GGameMode GetGameMode()

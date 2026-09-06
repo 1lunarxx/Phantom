@@ -1,10 +1,13 @@
 #include "pch.h"
+
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Engine/Restricted/NotForLicensees/Plugins/OnlineGameplayFramework/Source/McpProfileSys/Public/McpProfileGroup.h"
 #include "Engine/NetDriver.h"
+#include "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h"
 
 #include "GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h"
+#include "GameplayAbilities/Source/GameplayAbilities/Public/Abilities/GameplayAbility.h"
 
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
@@ -18,16 +21,11 @@
 #include "FortniteGame/Public/Athena/Modifiers/FortAthenaMutator_Barrier.h"
 #include "FortniteGame/Public/Athena/Building/AthenaBarrierFlag.h"
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
-
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
-
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
-
 #include "FortniteAI/Public/FortAIDirector.h"
-
-bool ReturnTrue() { return true; }
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -64,11 +62,10 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     BuildingActor::Setup();
     BuildingSMActor::Setup();
     FortInventoryOwnerInterface::Setup();
+    Object::Setup();
+    GameplayAbility::Setup();
 
-    Utils::Hook(InSDKUtils::GetImageBase() + 0x196EEE0, ReturnTrue);
-    Utils::Hook(InSDKUtils::GetImageBase() + 0x656320, ReturnTrue);
-
-    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85);
+    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
     *GIsClient = false;
     *GIsServer = true;

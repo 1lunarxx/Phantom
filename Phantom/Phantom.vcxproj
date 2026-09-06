@@ -153,8 +153,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\Abilities\GameplayAbility.h" />
     <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\AbilitySystemComponent.h" />
     <ClInclude Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Public\McpProfileGroup.h" />
+    <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\Object.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMath.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Math\UnrealMathUtility.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
@@ -176,6 +178,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventoryOwnerInterface.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortPickup.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerController.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
@@ -187,8 +190,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\Abilities\GameplayAbility.cpp" />
     <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\AbilitySystemComponent_Abilities.cpp" />
     <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Private\McpProfileGroup.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp" />
     <ClCompile Include="Engine\Source\Runtime\EngineSettingsModule\Private\EngineSettingsModule.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\Engine.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\NetDriver.cpp" />
