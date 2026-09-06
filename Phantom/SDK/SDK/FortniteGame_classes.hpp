@@ -13594,6 +13594,22 @@ static_assert(offsetof(UBuildingActorHotSpotConfig, DirectionSetup) == 0x000030,
 static_assert(offsetof(UBuildingActorHotSpotConfig, DefaultSetup) == 0x0000F0, "Member 'UBuildingActorHotSpotConfig::DefaultSetup' has a wrong offset!");
 static_assert(offsetof(UBuildingActorHotSpotConfig, ExtraTypeConfig) == 0x000110, "Member 'UBuildingActorHotSpotConfig::ExtraTypeConfig' has a wrong offset!");
 
+struct FFortAssets
+{
+public:
+	static UAnimMontage* GetAsset(const TSoftObjectPtr<UAnimMontage>* AssetPointer, bool bLogLoadTime)
+	{
+		static UAnimMontage* (*GetAsset)(const TSoftObjectPtr<UAnimMontage>*, bool) = decltype(GetAsset)(InSDKUtils::GetImageBase() + 0xBFB980);
+		return GetAsset(AssetPointer, bLogLoadTime);
+	}
+
+	static TSubclassOf<UFortGameplayAbility>* GetSubclassOf(TSubclassOf<UFortGameplayAbility>* result, TSoftClassPtr<UClass>* AssetSubclassOf, bool bLogLoadTime)
+	{
+		static TSubclassOf<UFortGameplayAbility>* (*GetSubclassOf)(TSubclassOf<UFortGameplayAbility>*, TSoftClassPtr<UClass>*, bool) = decltype(GetSubclassOf)(InSDKUtils::GetImageBase() + 0x1048E40);
+		return GetSubclassOf(result, AssetSubclassOf, bLogLoadTime);
+	}
+};
+
 // Class FortniteGame.FortPlayerController
 // 0x1440 (0x1AB8 - 0x0678)
 #pragma pack(push, 0x1)
@@ -30493,6 +30509,12 @@ static_assert(offsetof(UFortAssetManager, PerfMemTheaterPath) == 0x000500, "Memb
 static_assert(offsetof(UFortAssetManager, BROnlyTheaterPath) == 0x000510, "Member 'UFortAssetManager::BROnlyTheaterPath' has a wrong offset!");
 static_assert(offsetof(UFortAssetManager, ActiveTheaterListPath) == 0x000520, "Member 'UFortAssetManager::ActiveTheaterListPath' has a wrong offset!");
 static_assert(offsetof(UFortAssetManager, BROnlyLootPackagesExclusionList) == 0x000530, "Member 'UFortAssetManager::BROnlyLootPackagesExclusionList' has a wrong offset!");
+
+UFortAssetManager* GetFortAssetManager()
+{
+	static UFortAssetManager* (*GetFortAssetManager)() = decltype(GetFortAssetManager)(InSDKUtils::GetImageBase() + 0xEA4DC0);
+	return GetFortAssetManager();
+}
 
 // Class FortniteGame.FortEmitterCameraLensEffectDirectional
 // 0x0030 (0x0410 - 0x03E0)

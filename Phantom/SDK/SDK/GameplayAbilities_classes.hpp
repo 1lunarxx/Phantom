@@ -444,6 +444,12 @@ public:
 		static void(*MarkAbilitySpecDirty)(UAbilitySystemComponent*, FGameplayAbilitySpec*, bool) = decltype(MarkAbilitySpecDirty)(InSDKUtils::GetImageBase() + 0x671060);
 		MarkAbilitySpecDirty(this, Spec, WasAddOrRemove);
 	}
+
+	void GiveAbilityAndActivateOnce(FGameplayAbilitySpecHandle* result, FGameplayAbilitySpec* Spec)
+	{
+		static void(*GiveAbilityAndActivateOnce)(UAbilitySystemComponent*, FGameplayAbilitySpecHandle*, FGameplayAbilitySpec*) = decltype(GiveAbilityAndActivateOnce)(InSDKUtils::GetImageBase() + 0x66C540);
+		GiveAbilityAndActivateOnce(this, result, Spec);
+	}
 public:
 	static class UClass* StaticClass()
 	{

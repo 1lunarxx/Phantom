@@ -7309,7 +7309,12 @@ public:
 	uint8                                         Pad_2CB[0x1];                                      // 0x02CB(0x0001)(Fixing Size After Last Property [ Dumper-7 ])
 	int32                                         NumberOfSpawnedNotifications;                      // 0x02CC(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	uint8                                         Pad_2D0[0x158];                                    // 0x02D0(0x0158)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	UObject* GetPrimaryAssetObject(FPrimaryAssetId* PrimaryAssetId)
+	{
+		static UObject* (*GetPrimaryAssetObject)(UAssetManager*, FPrimaryAssetId*) = decltype(GetPrimaryAssetObject)(InSDKUtils::GetImageBase() + 0x24E6C00);
+		return GetPrimaryAssetObject(this, PrimaryAssetId);
+	}
 public:
 	static class UClass* StaticClass()
 	{

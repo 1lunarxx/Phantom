@@ -18,6 +18,56 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 	}
 }
 
+void FortPlayerController::ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset)
+{
+	if (EmoteAsset != NULL)
+	{
+		FFortAssets::GetAsset(&EmoteAsset->Animation, true); // whats the point of this?
+		ServerPlayEmoteItem_Internal(FortPlayerController, EmoteAsset); // not sure the name of this
+	}
+}
+
+void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset)
+{
+	AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn;
+
+	if (MyFortPawn != NULL)
+	{
+		UAbilitySystemComponent* ASC = MyFortPawn->AbilitySystemComponent;
+
+		if (ASC != NULL)
+		{
+			if (EmoteAsset != NULL)
+			{
+				/*if (FortPlayerController->CanPerformNativeAction(SomeTag))*/
+				{
+					UFortGameData* GameData = GetGameData();
+
+					if (GameData == NULL)
+						return;
+
+					TSubclassOf<UFortGameplayAbility> GameplayAbility;
+					FFortAssets::GetSubclassOf(&GameplayAbility, &GameData->EmoteGameplayAbility, true);
+
+					if (GameplayAbility != NULL)
+					{
+						UFortGameplayAbility* FortGameplayAbility = Cast<UFortGameplayAbility>(GameplayAbility->DefaultObject);
+
+						if (FortGameplayAbility == NULL)
+							return;
+
+						FGameplayAbilitySpec Spec;
+						Spec.ConstructAbilitySpec(GameplayAbility->DefaultObject, 1, -1, EmoteAsset);
+
+						FGameplayAbilitySpecHandle Handle;
+						ASC->GiveAbilityAndActivateOnce(&Handle, &Spec);
+					}
+				}
+			}
+		}
+	}
+}
+
 bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* PlayerController, FBuildingClassData* BuildingClassData)
 {
 	if (BuildingClassData == NULL || BuildingClassData->BuildingClass.Get() == NULL)
@@ -203,6 +253,7 @@ void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* Play
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor);

@@ -11,9 +11,6 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 {
 	FortGameModeZone->bWorldIsReady = true;
 
-	if (WorldManager != NULL)
-		WorldManager->WorldManagerState = EFortWorldManagerState::WMS_Running; // ngl im just doing some bullshit to do it
-
 	SetConsoleTitleA("Phantom | Ready");
 }
 
