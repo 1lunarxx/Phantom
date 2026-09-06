@@ -25,6 +25,10 @@
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
+#include "FortniteGame/Public/Items/FortPickup.h"
+
+#include "FortniteGame/Public/Pawns/FortPlayerPawn.h"
+
 #include "FortniteAI/Public/FortAIDirector.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
@@ -64,6 +68,8 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortInventoryOwnerInterface::Setup();
     Object::Setup();
     GameplayAbility::Setup();
+    FortPickup::Setup();
+    FortPlayerPawn::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 

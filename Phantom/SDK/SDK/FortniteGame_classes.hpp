@@ -154,6 +154,8 @@ public:
 	TSubclassOf<class UFortTooltip> GetTooltip() const;
 	bool IsInventorySizeLimited() const;
 	bool ShouldShowPreviewOnCurrentHero() const;
+public:
+	bool IsStackable() { return MaxStackSize > 1; };
 
 public:
 	static class UClass* StaticClass()
@@ -6347,13 +6349,44 @@ public:
 	void HandleInventoryLocalUpdate();
 public:
 	void AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
+	void AddItem(FFortItemEntry* ItemEntry);
 	void RemoveItem(FGuid& ItemGuid);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
+public:
+	static int GetInventoryUsed(const class IFortInventoryOwnerInterface* Owner, int InventoryType)
+	{
+		static int (*GetInventoryUsed)(const IFortInventoryOwnerInterface*, int) = decltype(GetInventoryUsed)(InSDKUtils::GetImageBase() + 0x10641E0);
+		return GetInventoryUsed(Owner, InventoryType);
+	}
+
+	static __int64 GetInventoryCapacity(const IFortInventoryOwnerInterface* Owner, int InventoryType)
+	{
+		static __int64 (*GetInventoryCapacity)(const IFortInventoryOwnerInterface*, int) = decltype(GetInventoryCapacity)(InSDKUtils::GetImageBase() + 0x1063B80);
+		return GetInventoryCapacity(Owner, InventoryType);
+	}
+
+	static __int64 GetOverflowFromAddingItemInExistingStack(const FFortItemEntry* ItemDescription, const IFortInventoryOwnerInterface* Owner, int InventoryType)
+	{
+		static __int64 (*GetOverflowFromAddingItemInExistingStack)(const FFortItemEntry*, const IFortInventoryOwnerInterface*, int) = decltype(GetOverflowFromAddingItemInExistingStack)(InSDKUtils::GetImageBase() + 0x10668B0);
+		return GetOverflowFromAddingItemInExistingStack(ItemDescription, Owner, InventoryType);
+	}
+
+	static __int64 GetOverflowFromAddingItemInNewStack(const FFortItemEntry* ItemDescription, const IFortInventoryOwnerInterface* Owner, int InventoryType, int PaddingStacks)
+	{
+		static __int64 (*GetOverflowFromAddingItemInNewStack)(const FFortItemEntry*, const IFortInventoryOwnerInterface*, int, int) = decltype(GetOverflowFromAddingItemInNewStack)(InSDKUtils::GetImageBase() + 0x1066E10);
+		return GetOverflowFromAddingItemInNewStack(ItemDescription, Owner, InventoryType, PaddingStacks);
+	}
 public:
 	void InitializeExistingItem(UFortWorldItem* ExistingItem)
 	{
 		static void (*InitializeExistingItem)(AFortInventory*, UFortWorldItem*) = decltype(InitializeExistingItem)(InSDKUtils::GetImageBase() + 0x106E710);
 		InitializeExistingItem(this, ExistingItem);
+	}
+
+	__int64 GetOverflowFromAddingItem(const FFortItemEntry* ItemDescription)
+	{
+		static __int64 (*GetOverflowFromAddingItem)(AFortInventory*, const FFortItemEntry*) = decltype(GetOverflowFromAddingItem)(InSDKUtils::GetImageBase() + 0x10665B0);
+		return GetOverflowFromAddingItem(this, ItemDescription);
 	}
 
 	UFortWorldItem* FindExistingItemForDefinition(UFortItemDefinition* ItemDefinition, bool bInStorageVault = false)
@@ -29426,9 +29459,9 @@ public:
 		SetPickupItems(this, PrimaryEntry, &AdditionalEntries, bInSplitOnPickup);
 	}
 
-	void SetPickupTarget(AFortPawn* PickupTarget, double InFlyTime, FVector InStartDirection)
+	void SetPickupTarget(AFortPawn* PickupTarget, float InFlyTime, FVector InStartDirection)
 	{
-		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, double, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
+		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, float, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
 		SetPickupTarget(this, PickupTarget, InFlyTime, InStartDirection);
 	}
 

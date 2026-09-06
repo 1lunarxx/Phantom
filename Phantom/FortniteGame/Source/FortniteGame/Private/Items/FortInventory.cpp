@@ -19,6 +19,21 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 	InitializeExistingItem(WorldItem);
 }
 
+void AFortInventory::AddItem(FFortItemEntry* ItemEntry)
+{
+	UFortWorldItem* WorldItem = UFortWorldItem::New(this, *ItemEntry);
+
+	if (WorldItem == NULL)
+		return;
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+	{
+		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
+	}
+
+	InitializeExistingItem(WorldItem);
+}
+
 // def a better way for all these functions, just dont care to be proper.
 
 void AFortInventory::RemoveItem(FGuid& ItemGuid)
@@ -36,10 +51,10 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid)
 	Inventory.ReplicatedEntries.Remove(ItemEntry);
 	Inventory.ItemInstances.Remove(&WorldItem);
 
-	Inventory.MarkArrayDirty();
-
 	bRequiresLocalUpdate = true;
 	HandleInventoryLocalUpdate();
+
+	Inventory.MarkArrayDirty();
 }
 
 void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)

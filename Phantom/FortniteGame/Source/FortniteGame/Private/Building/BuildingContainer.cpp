@@ -42,6 +42,14 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 
 	for (FFortItemEntry& LootDrop : OutLootDrops)
 	{
+		if (UFortWeaponRangedItemDefinition* WeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(LootDrop.ItemDefinition))
+		{
+			FFortRangedWeaponStats OutRow;
+			UFortKismetLibrary::GetRangedWeaponStatsRow(WeaponRangedItemDefinition->WeaponStatHandle, &OutRow);
+
+			LootDrop.LoadedAmmo = OutRow.ClipSize;
+		}
+
 		AFortPickup::SpawnPickup(LootDrop, LocationToSpawn, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
 	}
 
