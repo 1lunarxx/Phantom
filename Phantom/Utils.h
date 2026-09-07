@@ -74,6 +74,16 @@ public:
         }
     }
 
+    template <typename _Is>
+    static void Patch(uintptr_t Target, _Is Byte)
+    {
+        DWORD OldProtect;
+        VirtualProtect(LPVOID(Target), sizeof(_Is), PAGE_EXECUTE_READWRITE, &OldProtect);
+
+        *(_Is*)Target = Byte;
+        VirtualProtect(LPVOID(Target), sizeof(_Is), OldProtect, &OldProtect);
+    }
+
     template <class T>
     static inline T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL)
     {
@@ -85,16 +95,6 @@ public:
             UGameplayStatics::FinishSpawningActor(Actor, Transform);
 
         return (T*)Actor;
-    }
-
-    template <typename _Is>
-    static void Patch(uintptr_t Target, _Is Byte)
-    {
-        DWORD OldProtect;
-        VirtualProtect(LPVOID(Target), sizeof(_Is), PAGE_EXECUTE_READWRITE, &OldProtect);
-
-        *(_Is*)Target = Byte;
-        VirtualProtect(LPVOID(Target), sizeof(_Is), OldProtect, &OldProtect);
     }
 
     template<typename T = UObject>
@@ -216,39 +216,6 @@ public:
         {
             memset(Impl, 0x90, sizeof(int) + 1);
         }
-    }
-
-    static void Rel32Lea(uintptr_t Target, void* Detour)
-    {
-        uint8_t* Impl = (uint8_t*)Target;
-        uint8_t* NearPage = AllocateNearbyPage(Impl);
-
-        if (NearPage == NULL || Detour == NULL)
-            return;
-
-        uint8_t Shellcode[] =
-        {
-            0xFF, 0x25, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        };
-
-        memcpy(Shellcode + 6, &Detour, sizeof(void*));
-        memcpy(NearPage, Shellcode, sizeof(Shellcode));
-
-        int64_t Difference = NearPage - (Impl + 7);
-
-        if (Difference < INT32_MIN || Difference > INT32_MAX)
-            return;
-
-        int32_t Offset = (int32_t)Difference;
-
-        DWORD OldProtection;
-        VirtualProtect(Impl, 7, PAGE_EXECUTE_READWRITE, &OldProtection);
-
-        memcpy(Impl + 3, &Offset, sizeof(Offset));
-
-        VirtualProtect(Impl, 7, OldProtection, &OldProtection);
-        FlushInstructionCache(GetCurrentProcess(), Impl, 7);
     }
 };
 

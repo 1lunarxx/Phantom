@@ -18,14 +18,13 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 				{
 					WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
 
-					if (AFortDecoTool* FortDecoTool = Cast<AFortDecoTool>(MyFortPawn->CurrentWeapon))
+/*					if (AFortDecoTool* FortDecoTool = Cast<AFortDecoTool>(MyFortPawn->CurrentWeapon))
 					{
-						/*FortDecoTool->OnEquip(NULL);*/
 						FortDecoTool->SetDecoObjectPreview(WeaponItemDefinition, true);
 
 						if (AFortDecoTool_ContextTrap* ContextTrap = Cast<AFortDecoTool_ContextTrap>(MyFortPawn->CurrentWeapon))
 							ContextTrap->ContextTrapItemDefinition = Cast<UFortContextTrapItemDefinition>(WeaponItemDefinition);
-					}
+					}*/
 				}
 			}
 		}
