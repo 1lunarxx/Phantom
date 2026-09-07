@@ -54,7 +54,10 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 	{
 		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
 		{
-			for (const FItemAndCount& StartingItem : FortGameModeAthena->StartingItems)
+			TArray<FItemAndCount> StartingItems;
+			FortGameModeAthena->GetStartingItems(&StartingItems, true, NewPlayer);
+
+			for (const FItemAndCount& StartingItem : StartingItems)
 				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
 
 			WorldInventory->AddItem(FortPlayerController->CustomizationLoadout.Pickaxe->WeaponDefinition, 1);

@@ -41402,6 +41402,13 @@ public:
 		static void(*CreateAIGoalManager)(AFortGameModeAthena*) = decltype(CreateAIGoalManager)(InSDKUtils::GetImageBase() + 0xC98EB0);
 		CreateAIGoalManager(this);
 	}
+
+	TArray<FItemAndCount>* GetStartingItems(TArray<FItemAndCount>* result, bool bInitialSpawn, AController* Controller)
+	{
+		static TArray<FItemAndCount>* (*GetStartingItems)(AFortGameModeAthena*, TArray<FItemAndCount>*, bool, AController*) = decltype(GetStartingItems)(InSDKUtils::GetImageBase() + 0xCA5660);
+		return GetStartingItems(this, result, bInitialSpawn, Controller);
+
+	}
 public:
 	static class UClass* StaticClass()
 	{
