@@ -6301,7 +6301,18 @@ public:
 	void OnRep_CarriedActor(class AActor* OldCarriedActor);
 	void OnRep_ItemDefinition();
 	void ServerSpawnDeco(const struct FVector& Location, const struct FRotator& Rotation, class ABuildingSMActor* AttachedActor, EBuildingAttachmentType InBuildingAttachmentType);
+public:
+	void OnEquip(AFortWeapon* OldWeapon)
+	{
+		static void(*OnEquip)(AFortDecoTool*, AFortWeapon*) = decltype(OnEquip)(InSDKUtils::GetImageBase() + 0x1450190);
+		OnEquip(this, OldWeapon);
+	}
 
+	void SetDecoObjectPreview(const UFortItemDefinition* InItemDefinition, bool bUpdatePreviewPosition)
+	{
+		static void(*SetDecoObjectPreview)(AFortDecoTool*, const UFortItemDefinition*, bool) = decltype(SetDecoObjectPreview)(InSDKUtils::GetImageBase() + 0x145D590);
+		SetDecoObjectPreview(this, InItemDefinition, bUpdatePreviewPosition);
+	}
 public:
 	static class UClass* StaticClass()
 	{

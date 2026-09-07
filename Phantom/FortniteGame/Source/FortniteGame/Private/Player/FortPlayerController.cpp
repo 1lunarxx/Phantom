@@ -12,8 +12,22 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 		{
 			UFortWorldItem* WorldItem = InventoryInterface->GetItem(&ItemGuid);
 
-			if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
-				WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
+			if (WorldItem != NULL)
+			{
+				if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
+				{
+					WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
+
+					if (AFortDecoTool* FortDecoTool = Cast<AFortDecoTool>(MyFortPawn->CurrentWeapon))
+					{
+						/*FortDecoTool->OnEquip(NULL);*/
+						FortDecoTool->SetDecoObjectPreview(WeaponItemDefinition, true);
+
+						if (AFortDecoTool_ContextTrap* ContextTrap = Cast<AFortDecoTool_ContextTrap>(MyFortPawn->CurrentWeapon))
+							ContextTrap->ContextTrapItemDefinition = Cast<UFortContextTrapItemDefinition>(WeaponItemDefinition);
+					}
+				}
+			}
 		}
 	}
 }
@@ -47,7 +61,7 @@ void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* F
 						return;
 
 					TSubclassOf<UFortGameplayAbility> GameplayAbility;
-					FFortAssets::GetSubclassOf(&GameplayAbility, &GameData->EmoteGameplayAbility, true);
+					FFortAssets::GetSubclassOf(&GameplayAbility, EmoteAsset->IsA(UAthenaSprayItemDefinition::StaticClass()) ? &GameData->SprayGameplayAbility : &GameData->EmoteGameplayAbility, true);
 
 					if (GameplayAbility != NULL)
 					{

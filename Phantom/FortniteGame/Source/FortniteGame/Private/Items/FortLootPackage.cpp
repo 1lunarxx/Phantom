@@ -60,7 +60,7 @@ void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int F
 	{
 		if (FortLootTierData->NumLootPackageDrops < 1.0f)
 		{
-			if ((FMath::FRand() / (float)RAND_MAX) <= FortLootTierData->NumLootPackageDrops)
+			if (FMath::FRand() <= FortLootTierData->NumLootPackageDrops)
 				NumLootPackageDrops = 1;
 			else
 				NumLootPackageDrops = 0;
@@ -98,7 +98,7 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 		if (LootPackageRow == NULL)
 			continue;
 
-		if (LootPackageRow->LootPackageID.ComparisonIndex != LootPackage.ComparisonIndex || LootPackageRow->LootPackageID.Number != LootPackage.Number)
+		if (LootPackageRow->LootPackageID != LootPackage)
 			continue;
 
 		if (LootPackageCategory != -1 && LootPackageRow->LootPackageCategory != LootPackageCategory)
@@ -119,7 +119,7 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 	if (TotalWeight <= 0.0f)
 		return;
 
-	float RandomWeight = (FMath::FRand() / (float)RAND_MAX) * TotalWeight;
+	float RandomWeight = FMath::FRand() * TotalWeight;
 
 	for (const auto& [RowName, RowValue] : LootPackageData->RowMap)
 	{
@@ -128,7 +128,7 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 		if (LootPackageRow == NULL)
 			continue;
 
-		if (LootPackageRow->LootPackageID.ComparisonIndex != LootPackage.ComparisonIndex || LootPackageRow->LootPackageID.Number != LootPackage.Number)
+		if (LootPackageRow->LootPackageID != LootPackage)
 			continue;
 
 		if (LootPackageCategory != -1 && LootPackageRow->LootPackageCategory != LootPackageCategory)
@@ -151,8 +151,10 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 
 		if (LootPackageRow->LootPackageCall.Num() > 1)
 		{
-			for (int32 i = 0; i < LootPackageRow->Count; i++)
-				PickLootDropsFromLootPackage(OutLootToDrop, FName(LootPackageRow->LootPackageCall), ForcedLootTier, -1, WorldLevel);
+			int32 Count = FMath::Max(LootPackageRow->Count, 0);
+
+			for (int32 i = 0; i < Count; i++)
+				PickLootDropsFromLootPackage(OutLootToDrop, FName(LootPackageRow->LootPackageCall), ForcedLootTier, 0, WorldLevel);
 
 			return;
 		}

@@ -168,10 +168,10 @@ void FortAthenaMutator_Barrier::BeginPlay(AFortAthenaMutator_Barrier* FortAthena
 
 void FortAthenaMutator_Barrier::OnGamePhaseStepChanged(AFortAthenaMutator_Barrier* FortAthenaMutator_Barrier, EAthenaGamePhaseStep GamePhaseStep)
 {
+    Originals::OnGamePhaseStepChanged(FortAthenaMutator_Barrier, GamePhaseStep);
+
     if (GamePhaseStep == EAthenaGamePhaseStep::BusLocked)
         FortAthenaMutator_Barrier->SpawnModeObjectives();
-
-    Originals::OnGamePhaseStepChanged(FortAthenaMutator_Barrier, GamePhaseStep);
 }
 
 void FortAthenaMutator_Barrier::Setup()
