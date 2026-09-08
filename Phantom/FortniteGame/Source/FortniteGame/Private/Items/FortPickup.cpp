@@ -8,7 +8,7 @@ AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocati
 
 	FortPickupCreationData* CreationData = new FortPickupCreationData();
 
-	CreationData->World = UWorld::GetWorld();
+	CreationData->World = GWorld;
 	CreationData->PickupDataItemEntry = &ItemEntry;
 	CreationData->Position = &InLocation;
 	CreationData->OptionalPCOwner = NULL;

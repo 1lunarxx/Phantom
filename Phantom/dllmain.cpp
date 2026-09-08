@@ -29,7 +29,7 @@
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
 #include "FortniteGame/Public/Items/FortPickup.h"
 #include "FortniteGame/Public/Items/FortWorldItem.h"
-
+#include "FortniteGame/Public/Items/FortLootPackage.h"
 #include "FortniteGame/Public/Pawns/FortPlayerPawn.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"

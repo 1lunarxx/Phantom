@@ -16,6 +16,11 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
 	}
 
+	if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
+	{
+		WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+	}
+
 	InitializeExistingItem(WorldItem);
 }
 
@@ -31,10 +36,81 @@ void AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
 	}
 
+	if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
+	{
+		WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+	}
+
 	InitializeExistingItem(WorldItem);
 }
 
-// def a better way for all these functions, just dont care to be proper.
+void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
+{
+	if (ItemStackToRemove != NULL)
+	{
+		UFortItemDefinition* FortItemDefinition = ItemStackToRemove->ItemEntry.ItemDefinition;
+
+		if (FortItemDefinition != NULL)
+		{
+			if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(FortItemDefinition))
+			{
+				if (!ItemStackToRemove->IsInventoryOverflowItem())
+				{
+					for (UFortWorldItem* WorldItem : Inventory.ItemInstances)
+					{
+						if (WorldItem == NULL)
+							continue;
+
+						UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(WorldItem->ItemEntry.ItemDefinition);
+
+						if (WorldItemDefinition == NULL)
+							continue;
+
+						if (WorldItem->IsInventoryOverflowItem())
+						{
+							WorldItem->SetInInventoryOverflow(false);
+							break;
+						}
+					}
+				}
+
+				ItemStackToRemove->SetInInventoryOverflow(false);
+			}
+		}
+
+		FFortItemEntry RemovedItemEntry = FFortItemEntry{};
+
+		if (Inventory.ReplicatedEntries.Num() > 0)
+		{
+			for (int32 i = 0; i < Inventory.ReplicatedEntries.Num(); i++)
+			{
+				FFortItemEntry& ItemEntry = Inventory.ReplicatedEntries[i];
+
+				if (ItemEntry.ItemGuid == *ItemGuid)
+				{
+					RemovedItemEntry = ItemEntry;
+					Inventory.ReplicatedEntries.Remove(i);
+					break;
+				}
+			}
+		}
+
+		for (int32 i = 0; i < RemovedItemEntry.StateValues.Num(); i++)
+		{
+			FFortItemEntryStateValue& StateValue = RemovedItemEntry.StateValues[i];
+
+			if (StateValue.StateType != EFortItemEntryState::EFortItemEntryState_MAX)
+				continue;
+
+			RemovedItemEntry.StateValues.Remove(i); // they dont do this but why not
+
+			break;
+		}
+
+		UpdateItemInstances();
+		HandleInventoryItemRemoved();
+	}
+}
 
 void AFortInventory::RemoveItem(FGuid& ItemGuid)
 {
@@ -45,16 +121,12 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid)
 
 	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
 
-	if (WorldItem == NULL)
-		return;
+	if (WorldItem != NULL)
+	{
+		WorldItem->RemoveFromInventory();
 
-	Inventory.ReplicatedEntries.Remove(ItemEntry);
-	Inventory.ItemInstances.Remove(&WorldItem);
-
-	bRequiresLocalUpdate = true;
-	HandleInventoryLocalUpdate();
-
-	Inventory.MarkArrayDirty();
+		OnRemoveItemStack(WorldItem, &ItemGuid);
+	}
 }
 
 void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)

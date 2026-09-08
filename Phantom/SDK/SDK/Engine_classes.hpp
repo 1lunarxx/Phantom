@@ -6908,10 +6908,13 @@ public:
 	void* CallbackSum_Callable;
 	void* CallbackSum_HeapAllocation;
 public:
-	FActorSpawnParameters()
+	FActorSpawnParameters(bool SpawnCollisionHandlingOverride = false)
 	{
 		static void(*Construct)(FActorSpawnParameters*) = decltype(Construct)(InSDKUtils::GetImageBase() + 0x2AA4F60);
 		Construct(this);
+
+		if (SpawnCollisionHandlingOverride)
+			this->SpawnCollisionHandlingOverride = 1;
 	}
 };
 
@@ -6982,6 +6985,12 @@ public:
 
 	AActor* SpawnActor(UClass* Class, const FVector* Location, const FRotator* Rotation, const struct FActorSpawnParameters* SpawnParameters)
 	{
+		if (SpawnParameters == NULL)
+		{
+			FActorSpawnParameters NewSpawnParams = FActorSpawnParameters(true);
+			SpawnParameters = &NewSpawnParams;
+		}
+
 		static AActor* (*SpawnActor)(UWorld*, UClass*, const FVector*, const FRotator*, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
 		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
 	}

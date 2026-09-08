@@ -6406,6 +6406,22 @@ public:
 		InitializeExistingItem(this, ExistingItem);
 	}
 
+	void UpdateItemInstances()
+	{
+		static void(*UpdateItemInstances)(AFortInventory*) = decltype(UpdateItemInstances)(InSDKUtils::GetImageBase() + 0x1076B90);
+		UpdateItemInstances(this);
+	}
+
+	void HandleInventoryItemRemoved()
+	{
+		Inventory.MarkArrayDirty();
+
+		bRequiresLocalUpdate = true;
+		HandleInventoryLocalUpdate();
+	}
+
+	void OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid);
+
 	__int64 GetOverflowFromAddingItem(const FFortItemEntry* ItemDescription)
 	{
 		static __int64 (*GetOverflowFromAddingItem)(AFortInventory*, const FFortItemEntry*) = decltype(GetOverflowFromAddingItem)(InSDKUtils::GetImageBase() + 0x10665B0);
@@ -56974,6 +56990,33 @@ public:
 	{
 		static UFortWorldItem* (*New)(AFortInventory*, FFortItemEntry*) = decltype(New)(InSDKUtils::GetImageBase() + 0x10CC7B0);
 		return New(OwnerInventory, &ItemDescription);
+	}
+
+	void OnItemInstanceAdded(IFortInventoryOwnerInterface* InventoryOwner)
+	{
+		static void(*OnItemInstanceAdded)(UFortWorldItem*, IFortInventoryOwnerInterface*) = decltype(OnItemInstanceAdded)(InSDKUtils::GetImageBase() + 0x109C500);
+		OnItemInstanceAdded(this, InventoryOwner);
+	}
+
+	void RemoveFromInventory()
+	{
+		static void(*RemoveFromInventory)(UFortWorldItem*) = decltype(RemoveFromInventory)(InSDKUtils::GetImageBase() + 0x10D13A0);
+		RemoveFromInventory(this);
+	}
+
+	bool SetInInventoryOverflow(bool bInInventoryOverflow)
+	{
+		if (ItemEntry.inventory_overflow_date == bInInventoryOverflow)
+			return false;
+
+		ItemEntry.inventory_overflow_date = bInInventoryOverflow;
+
+		return true;
+	}
+
+	bool IsInventoryOverflowItem()
+	{
+		return ItemEntry.inventory_overflow_date;
 	}
 public:
 	static class UClass* StaticClass()

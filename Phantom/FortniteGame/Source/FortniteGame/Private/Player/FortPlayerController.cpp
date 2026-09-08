@@ -17,7 +17,7 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 				if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
 				{
 					WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
-
+					
 /*					if (AFortDecoTool* FortDecoTool = Cast<AFortDecoTool>(MyFortPawn->CurrentWeapon))
 					{
 						FortDecoTool->SetDecoObjectPreview(WeaponItemDefinition, true);
@@ -155,7 +155,7 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Play
 				FActorSpawnParameters SpawnParams = FActorSpawnParameters();
 				SpawnParams.SpawnCollisionHandlingOverride = 1;
 
-				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(UWorld::GetWorld()->SpawnActor(BuildingClassData.BuildingClass, &BuildLoc, &BuildRot, &SpawnParams));
+				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, &BuildLoc, &BuildRot, &SpawnParams));
 
 				if (NewBuilding != NULL)
 				{

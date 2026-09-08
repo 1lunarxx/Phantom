@@ -18,7 +18,7 @@ void AFortAthenaMutator_Barrier::SetupTeamStates()
 
 void AFortAthenaMutator_Barrier::SpawnBarrier(const FVector* WallStart, const FVector* WallEnd)
 {
-    BigBaseWall = AAthenaBigBaseWall::CreateWall(UWorld::GetWorld(), BigBaseWallClass.Get(), WallStart, WallEnd, -2500.f);
+    BigBaseWall = AAthenaBigBaseWall::CreateWall(GWorld, BigBaseWallClass.Get(), WallStart, WallEnd, -2500.f);
 }
 
 void AFortAthenaMutator_Barrier::SpawnModeObjectives()
@@ -118,7 +118,7 @@ AAthenaBarrierFlag* AFortAthenaMutator_Barrier::SpawnObjectiveActor(TSubclassOf<
     FActorSpawnParameters SpawnParams = FActorSpawnParameters();
     SpawnParams.SpawnCollisionHandlingOverride = 1;
 
-    AAthenaBarrierFlag* ObjectiveFlag = Cast<AAthenaBarrierFlag>(UWorld::GetWorld()->SpawnActor(InActorClass, InActorLocation, InActorRotation, &SpawnParams));
+    AAthenaBarrierFlag* ObjectiveFlag = Cast<AAthenaBarrierFlag>(GWorld->SpawnActor(InActorClass, InActorLocation, InActorRotation, &SpawnParams));
 
     if (ObjectiveFlag != NULL)
         UGameplayStatics::FinishSpawningActor(ObjectiveFlag, UKismetMathLibrary::MakeTransform(*InActorLocation, *InActorRotation, FVector(1, 1, 1)));

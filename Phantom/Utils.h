@@ -11,12 +11,12 @@ static T* Cast(UObject* Object)
 
 static AFortGameStateAthena* GetGameState()
 {
-    return Cast<AFortGameStateAthena>(UWorld::GetWorld()->GameState);
+    return Cast<AFortGameStateAthena>(GWorld->GameState);
 }
 
 static AFortGameModeAthena* GetGameMode()
 {
-    return Cast<AFortGameModeAthena>(UWorld::GetWorld()->AuthorityGameMode);
+    return Cast<AFortGameModeAthena>(GWorld->AuthorityGameMode);
 }
 
 #define GGameState GetGameState()
@@ -263,3 +263,17 @@ public:
 
     void IncrementCode() { Code += !!Code; }
 };
+
+template<typename UEType>
+UEType* TSoftClassPtr<UEType>::Get() const
+{
+    UObject* Obj = TPersistentObjectPtr::Get();
+
+    if (Obj == NULL)
+    {
+        FString AssetPath = UKismetStringLibrary::Conv_NameToString(ObjectID.AssetPathName);
+        Obj = Utils::StaticLoadObject<UEType>(AssetPath.CStr());
+    }
+
+    return static_cast<UEType*>(Obj);
+}

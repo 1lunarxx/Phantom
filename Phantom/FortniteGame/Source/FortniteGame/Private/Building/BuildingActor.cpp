@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Building/BuildingActor.h"
+#include "FortniteGame/Public/Items/FortLootPackage.h"
 
 void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, const FGameplayTagContainer* DamageTags, FVector* Momentum, const FHitResult* HitInfo, AController* InstigatedBy, AActor* DamageCauser, FGameplayEffectContextHandle* EffectContext)
 {
@@ -16,7 +17,30 @@ void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, 
 	}
 }
 
+void BuildingActor::BeginPlay(ABGAConsumableSpawner* BGAConsumableSpawner)
+{
+    Originals::BeginPlay(BGAConsumableSpawner);
+
+    FortLootPackage::PickLootDrops(&BGAConsumableSpawner->ConsumablesToSpawn, GGameState->WorldLevel, BGAConsumableSpawner->SpawnLootTierGroup);
+
+    for (FFortItemEntry& ConsumableToSpawn : BGAConsumableSpawner->ConsumablesToSpawn)
+    {
+        UBGAConsumableWrapperItemDefinition* BGAConsumableWrapperItemDefinition = Cast<UBGAConsumableWrapperItemDefinition>(ConsumableToSpawn.ItemDefinition);
+
+        if (BGAConsumableWrapperItemDefinition == NULL)
+            continue;
+
+        FVector Location = UFortKismetLibrary::FindGroundLocationAt(GWorld, NULL, BGAConsumableSpawner->K2_GetActorLocation(), -1000.f, 2500.f, FName(L"FortDynamicMeshPhysics"));
+        FRotator Rotation = BGAConsumableSpawner->K2_GetActorRotation();
+
+        GWorld->SpawnActor(BGAConsumableWrapperItemDefinition->ConsumableClass.Get(), &Location, &Rotation, NULL);
+
+        break;
+    }
+}
+
 void BuildingActor::Setup()
 {
 	Utils::Hook(InSDKUtils::GetImageBase() + 0x149E410, OnDeathServer, (void**)&Originals::OnDeathServer);
+    Utils::Hook(InSDKUtils::GetImageBase() + 0xD65060, BeginPlay, (void**)&Originals::BeginPlay);
 }

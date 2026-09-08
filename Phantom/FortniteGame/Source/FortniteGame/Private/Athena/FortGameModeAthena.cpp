@@ -35,7 +35,7 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 			{
 				bool bSuccess = false;
 
-				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(UWorld::GetWorld(), AdditionalLevel, FVector(), FRotator(), &bSuccess);
+				ULevelStreamingDynamic::LoadLevelInstanceBySoftObjectPtr(GWorld, AdditionalLevel, FVector(), FRotator(), &bSuccess);
 
 				if (bSuccess)
 					FortGameStateAthena->AdditionalPlaylistLevelsStreamed.Add(AdditionalLevel.ObjectID.AssetPathName);
