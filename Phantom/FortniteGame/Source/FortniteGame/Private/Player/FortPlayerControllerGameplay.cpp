@@ -18,8 +18,6 @@ void FortPlayerControllerGameplay::EndGhostMode(AFortPlayerControllerGameplay* F
 {
 	Stack.IncrementCode();
 
-	Originals::EndGhostMode(FortPlayerControllerGameplay, Stack);
-
 	if (AFortInventory* WorldInventory = FortPlayerControllerGameplay->GetWorldInventory())
 	{
 		UFortWorldItem* WorldItem = WorldInventory->FindExistingItemForDefinition(FortPlayerControllerGameplay->GhostModeRepData.GhostModeItemDef);
@@ -27,11 +25,13 @@ void FortPlayerControllerGameplay::EndGhostMode(AFortPlayerControllerGameplay* F
 		if (WorldItem != NULL)
 			WorldInventory->RemoveItem(WorldItem->ItemEntry.ItemGuid);
 	}
+
+	FortPlayerControllerGameplay->GhostModeRepData.bInGhostMode = false;
+	FortPlayerControllerGameplay->CheckGhostModeItemRemoved(FortPlayerControllerGameplay->GhostModeRepData.GhostModeItemDef);
 }
 
 void FortPlayerControllerGameplay::Setup()
 {
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x132750F, GiveItemToInventoryOwner_StartGhostMode);
-
-/*	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerControllerGameplay.EndGhostMode"), EndGhostMode, (void**)&Originals::EndGhostMode);*/
+	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerControllerGameplay.EndGhostMode"), EndGhostMode);
 }
