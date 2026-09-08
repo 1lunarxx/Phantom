@@ -1656,6 +1656,12 @@ public:
 		static void(*ScoreBuildingEdit)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingEdit)(InSDKUtils::GetImageBase() + 0xF2FAE0);
 		ScoreBuildingEdit(this, EditingController, EditedBuilding);
 	}
+
+	void FinishWorldInitialization(class AFortWorldManager* WorldManager)
+	{
+		static void(*FinishWorldInitialization)(AFortGameMode*, AFortWorldManager*) = decltype(FinishWorldInitialization)(InSDKUtils::GetImageBase() + 0xF181C0);
+		FinishWorldInitialization(this, WorldManager);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -6382,7 +6388,7 @@ public:
 	void HandleInventoryLocalUpdate();
 public:
 	UFortWorldItem* AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
-	void AddItem(FFortItemEntry* ItemEntry);
+	UFortWorldItem* AddItem(FFortItemEntry* ItemEntry);
 	void RemoveItem(FGuid& ItemGuid);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
 public:
@@ -56529,7 +56535,12 @@ public:
 
 public:
 	void OnRep_InitialGlobalWind();
-
+public:
+	void FinishWorldInitialization()
+	{
+		static void(*FinishWorldInitialization)(AFortWorldManager*) = decltype(FinishWorldInitialization)(InSDKUtils::GetImageBase() + 0x1014D20);
+		FinishWorldInitialization(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

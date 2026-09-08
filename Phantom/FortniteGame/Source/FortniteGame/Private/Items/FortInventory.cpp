@@ -1,51 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortInventory.h"
 
-UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
-{
-	if (Count <= 0)
-		return NULL;
-
-	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
-
-	if (WorldItem == NULL)
-		return NULL;
-
-	InitializeExistingItem(WorldItem);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-	{
-		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-		{
-			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-		}
-	}
-
-	return WorldItem;
-}
-
-void AFortInventory::AddItem(FFortItemEntry* ItemEntry)
-{
-	UFortWorldItem* WorldItem = UFortWorldItem::New(this, *ItemEntry);
-
-	if (WorldItem == NULL)
-		return;
-
-	InitializeExistingItem(WorldItem);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-	{
-		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-		{
-			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-		}
-	}
-}
-
 void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
 {
 	if (ItemStackToRemove != NULL)
@@ -112,6 +67,54 @@ void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const 
 		UpdateItemInstances();
 		HandleInventoryItemRemoved();
 	}
+}
+
+
+UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
+{
+	if (Count <= 0)
+		return NULL;
+
+	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
+
+	if (WorldItem == NULL)
+		return NULL;
+
+	InitializeExistingItem(WorldItem);
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+	{
+		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
+
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+		}
+	}
+
+	return WorldItem;
+}
+
+UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
+{
+	UFortWorldItem* WorldItem = UFortWorldItem::New(this, *ItemEntry);
+
+	if (WorldItem == NULL)
+		return NULL;
+
+	InitializeExistingItem(WorldItem);
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+	{
+		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
+
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+		}
+	}
+
+	return WorldItem;
 }
 
 void AFortInventory::RemoveItem(FGuid& ItemGuid)
