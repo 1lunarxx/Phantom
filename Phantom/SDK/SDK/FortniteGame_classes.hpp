@@ -6390,6 +6390,7 @@ public:
 	UFortWorldItem* AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
 	UFortWorldItem* AddItem(FFortItemEntry* ItemEntry);
 	void RemoveItem(FGuid& ItemGuid);
+	void RemoveItem(FGuid& ItemGuid, int32 Count);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
 public:
 	static int GetInventoryUsed(const class IFortInventoryOwnerInterface* Owner, int InventoryType)

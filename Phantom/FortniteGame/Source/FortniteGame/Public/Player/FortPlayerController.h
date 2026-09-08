@@ -6,16 +6,18 @@ class FortPlayerController
 {
 private:
 	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid);
+	static void ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash);
+
 	static void ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset);
 	static void ServerPlayEmoteItem_Internal(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset);
 
-	static bool FixUpCreateBuildingClassData(AFortPlayerController* PlayerController, FBuildingClassData* BuildingActorData);
+	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);
 
-	static void ServerCreateBuildingActor(AFortPlayerController* PlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey);
-	static void ServerBeginEditingBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit);
-	static void ServerEditBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored);
-	static void ServerEndEditingBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit);
-	static void ServerRepairBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToRepair);
+	static void ServerCreateBuildingActor(AFortPlayerController* FortPlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey);
+	static void ServerBeginEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit);
+	static void ServerEditBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored);
+	static void ServerEndEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit);
+	static void ServerRepairBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
 public:
 	static void Setup();
 };

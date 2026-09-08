@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortWorldItem.h"
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 bool FortWorldItem::SetLoadedAmmo(UFortWorldItem* FortWorldItem, int InCount)
 {

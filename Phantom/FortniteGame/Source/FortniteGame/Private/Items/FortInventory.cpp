@@ -142,6 +142,24 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid)
 	}
 }
 
+void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
+{
+	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
+
+	if (ItemEntry == NULL)
+		return;
+
+	if (Count <= 0 || Count >= ItemEntry->Count)
+	{
+		RemoveItem(ItemGuid);
+	}
+	else
+	{
+		ItemEntry->Count -= Count;
+		UpdateItemEntry(ItemEntry);
+	}
+}
+
 void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
 {
 	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&NewItemEntry->ItemGuid);

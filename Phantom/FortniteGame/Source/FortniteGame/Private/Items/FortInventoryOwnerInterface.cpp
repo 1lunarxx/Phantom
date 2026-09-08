@@ -16,17 +16,8 @@ bool FortInventoryOwnerInterface::RemoveInventoryItem(IFortInventoryOwnerInterfa
 
 	FFortItemEntry* ItemEntry = WorldInventory->GetReplicatedItemEntry(&ItemGuid);
 
-	if (ItemEntry == NULL)
-		return false;
-
-	int32 NewCount = FMath::Min(Count, ItemEntry->Count);
-
-	ItemEntry->Count -= NewCount;
-
-	if (bForceRemoval || ItemEntry->Count <= 0)
-		WorldInventory->RemoveItem(ItemGuid);
-	else
-		WorldInventory->UpdateItemEntry(ItemEntry);
+	if (ItemEntry != NULL)
+		WorldInventory->RemoveItem(ItemGuid, FMath::Min(Count, ItemEntry->Count));
 
 	return true;
 }

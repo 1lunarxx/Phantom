@@ -15,19 +15,33 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 			if (WorldItem != NULL)
 			{
 				if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
-				{
 					WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
-					
-/*					if (AFortDecoTool* FortDecoTool = Cast<AFortDecoTool>(MyFortPawn->CurrentWeapon))
-					{
-						FortDecoTool->SetDecoObjectPreview(WeaponItemDefinition, true);
-
-						if (AFortDecoTool_ContextTrap* ContextTrap = Cast<AFortDecoTool_ContextTrap>(MyFortPawn->CurrentWeapon))
-							ContextTrap->ContextTrapItemDefinition = Cast<UFortContextTrapItemDefinition>(WeaponItemDefinition);
-					}*/
-				}
 			}
 		}
+	}
+}
+
+void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash)
+{
+	AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory();
+
+	if (WorldInventory == NULL)
+		return;
+
+	FFortItemEntry* ItemEntryToRemove = WorldInventory->GetReplicatedItemEntry(ItemGuid);
+
+	if (ItemEntryToRemove == NULL)
+		return;
+
+	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
+
+	if (FortPlayerPawn != NULL)
+	{
+		if (Count > ItemEntryToRemove->Count)
+			Count = ItemEntryToRemove->Count;
+
+		AFortPickup::SpawnPickup(*ItemEntryToRemove, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 20), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
+		WorldInventory->RemoveItem(ItemEntryToRemove->ItemGuid, Count);
 	}
 }
 
@@ -133,9 +147,9 @@ bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* P
 	return false;
 }
 
-void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* PlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey)
+void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* FortPlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey)
 {
-	if (!FixUpCreateBuildingClassData(PlayerController, &BuildingClassData))
+	if (!FixUpCreateBuildingClassData(FortPlayerController, &BuildingClassData))
 		return;
 
 	if (BuildingClassData.BuildingClass != NULL)
@@ -145,10 +159,10 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Play
 		if (BuildingSMActor == NULL)
 			return;
 
-		if (PlayerController->CanAffordToPlaceBuildableClass(&BuildingClassData) && PlayerController->HasRequiredBuildingLevel(BuildingClassData.PreviousBuildingLevel, BuildingSMActor->ResourceType))
+		if (FortPlayerController->CanAffordToPlaceBuildableClass(&BuildingClassData) && FortPlayerController->HasRequiredBuildingLevel(BuildingClassData.PreviousBuildingLevel, BuildingSMActor->ResourceType))
 		{
 			TArray<ABuildingActor*> ExistingBuildings;
-			EFortStructuralGridQueryResults CanPlaceBuildableClassInStructuralGrid = PlayerController->CanPlaceBuildableClassInStructuralGrid(BuildingClassData.BuildingClass, &BuildLoc, &BuildRot, bMirrored, &ExistingBuildings);
+			EFortStructuralGridQueryResults CanPlaceBuildableClassInStructuralGrid = FortPlayerController->CanPlaceBuildableClassInStructuralGrid(BuildingClassData.BuildingClass, &BuildLoc, &BuildRot, bMirrored, &ExistingBuildings);
 
 			if (CanPlaceBuildableClassInStructuralGrid == EFortStructuralGridQueryResults::CanAdd)
 			{
@@ -163,16 +177,16 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Play
 					NewBuilding->OnRep_CurrentBuildingLevel();
 
 					NewBuilding->SetMirrored(bMirrored);
-					NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, PlayerController, true);
+					NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, FortPlayerController, true);
 
-					PlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
+					FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
 
-					UFortAnalytics::FireEvent_BuildingAction(PlayerController, L"Create", BuildingSMActor, 0);
+					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, 0);
 
 					if (GGameMode != NULL)
-						GGameMode->ScoreBuildingConstruction(PlayerController, NewBuilding);
+						GGameMode->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
 
-					if (AFortPlayerPawn* MyFortPawn = PlayerController->MyFortPawn)
+					if (AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn)
 					{
 						UFortAIFunctionLibrary::MakeNoiseEventAtLocation(MyFortPawn, 0, MyFortPawn->K2_GetActorLocation());
 
@@ -192,22 +206,22 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Play
 	}
 }
 
-void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit)
+void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
 {
-	if (BuildingActorToEdit != NULL && PlayerController->MyFortPawn != NULL)
+	if (BuildingActorToEdit != NULL && FortPlayerController->MyFortPawn != NULL)
 	{
-		AFortPlayerStateZone* PlayerState = Cast<AFortPlayerStateZone>(PlayerController->PlayerState);
+		AFortPlayerStateZone* PlayerState = Cast<AFortPlayerStateZone>(FortPlayerController->PlayerState);
 
 		if (PlayerState != NULL)
 		{
 			BuildingActorToEdit->SetEditingPlayer(PlayerState);
 
 			UFortEditToolItemDefinition* EditToolItem = GetGameData()->EditToolItem.LoadSynchronous();
-			UFortWorldItem* WorldItem = PlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
+			UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
-			if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, PlayerController))
+			if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))
 			{
-				AFortWeap_EditingTool* EditingTool = Cast<AFortWeap_EditingTool>(PlayerController->MyFortPawn->CurrentWeapon);
+				AFortWeap_EditingTool* EditingTool = Cast<AFortWeap_EditingTool>(FortPlayerController->MyFortPawn->CurrentWeapon);
 
 				if (EditingTool != NULL)
 					EditingTool->SetEditActor(BuildingActorToEdit);
@@ -216,32 +230,32 @@ void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController
 	}
 }
 
-void FortPlayerController::ServerEditBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored)
+void FortPlayerController::ServerEditBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored)
 {
-	if (BuildingActorToEdit != NULL && BuildingActorToEdit->EditingPlayer == PlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
+	if (BuildingActorToEdit != NULL && BuildingActorToEdit->EditingPlayer == FortPlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
 	{
 		BuildingActorToEdit->SetEditingPlayer(NULL);
-		BuildingActorToEdit->ReplaceBuildingActor(EBuildingReplacementType::BRT_Edited, NewBuildingClass, BuildingActorToEdit->GetCurrentBuildingLevel(), RotationIterations, bMirrored, PlayerController);
+		BuildingActorToEdit->ReplaceBuildingActor(EBuildingReplacementType::BRT_Edited, NewBuildingClass, BuildingActorToEdit->GetCurrentBuildingLevel(), RotationIterations, bMirrored, FortPlayerController);
 
-		UFortAnalytics::FireEvent_BuildingAction(PlayerController, L"Edit", BuildingActorToEdit, 0);
+		UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Edit", BuildingActorToEdit, 0);
 
 		if (GGameMode != NULL)
-			GGameMode->ScoreBuildingEdit(PlayerController, BuildingActorToEdit);
+			GGameMode->ScoreBuildingEdit(FortPlayerController, BuildingActorToEdit);
 	}
 }
 
-void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToEdit)
+void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
 {
-	if (BuildingActorToEdit != NULL && PlayerController->MyFortPawn != NULL && BuildingActorToEdit->EditingPlayer == PlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
+	if (BuildingActorToEdit != NULL && FortPlayerController->MyFortPawn != NULL && BuildingActorToEdit->EditingPlayer == FortPlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
 	{
 		BuildingActorToEdit->SetEditingPlayer(NULL);
 
 		UFortEditToolItemDefinition* EditToolItem = GetGameData()->EditToolItem.LoadSynchronous();
-		UFortWorldItem* WorldItem = PlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
+		UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
-		if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, PlayerController))
+		if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))
 		{
-			AFortWeap_EditingTool* EditingTool = Cast<AFortWeap_EditingTool>(PlayerController->MyFortPawn->CurrentWeapon);
+			AFortWeap_EditingTool* EditingTool = Cast<AFortWeap_EditingTool>(FortPlayerController->MyFortPawn->CurrentWeapon);
 
 			if (EditingTool != NULL)
 				EditingTool->SetEditActor(NULL);
@@ -249,23 +263,24 @@ void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* 
 	}
 }
 
-void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* PlayerController, ABuildingSMActor* BuildingActorToRepair)
+void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair)
 {
 	if (BuildingActorToRepair == NULL)
 		return;
 
-	int32 CostToRepair = BuildingActorToRepair->GetCostToRepair(PlayerController);
+	int32 CostToRepair = BuildingActorToRepair->GetCostToRepair(FortPlayerController);
 
 	if (CostToRepair <= 0)
 		return;
 
-	PlayerController->PayBuildingRepairCost(BuildingActorToRepair);
-	BuildingActorToRepair->RepairBuilding(PlayerController, CostToRepair);
+	FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
+	BuildingActorToRepair->RepairBuilding(FortPlayerController, CostToRepair);
 }
 
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1030 / 8, ServerAttemptInventoryDrop_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor);
