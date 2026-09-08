@@ -11,7 +11,18 @@ void FortPlayerControllerGameplay::GiveItemToInventoryOwner_StartGhostMode(TScri
 	AFortPlayerController* FortPlayerController = FortInventoryOwnerInterface->GetOwner<AFortPlayerController>();
 
 	if (FortPlayerController != NULL)
-		FortPlayerController->WorldInventory->AddItem(ItemDefinition, NumberToGive);
+	{
+		UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->AddItem(ItemDefinition, NumberToGive);
+
+		if (WorldItem != NULL)
+		{
+			if (UFortGadgetItemDefinition* FortGadgetItemDefinition = Cast<UFortGadgetItemDefinition>(ItemDefinition))
+			{
+				if (UFortWeaponItemDefinition* FortWeaponItemDefinition = Cast<UFortWeaponItemDefinition>(FortGadgetItemDefinition->GetDecoItemDefinition()))
+					FortWeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
+			}
+		}
+	}
 }
 
 void FortPlayerControllerGameplay::EndGhostMode(AFortPlayerControllerGameplay* FortPlayerControllerGameplay, FFrame& Stack)
@@ -24,14 +35,14 @@ void FortPlayerControllerGameplay::EndGhostMode(AFortPlayerControllerGameplay* F
 
 		if (WorldItem != NULL)
 			WorldInventory->RemoveItem(WorldItem->ItemEntry.ItemGuid);
-	}
 
-	FortPlayerControllerGameplay->GhostModeRepData.bInGhostMode = false;
-	FortPlayerControllerGameplay->CheckGhostModeItemRemoved(FortPlayerControllerGameplay->GhostModeRepData.GhostModeItemDef);
+		FortPlayerControllerGameplay->GhostModeRepData.bInGhostMode = false;
+		FortPlayerControllerGameplay->CheckGhostModeItemRemoved(FortPlayerControllerGameplay->GhostModeRepData.GhostModeItemDef);
+	}
 }
 
 void FortPlayerControllerGameplay::Setup()
 {
-	Utils::Rel32(InSDKUtils::GetImageBase() + 0x132750F, GiveItemToInventoryOwner_StartGhostMode);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerControllerGameplay.EndGhostMode"), EndGhostMode);
+	Utils::Rel32(InSDKUtils::GetImageBase() + 0x132750F, GiveItemToInventoryOwner_StartGhostMode);
 }

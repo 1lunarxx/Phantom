@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortInventory.h"
 
-void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
+UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 {
 	if (Count <= 0)
-		return;
+		return NULL;
 
 	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
 
 	if (WorldItem == NULL)
-		return;
+		return NULL;
 
 	InitializeExistingItem(WorldItem);
 
@@ -22,6 +22,8 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 		}
 	}
+
+	return WorldItem;
 }
 
 void AFortInventory::AddItem(FFortItemEntry* ItemEntry)

@@ -10,7 +10,7 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 
 	if (GetAsyncKeyState(VK_F3) & 1)
 	{
-		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", nullptr);
+		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", NULL);
 	}
 
 	Originals::TickFlush(NetDriver, DeltaSeconds);

@@ -6381,7 +6381,7 @@ public:
 public:
 	void HandleInventoryLocalUpdate();
 public:
-	void AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
+	UFortWorldItem* AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
 	void AddItem(FFortItemEntry* ItemEntry);
 	void RemoveItem(FGuid& ItemGuid);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
