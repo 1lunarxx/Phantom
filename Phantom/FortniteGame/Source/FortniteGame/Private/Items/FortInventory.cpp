@@ -11,17 +11,20 @@ void AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 	if (WorldItem == NULL)
 		return;
 
+	InitializeExistingItem(WorldItem);
+
 	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
 	{
 		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-	}
 
-	if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
-	{
-		WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-	}
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 
-	InitializeExistingItem(WorldItem);
+			if (UFortGadgetItemDefinition* FortGadgetItemDefinition = Cast<UFortGadgetItemDefinition>(ItemDefinition))
+				FortGadgetItemDefinition->ApplyGadgetData(FortInventoryOwnerInterface, WorldItem, false);
+		}
+	}
 }
 
 void AFortInventory::AddItem(FFortItemEntry* ItemEntry)
@@ -31,17 +34,20 @@ void AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 	if (WorldItem == NULL)
 		return;
 
+	InitializeExistingItem(WorldItem);
+
 	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
 	{
 		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-	}
 
-	if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
-	{
-		WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-	}
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 
-	InitializeExistingItem(WorldItem);
+			if (UFortGadgetItemDefinition* FortGadgetItemDefinition = Cast<UFortGadgetItemDefinition>(ItemEntry->ItemDefinition))
+				FortGadgetItemDefinition->ApplyGadgetData(FortInventoryOwnerInterface, WorldItem, false);
+		}
+	}
 }
 
 void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
@@ -123,9 +129,15 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid)
 
 	if (WorldItem != NULL)
 	{
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
 		{
-			WorldItem->OnItemInstanceRemoved(FortInventoryOwnerInterface, ItemEntry->Count);
+			if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+			{
+				WorldItem->OnItemInstanceRemoved(FortInventoryOwnerInterface, ItemEntry->Count);
+
+				if (UFortGadgetItemDefinition* FortGadgetItemDefinition = Cast<UFortGadgetItemDefinition>(ItemEntry->ItemDefinition))
+					FortGadgetItemDefinition->RemoveGadgetData(FortInventoryOwnerInterface, WorldItem);
+			}
 		}
 
 		WorldItem->RemoveFromInventory();

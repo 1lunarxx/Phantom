@@ -33,6 +33,7 @@
 #include "FortniteGame/Public/Pawns/FortPlayerPawn.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
+#include "FortniteGame/Public/Player/FortPlayerControllerGameplay.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -75,6 +76,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortPlayerPawn::Setup();
     FortWorldItem::Setup();
     FortAthenaSupplyDrop::Setup();
+    FortPlayerControllerGameplay::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 

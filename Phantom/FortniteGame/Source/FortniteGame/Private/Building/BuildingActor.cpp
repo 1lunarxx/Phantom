@@ -30,7 +30,7 @@ void BuildingActor::BeginPlay(ABGAConsumableSpawner* BGAConsumableSpawner)
         if (BGAConsumableWrapperItemDefinition == NULL)
             continue;
 
-        FVector Location = UFortKismetLibrary::FindGroundLocationAt(GWorld, NULL, BGAConsumableSpawner->K2_GetActorLocation(), -1000.f, 2500.f, FName(L"FortDynamicMeshPhysics"));
+        FVector Location = BGAConsumableSpawner->K2_GetActorLocation();
         FRotator Rotation = BGAConsumableSpawner->K2_GetActorRotation();
 
         GWorld->SpawnActor(BGAConsumableWrapperItemDefinition->ConsumableClass.Get(), &Location, &Rotation, NULL);

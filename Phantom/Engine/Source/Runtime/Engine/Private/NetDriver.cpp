@@ -8,9 +8,9 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 		ReplicationDriver->ServerReplicateActors();
 	}
 
-	if (GetKeyState(VK_F3))
+	if (GetAsyncKeyState(VK_F3) & 1)
 	{
-		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", NULL);
+		UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), L"startaircraft", nullptr);
 	}
 
 	Originals::TickFlush(NetDriver, DeltaSeconds);

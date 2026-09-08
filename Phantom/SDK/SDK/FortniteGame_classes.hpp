@@ -1887,7 +1887,18 @@ public:
 	struct FGameplayAttribute GetLevelAttribute() const;
 	bool HasChargeUp() const;
 	bool HasTrackedAttributes() const;
+public:
+	void ApplyGadgetData(class IFortInventoryOwnerInterface* InventoryOwner, UFortItem* Item, bool bLoadedFromRecord)
+	{
+		static void (*ApplyGadgetData)(UFortGadgetItemDefinition*, IFortInventoryOwnerInterface*, UFortItem*, bool) = decltype(ApplyGadgetData)(InSDKUtils::GetImageBase() + 0x10526B0);
+		ApplyGadgetData(this, InventoryOwner, Item, bLoadedFromRecord);
+	}
 
+	void RemoveGadgetData(class IFortInventoryOwnerInterface* InventoryOwner, UFortItem* Item)
+	{
+		static void (*RemoveGadgetData)(UFortGadgetItemDefinition*, IFortInventoryOwnerInterface*, UFortItem*) = decltype(RemoveGadgetData)(InSDKUtils::GetImageBase() + 0x1074760);
+		RemoveGadgetData(this, InventoryOwner, Item);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -1924,7 +1935,6 @@ class UAthenaGadgetItemDefinition final : public UFortGadgetItemDefinition
 public:
 	bool                                          bIgnoreSingletonInventoryCheck;                    // 0x0A50(0x0001)(Edit, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	uint8                                         Pad_A51[0xF];                                      // 0x0A51(0x000F)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
 public:
 	static class UClass* StaticClass()
 	{
@@ -39448,7 +39458,6 @@ public:
 	void ServerEnableSlot(EFortQuickBars InQuickBar, int32 SlotIndex);
 	void ServerRemoveItemInternal(const struct FGuid& Item, bool bFindReplacement, bool bForce);
 	void ServerSwapItemsInternal(EFortQuickBars QuickBarA, int32 SlotIndexA, EFortQuickBars QuickBarB, int32 SlotIndexB);
-
 public:
 	static class UClass* StaticClass()
 	{
