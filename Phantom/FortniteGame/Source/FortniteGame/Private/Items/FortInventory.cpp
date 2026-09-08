@@ -123,6 +123,11 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid)
 
 	if (WorldItem != NULL)
 	{
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceRemoved(FortInventoryOwnerInterface, ItemEntry->Count);
+		}
+
 		WorldItem->RemoveFromInventory();
 
 		OnRemoveItemStack(WorldItem, &ItemGuid);

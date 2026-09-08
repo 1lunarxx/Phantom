@@ -56998,6 +56998,12 @@ public:
 		OnItemInstanceAdded(this, InventoryOwner);
 	}
 
+	void OnItemInstanceRemoved(IFortInventoryOwnerInterface* InventoryOwner, int NumInStackOnRemove)
+	{
+		static void(*OnItemInstanceRemoved)(UFortWorldItem*, IFortInventoryOwnerInterface*, int) = decltype(OnItemInstanceRemoved)(InSDKUtils::GetImageBase() + 0x109C600);
+		OnItemInstanceRemoved(this, InventoryOwner, NumInStackOnRemove);
+	}
+
 	void RemoveFromInventory()
 	{
 		static void(*RemoveFromInventory)(UFortWorldItem*) = decltype(RemoveFromInventory)(InSDKUtils::GetImageBase() + 0x10D13A0);

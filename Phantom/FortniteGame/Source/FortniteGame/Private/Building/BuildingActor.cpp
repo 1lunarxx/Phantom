@@ -42,5 +42,6 @@ void BuildingActor::BeginPlay(ABGAConsumableSpawner* BGAConsumableSpawner)
 void BuildingActor::Setup()
 {
 	Utils::Hook(InSDKUtils::GetImageBase() + 0x149E410, OnDeathServer, (void**)&Originals::OnDeathServer);
-    Utils::Hook(InSDKUtils::GetImageBase() + 0xD65060, BeginPlay, (void**)&Originals::BeginPlay);
+
+    Utils::Virtual(ABGAConsumableSpawner::GetDefaultObj()->VTable, 0x2F8 / 8, BeginPlay, (void**)&Originals::BeginPlay);
 }
