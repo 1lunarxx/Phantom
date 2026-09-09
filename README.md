@@ -18,6 +18,5 @@ If you know how to do certain functions properly, feel free to make a pull reque
 - Quests
 - Proper Match Stats
 - Deimos Spawning
-- Prefabs
 
 Credits: Andr1ww for some help on Inventory, and Building.
