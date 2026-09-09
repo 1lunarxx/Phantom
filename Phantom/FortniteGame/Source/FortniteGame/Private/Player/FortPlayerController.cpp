@@ -48,7 +48,7 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 void FortPlayerController::ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg)
 {
 	if (FortPlayerController->CheatManager == NULL)
-		FortPlayerController->CheatManager = NewObject<UCheatManager>(FortPlayerController);
+		FortPlayerController->CheatManager = NewObject<UFortCheatManager>(FortPlayerController);
 
 	if (FortPlayerController->CheatManager != NULL)
 	{

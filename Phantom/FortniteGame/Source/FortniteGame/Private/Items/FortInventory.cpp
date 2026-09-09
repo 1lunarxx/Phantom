@@ -69,7 +69,6 @@ void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const 
 	}
 }
 
-
 UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 {
 	if (Count <= 0)
@@ -115,6 +114,21 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 	}
 
 	return WorldItem;
+}
+
+void AFortInventory::AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count)
+{
+	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemDefinition);
+
+	if (WorldItem == NULL)
+	{
+		AddItem(ItemDefinition, Count);
+	}
+	else
+	{
+		WorldItem->ItemEntry.Count += Count;
+		UpdateItemEntry(&WorldItem->ItemEntry);
+	}
 }
 
 void AFortInventory::RemoveItem(FGuid& ItemGuid)
@@ -168,11 +182,7 @@ void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
 		return;
 
 	*ItemEntry = *NewItemEntry;
-
-	Inventory.MarkItemDirty(*ItemEntry);
-
-	bRequiresLocalUpdate = true;
-	HandleInventoryLocalUpdate();
+	SetItemRequiresUpdate(ItemEntry);
 }
 
 FFortItemEntry* AFortInventory::GetReplicatedItemEntry(FGuid* ItemGuid)

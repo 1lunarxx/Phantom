@@ -12,8 +12,6 @@
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
 #include "FortniteGame/Public/Online/FortGameSession.h"
-#include "FortniteGame/Public/Player/FortPlayerControllerZone.h"
-#include "FortniteGame/Public/Player/FortPlayerController.h"
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
@@ -33,7 +31,11 @@
 #include "FortniteGame/Public/Pawns/FortPlayerPawn.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
+
 #include "FortniteGame/Public/Player/FortPlayerControllerGameplay.h"
+#include "FortniteGame/Public/Player/FortCheatManager.h"
+#include "FortniteGame/Public/Player/FortPlayerControllerZone.h"
+#include "FortniteGame/Public/Player/FortPlayerController.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -77,6 +79,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortWorldItem::Setup();
     FortAthenaSupplyDrop::Setup();
     FortPlayerControllerGameplay::Setup();
+    FortCheatManager::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 

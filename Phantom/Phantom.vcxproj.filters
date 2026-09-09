@@ -129,6 +129,12 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerGameplay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortCheatManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMisc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -255,6 +261,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerControllerGameplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortCheatManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,6 +7,12 @@ void FortPlayerControllerAthena::ServerRestartPlayer_Implementation(AFortPlayerC
 	ServerRestartPlayer(FortPlayerControllerAthena);
 }
 
+void FortPlayerControllerAthena::ServerReturnToMainMenu_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena)
+{
+	static void(*ServerReturnToMainMenu)(AFortPlayerControllerZone*) = decltype(ServerReturnToMainMenu)(AFortPlayerControllerZone::GetDefaultObj()->VTable[0x1270 / 8]);
+	ServerReturnToMainMenu(FortPlayerControllerAthena);
+}
+
 void FortPlayerControllerAthena::RemoveAllInventoryItems(AFortPlayerControllerAthena* FortPlayerControllerAthena)
 {
 	if (AFortInventory* WorldInventory = FortPlayerControllerAthena->GetWorldInventory())
@@ -21,6 +27,7 @@ void FortPlayerControllerAthena::RemoveAllInventoryItems(AFortPlayerControllerAt
 void FortPlayerControllerAthena::Setup()
 {
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x7E8 / 8, ServerRestartPlayer_Implementation);
+	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x1270 / 8, ServerReturnToMainMenu_Implementation);
 
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xCBAC01, RemoveAllInventoryItems);
 }

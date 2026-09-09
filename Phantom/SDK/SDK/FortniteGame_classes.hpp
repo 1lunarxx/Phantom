@@ -6389,6 +6389,7 @@ public:
 public:
 	UFortWorldItem* AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
 	UFortWorldItem* AddItem(FFortItemEntry* ItemEntry);
+	void AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count);
 	void RemoveItem(FGuid& ItemGuid);
 	void RemoveItem(FGuid& ItemGuid, int32 Count);
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
@@ -6427,6 +6428,12 @@ public:
 	{
 		static void(*UpdateItemInstances)(AFortInventory*) = decltype(UpdateItemInstances)(InSDKUtils::GetImageBase() + 0x1076B90);
 		UpdateItemInstances(this);
+	}
+
+	void SetItemRequiresUpdate(FFortItemEntry* Item)
+	{
+		static void(*SetItemRequiresUpdate)(AFortInventory*, FFortItemEntry*) = decltype(SetItemRequiresUpdate)(InSDKUtils::GetImageBase() + 0x1076280);
+		SetItemRequiresUpdate(this, Item);
 	}
 
 	void HandleInventoryItemRemoved()
