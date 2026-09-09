@@ -11,5 +11,7 @@ If you know how to do certain functions properly, feel free to make a pull reque
 - Food Fight (unfinished)
 - Proper Building & Editing
 - Harvesting
+- Gadgets (Ghost mode etc)
+- Others: Cheat Commands, Emoting, Some proper stuff
 
 Credits: Andr1ww for some help on Inventory, and Building.
