@@ -51471,7 +51471,9 @@ public:
 	struct FLinearColor GetPinColor() const;
 	bool IsDisconnected() const;
 	bool IsSquadDead() const;
-
+public:
+	void InitializeDeathInfo(const FDeathInfo* InDeathInfo);
+	void IncrementKillStreak();
 public:
 	static class UClass* StaticClass()
 	{

@@ -17,8 +17,21 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 	SetConsoleTitleA("Phantom | Ready");
 }
 
+void FortGameModeZone::HandleStartingNewPlayer_Implementation(AFortGameModeZone* FortGameModeZone, AFortPlayerController* NewPlayer)
+{
+	Originals::HandleStartingNewPlayer_Implementation(FortGameModeZone, NewPlayer);
+
+	if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(NewPlayer))
+	{
+		if (FortPlayerControllerAthena->MatchReport == NULL)
+			FortPlayerControllerAthena->MatchReport = NewObject<UAthenaPlayerMatchReport>(FortPlayerControllerAthena);
+	}
+}
+
 void FortGameModeZone::Setup()
 {
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xC98E3B, CreateAIDirector);
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x134F889, FinishWorldInitialization);
+
+	Utils::Virtual(AFortGameModeAthena::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer_Implementation, (void**)&Originals::HandleStartingNewPlayer_Implementation);
 }

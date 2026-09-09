@@ -193,6 +193,25 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 					NewBuilding->SetMirrored(bMirrored);
 					NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, FortPlayerController, true);
 
+					if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
+					{
+						if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
+						{
+							switch (NewBuilding->ResourceType)
+							{
+							case EFortResourceType::Wood:
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[13] += 10; // GameplayStat.Profile.Match.UsedWood
+								break;
+							case EFortResourceType::Stone:
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[14] += 10; // GameplayStat.Profile.Match.UsedStone
+								break;
+							case EFortResourceType::Metal:
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[15] += 10; // GameplayStat.Profile.Match.UsedMetal
+								break;
+							}
+						}
+					}
+
 					FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
 
 					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, 0);

@@ -26,9 +26,6 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 					float MaxResourcesToSpawn = BuildingSMActor->MaxResourcesToSpawn;
 					int32 ResourceCount = (int32)((MaxResourcesToSpawn / BuildingSMActor->GetMaxHealth()) * ActualDamageDealt);
 
-/*					ResourceCount = ResourceCount + BuildingSMActor->UndistributedResources;
-					BuildingSMActor->UndistributedResources = ResourceCount - (float)(int32)ResourceCount;*/
-
 					bool bDestroyed = false;
 
 					if (!BuildingSMActor->HasHealthLeft())
@@ -59,6 +56,25 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 						}
 
 						FortPlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, ResourceType, ResourceCount, bDestroyed, bJustHitWeakspot);
+
+						if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
+						{
+							if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
+							{
+								switch (ResourceType)
+								{
+								case EFortResourceType::Wood:
+									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[10] += ResourceCount; // GameplayStat.Profile.Match.GatheredWood
+									break;
+								case EFortResourceType::Stone:
+									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[11] += ResourceCount; // GameplayStat.Profile.Match.GatheredStone
+									break;
+								case EFortResourceType::Metal:
+									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[12] += ResourceCount; // GameplayStat.Profile.Match.GatheredMetal
+									break;
+								}
+							}
+						}
 					}
 				}
 			}
