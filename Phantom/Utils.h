@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "CoreUObject/Public/UObject/Stack.h"
 
 #define ANY_PACKAGE (UObject*)-1
 
@@ -223,51 +224,6 @@ public:
             memset(Impl, 0x90, sizeof(int) + 1);
         }
     }
-};
-
-class FOutputDevice
-{
-public:
-    void** VTable;
-    bool bSuppressEventTag;
-    bool bAutoEmitLineTerminator;
-};
-
-class FFrame : public FOutputDevice
-{
-public:
-    UFunction* Node;
-    UObject* Object;
-    uint8* Code;
-    uint8* Locals;
-    void* MostRecentProperty;
-    uint8_t* MostRecentPropertyAddress;
-    uint8_t _Padding1[0x40];
-    UField* PropertyChainForCompiledIn;
-
-public:
-    inline void StepCompiledIn(void* const Result = NULL)
-    {
-        if (Code)
-        {
-            static void(*StepCompiledInCode)(FFrame*, UObject*, void* const) = decltype(StepCompiledInCode)(InSDKUtils::GetImageBase() + 0x19A35F0);
-            StepCompiledInCode(this, Object, Result);
-        }
-        else
-        {
-            const UField* Prop = *(const UField**)(__int64(this) + 0x80);
-
-            if (Prop != NULL)
-            {
-                *(const UField**)(__int64(this) + 0x80) = *(const UField**)(__int64(Prop) + 0x28);
-
-                static void(*StepExplicitProperty)(FFrame*, void* const, const UField*) = decltype(StepExplicitProperty)(InSDKUtils::GetImageBase() + 0x19A3620);
-                StepExplicitProperty(this, Result, Prop);
-            }
-        }
-    }
-
-    void IncrementCode() { Code += !!Code; }
 };
 
 template<typename UEType>
