@@ -17,7 +17,17 @@ AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* FortAthena
 
     Stack.IncrementCode();
 
-    return *Ret = AFortPickup::SpawnPickup(FFortItemEntry(ItemDefinition, NumberToSpawn, 0), Position, NumberToSpawn, EFortPickupSourceTypeFlag::Container_SupplyDrop, 3);
+    FFortItemEntry ItemEntry = FFortItemEntry(ItemDefinition, NumberToSpawn, 0);
+
+    if (UFortWeaponRangedItemDefinition* WeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(ItemDefinition))
+    {
+        FFortRangedWeaponStats OutRow;
+        UFortKismetLibrary::GetRangedWeaponStatsRow(WeaponRangedItemDefinition->WeaponStatHandle, &OutRow);
+
+        ItemEntry.LoadedAmmo = OutRow.ClipSize;
+    }
+
+    return *Ret = AFortPickup::SpawnPickup(ItemEntry, Position, NumberToSpawn, EFortPickupSourceTypeFlag::Container_SupplyDrop, 3);
 }
 
 void FortAthenaSupplyDrop::Setup()

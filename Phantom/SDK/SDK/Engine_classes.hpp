@@ -6999,6 +6999,12 @@ public:
 		static AActor* (*SpawnActor)(UWorld*, UClass*, const FVector*, const FRotator*, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
 		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
 	}
+
+	template <class T>
+	T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL);
+public:
+	class AFortGameStateAthena* GetGameState();
+	class AFortGameModeAthena* GetGameMode();
 public:
 	static class UClass* StaticClass()
 	{

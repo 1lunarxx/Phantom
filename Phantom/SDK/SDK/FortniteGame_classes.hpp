@@ -904,6 +904,7 @@ public:
 public:
 	void SetupTeamStates();
 	void SpawnModeObjectives();
+	void SetupTeamObjective(EBarrierFoodTeam FoodTeam, FVector Location, FRotator Rotation);
 
 	void OnObjectiveDestroyed(AAthenaBarrierObjective* Objective);
 	void SpawnBarrier(const FVector* WallStart, const FVector* WallEnd);
@@ -18118,6 +18119,12 @@ public:
 	{
 		static void (*GetPlayerBuildableClasses)(AFortGameStateAthena*, TArray<TSubclassOf<ABuildingSMActor>>*, const FPlayerBuildableClassFilter*) = decltype(GetPlayerBuildableClasses)(InSDKUtils::GetImageBase() + 0xF6BA30);
 		GetPlayerBuildableClasses(this, OutBuildableClasses, ClassFilter);
+	}
+
+	UFortPlaylistAthena* GetCurrentPlaylistData()
+	{
+		static UFortPlaylistAthena* (*GetCurrentPlaylistData)(AFortGameStateAthena*) = decltype(GetCurrentPlaylistData)(InSDKUtils::GetImageBase() + 0xCA10C0);
+		return GetCurrentPlaylistData(this);
 	}
 public:
 	static class UClass* StaticClass()

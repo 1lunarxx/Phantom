@@ -5,10 +5,11 @@ void AFortAthenaMutator_Barrier::SetupTeamStates()
 {
     if (CachedGameState != NULL)
     {
-        UFortPlaylistAthena* CurrentPlaylistData = CachedGameState->CurrentPlaylistInfo.BasePlaylist;
+        UFortPlaylistAthena* CurrentPlaylistData = CachedGameState->GetCurrentPlaylistData();
 
         if (CurrentPlaylistData != NULL)
         {
+            Team_0_State.FoodTeam = EBarrierFoodTeam::Burger;
             Team_0_State.TeamNum = CurrentPlaylistData->DefaultFirstTeam;
             Team_1_State.FoodTeam = EBarrierFoodTeam::Tomato;
             Team_1_State.TeamNum = CurrentPlaylistData->DefaultLastTeam;
@@ -25,96 +26,64 @@ void AFortAthenaMutator_Barrier::SpawnModeObjectives()
 {
     float SafeZonePhaseWhenToBringDownWall = UFortScalableFloatUtils::GetValueAtLevel(this->SafeZonePhaseWhenToBringDownWall, 0.f);
     float ObjectiveDistanceFromWall = UFortScalableFloatUtils::GetValueAtLevel(this->ObjectiveDistanceFromWall, 0.f);
-    float ObjectiveZOffset = UFortScalableFloatUtils::GetValueAtLevel(this->ObjectiveZOffset, 0.f);
 
     FVector Team_0_Location = GGameMode->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] + (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
     FVector Team_1_Location = GGameMode->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] - (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
 
-    Team_0_Location.Z = 7000.f;
-    Team_1_Location.Z = 7000.f;
+    Team_0_Location.Z = 6500.f;
+    Team_1_Location.Z = 6500.f;
 
     FRotator Team_0_Rotation = UKismetMathLibrary::Conv_VectorToRotator(Team_1_Location - Team_0_Location);
     FRotator Team_1_Rotation = UKismetMathLibrary::Conv_VectorToRotator(Team_0_Location - Team_1_Location);
 
-    if (AAthenaBarrierFlag* BarrierFlag = SpawnObjectiveActor(ObjectiveFlag.Get(), &Team_0_Location, &Team_0_Rotation))
-    {
-        BarrierFlag->SetFoodTeam(Team_0_State.FoodTeam);
-        BarrierFlag->SetTeam(Team_0_State.TeamNum);
+    SetupTeamObjective(EBarrierFoodTeam::Burger, Team_0_Location, Team_0_Rotation);
+    SetupTeamObjective(EBarrierFoodTeam::Tomato, Team_1_Location, Team_1_Rotation);
+}
 
-        BarrierFlag->SetCurrentState(EBarrierFlagState::FlagUp);
+void AFortAthenaMutator_Barrier::SetupTeamObjective(EBarrierFoodTeam FoodTeam, FVector Location, FRotator Rotation)
+{
+    FBarrierTeamState* TeamState = &Team_0_State;
 
-        if (AAthenaBarrierObjective* ObjectiveActor = BarrierFlag->GetObjectiveActor())
-        {
-            ObjectiveActor->SetFoodTeam(Team_0_State.FoodTeam);
-            ObjectiveActor->SetTeam(Team_0_State.TeamNum);
+    if (FoodTeam == EBarrierFoodTeam::Tomato)
+        TeamState = &Team_1_State;
 
-            ObjectiveActor->SetAllowDamage(true);
-            ObjectiveActor->SetObjectiveDamageState(EBarrierObjectiveDamageState::Health_50);
+    AAthenaBarrierFlag* BarrierFlag = SpawnObjectiveActor(ObjectiveFlag.Get(), &Location, &Rotation);
 
-            Team_0_State.ObjectiveObject = ObjectiveActor;
-        }
+    if (BarrierFlag == NULL)
+        return;
 
-        Team_0_State.ObjectiveFlag = BarrierFlag;
-        Team_0_State.bRespawnEnabled = true;
-    }
+    BarrierFlag->SetTeam(TeamState->TeamNum);
+    BarrierFlag->SetFoodTeam(TeamState->FoodTeam);
+    BarrierFlag->SetCurrentState(EBarrierFlagState::FlagUp);
 
-    if (AAthenaBarrierFlag* BarrierFlag = SpawnObjectiveActor(ObjectiveFlag, &Team_1_Location, &Team_1_Rotation))
-    {
-        BarrierFlag->SetFoodTeam(Team_1_State.FoodTeam);
-        BarrierFlag->SetTeam(Team_1_State.TeamNum);
+    TeamState->ObjectiveFlag = BarrierFlag;
+    TeamState->bRespawnEnabled = true;
 
-        BarrierFlag->SetCurrentState(EBarrierFlagState::FlagUp);
+    FGameplayMutatorObjectData MutatorObjectData = FGameplayMutatorObjectData{};
 
-        if (AAthenaBarrierObjective* ObjectiveActor = BarrierFlag->GetObjectiveActor())
-        {
-            ObjectiveActor->SetFoodTeam(Team_1_State.FoodTeam);
-            ObjectiveActor->SetTeam(Team_1_State.TeamNum);
+    MutatorObjectData.ReplicationID = -1;
+    MutatorObjectData.ReplicationKey = -1;
+    MutatorObjectData.MostRecentArrayReplicationKey = -1;
+    MutatorObjectData.TheObject = BarrierFlag;
 
-            ObjectiveActor->SetAllowDamage(true);
-            ObjectiveActor->SetObjectiveDamageState(EBarrierObjectiveDamageState::Health_50);
+    CachedGameState->MutatorObjectDataArray.MarkItemDirty(MutatorObjectData);
+    CachedGameState->MutatorObjectDataArray.ObjectDataList.Add(MutatorObjectData);
 
-            Team_1_State.ObjectiveObject = ObjectiveActor;
-        }
+    AAthenaBarrierObjective* ObjectiveActor = BarrierFlag->GetObjectiveActor();
 
-        Team_1_State.ObjectiveFlag = BarrierFlag;
-        Team_1_State.bRespawnEnabled = true;
-    }
+    if (ObjectiveActor == NULL)
+        return;
 
-    if (Team_0_State.ObjectiveFlag != NULL)
-    {
-        FGameplayMutatorObjectData ObjectData = FGameplayMutatorObjectData{};
+    ObjectiveActor->SetTeam(TeamState->TeamNum);
+    ObjectiveActor->SetFoodTeam(TeamState->FoodTeam);
+    ObjectiveActor->SetAllowDamage(true);
 
-        ObjectData.ReplicationID = -1;
-        ObjectData.ReplicationKey = -1;
-        ObjectData.MostRecentArrayReplicationKey = -1;
-        ObjectData.TheObject = Team_0_State.ObjectiveFlag;
-
-        CachedGameState->MutatorObjectDataArray.MarkItemDirty(ObjectData);
-        CachedGameState->MutatorObjectDataArray.ObjectDataList.Add(ObjectData);
-    }
-
-    if (Team_1_State.ObjectiveFlag != NULL)
-    {
-        FGameplayMutatorObjectData ObjectData = FGameplayMutatorObjectData{};
-
-        ObjectData.ReplicationID = -1;
-        ObjectData.ReplicationKey = -1;
-        ObjectData.MostRecentArrayReplicationKey = -1;
-        ObjectData.TheObject = Team_1_State.ObjectiveFlag;
-
-        CachedGameState->MutatorObjectDataArray.MarkItemDirty(ObjectData);
-        CachedGameState->MutatorObjectDataArray.ObjectDataList.Add(ObjectData);
-    }
+    TeamState->ObjectiveObject = ObjectiveActor;
 }
 
 AAthenaBarrierFlag* AFortAthenaMutator_Barrier::SpawnObjectiveActor(TSubclassOf<AAthenaBarrierFlag> InActorClass, const FVector* InActorLocation, const FRotator* InActorRotation)
 {
-    AAthenaBarrierFlag* ObjectiveFlag = Cast<AAthenaBarrierFlag>(GWorld->SpawnActor(InActorClass, InActorLocation, InActorRotation, NULL));
-
-    if (ObjectiveFlag != NULL)
-        UGameplayStatics::FinishSpawningActor(ObjectiveFlag, UKismetMathLibrary::MakeTransform(*InActorLocation, *InActorRotation, FVector(1, 1, 1)));
-
-    return ObjectiveFlag;
+    return GWorld->SpawnActor<AAthenaBarrierFlag>(*InActorLocation, *InActorRotation, InActorClass.Get());
 }
 
 void AFortAthenaMutator_Barrier::OnObjectiveDestroyed(AAthenaBarrierObjective* Objective)
@@ -149,8 +118,9 @@ void FortAthenaMutator_Barrier::BeginPlay(AFortAthenaMutator_Barrier* FortAthena
     FAircraftFlightInfo& FlightPathMidLine = GGameState->FlightPathMidLine;
 
     FVector FlightMidLineEnd = FlightPathMidLine.GetFlightEnd();
+    FVector FlightStartLocation = FlightPathMidLine.FlightStartLocation;
 
-    FortAthenaMutator_Barrier->SpawnBarrier(&FlightPathMidLine.FlightStartLocation, &FlightMidLineEnd);
+    FortAthenaMutator_Barrier->SpawnBarrier(&FlightStartLocation, &FlightMidLineEnd);
     FortAthenaMutator_Barrier->SetupTeamStates();
 }
 

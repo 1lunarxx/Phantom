@@ -3,7 +3,7 @@
 
 void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 {
-	FortGameModeZone->AIDirector = Utils::SpawnActor<AFortAIDirector>(FVector(), FRotator(), AFortAIDirector::StaticClass(), FortGameModeZone);
+	FortGameModeZone->AIDirector = GWorld->SpawnActor<AFortAIDirector>(FVector(), FRotator(), AFortAIDirector::StaticClass(), FortGameModeZone);
 	FortGameModeZone->AIDirector->Activate();
 }
 

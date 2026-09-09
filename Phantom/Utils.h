@@ -1,33 +1,8 @@
 #pragma once
 #include "pch.h"
 #include "CoreUObject/Public/UObject/Stack.h"
-
-#define ANY_PACKAGE (UObject*)-1
-
-template<class T>
-static T* Cast(UObject* Object)
-{
-    return Object && (Object->IsA(T::StaticClass())) ? (T*)Object : NULL;
-}
-
-static AFortGameStateAthena* GetGameState()
-{
-    return Cast<AFortGameStateAthena>(GWorld->GameState);
-}
-
-static AFortGameModeAthena* GetGameMode()
-{
-    return Cast<AFortGameModeAthena>(GWorld->AuthorityGameMode);
-}
-
-template<typename T>
-static T* NewObject(UObject* Object, UClass* Class = NULL)
-{
-    return (T*)UGameplayStatics::SpawnObject(Class ? Class : T::StaticClass(), Object);
-}
-
-#define GGameState GetGameState()
-#define GGameMode GetGameMode()
+#include "CoreUObject/Public/UObject/UObjectGlobals.h"
+#include "CoreUObject/Public/Templates/Casts.h"
 
 class Utils
 {
@@ -89,19 +64,6 @@ public:
 
         *(_Is*)Target = Byte;
         VirtualProtect(LPVOID(Target), sizeof(_Is), OldProtect, &OldProtect);
-    }
-
-    template <class T>
-    static inline T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL)
-    {
-        FTransform Transform = UKismetMathLibrary::MakeTransform(Location, Rotation, FVector(1, 1, 1));
-
-        AActor* Actor = UGameplayStatics::BeginDeferredActorSpawnFromClass(UWorld::GetWorld(), InClass, Transform, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn, Owner);
-
-        if (Actor)
-            UGameplayStatics::FinishSpawningActor(Actor, Transform);
-
-        return (T*)Actor;
     }
 
     template<typename T = UObject>
@@ -239,3 +201,28 @@ UEType* TSoftClassPtr<UEType>::Get() const
 
     return static_cast<UEType*>(Obj);
 }
+
+template <class T>
+T* UWorld::SpawnActor(FVector Location, FRotator Rotation, UClass* InClass, AActor* Owner)
+{
+    AActor* Actor = SpawnActor(InClass, &Location, &Rotation, NULL);
+
+    if (Actor != NULL)
+        UGameplayStatics::FinishSpawningActor(Actor, UKismetMathLibrary::MakeTransform(Location, Rotation, FVector(1, 1, 1)));
+
+    return (T*)Actor;
+}
+
+FORCEINLINE AFortGameStateAthena* UWorld::GetGameState()
+{
+    return Cast<AFortGameStateAthena>(GameState);
+}
+
+FORCEINLINE AFortGameModeAthena* UWorld::GetGameMode()
+{
+    return Cast<AFortGameModeAthena>(AuthorityGameMode);
+}
+
+#define GGameState GWorld->GetGameState()
+#define GGameMode GWorld->GetGameMode()
+#define ANY_PACKAGE (UObject*)-1

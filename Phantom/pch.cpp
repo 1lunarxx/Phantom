@@ -38,3 +38,9 @@ void FFortItemEntry::SetLoadedAmmo(int InCount)
 		bIsDirty = 1;
 	}
 }
+
+void FGameplayMutatorObjectData::PostReplicatedAdd(struct FGameplayMutatorObjectDataArray* InArraySerializer)
+{
+	InArraySerializer->MarkItemDirty(*this);
+	InArraySerializer->ObjectDataList.Add(*this);
+}

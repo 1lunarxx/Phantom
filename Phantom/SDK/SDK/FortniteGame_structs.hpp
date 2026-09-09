@@ -10692,6 +10692,8 @@ public:
 	int32                                         ObjectValue1;                                      // 0x001C(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	int32                                         ObjectValue2;                                      // 0x0020(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_24[0x4];                                       // 0x0024(0x0004)(Fixing Struct Size After Last Property [ Dumper-7 ])
+public:
+	void PostReplicatedAdd(struct FGameplayMutatorObjectDataArray* InArraySerializer);
 };
 static_assert(alignof(FGameplayMutatorObjectData) == 0x000008, "Wrong alignment on FGameplayMutatorObjectData");
 static_assert(sizeof(FGameplayMutatorObjectData) == 0x000028, "Wrong size on FGameplayMutatorObjectData");
