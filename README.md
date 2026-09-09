@@ -12,7 +12,7 @@ If you know how to do certain functions properly, feel free to make a pull reque
 - Proper Building & Editing
 - Semi-Proper Harvesting
 - Gadgets (Ghost mode etc)
-- Others: Cheat Commands, Emoting, Some proper stuff
+- Others: Cheat Commands, Emoting, Unfinished Matchstats, Semi-Proper Dying, Some proper stuff
 
 ## TODO:
 - Quests
