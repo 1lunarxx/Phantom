@@ -14150,16 +14150,16 @@ public:
 		return CanAffordToPlaceBuildableClass(this, ClassToBuildData);
 	}
 
-	void PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
+	__int64 PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
 	{
-		static void(*PayBuildableClassPlacementCost)(AFortPlayerController*, FBuildingClassData*) = decltype(PayBuildableClassPlacementCost)(InSDKUtils::GetImageBase() + 0x12DF940);
-		PayBuildableClassPlacementCost(this, BuildingClassData);
+		static __int64 (*PayBuildableClassPlacementCost)(AFortPlayerController*, FBuildingClassData*) = decltype(PayBuildableClassPlacementCost)(InSDKUtils::GetImageBase() + 0x12DF940);
+		return PayBuildableClassPlacementCost(this, BuildingClassData);
 	}
 
-	void PayBuildingRepairCost(ABuildingSMActor* BuildingToRepair)
+	__int64 PayBuildingRepairCost(ABuildingSMActor* BuildingToRepair)
 	{
-		static void (*PayBuildingRepairCost)(AFortPlayerController*, ABuildingSMActor*) = decltype(PayBuildingRepairCost)(InSDKUtils::GetImageBase() + 0x12DFB50);
-		PayBuildingRepairCost(this, BuildingToRepair);
+		static __int64 (*PayBuildingRepairCost)(AFortPlayerController*, ABuildingSMActor*) = decltype(PayBuildingRepairCost)(InSDKUtils::GetImageBase() + 0x12DFB50);
+		return PayBuildingRepairCost(this, BuildingToRepair);
 	}
 
 	char HasRequiredBuildingLevel(int NewLevel, EFortResourceType ResourceType)
@@ -21517,6 +21517,12 @@ public:
 		static UFortResourceItemDefinition* (*GetResourceItemDefinition)(UFortGameData*, EFortResourceType) = decltype(GetResourceItemDefinition)(InSDKUtils::GetImageBase() + 0xEF3390);
 		return GetResourceItemDefinition(this, Type);
 	}
+
+	static UFortGameData* Get()
+	{
+		static UFortGameData* (*GetGameData)() = decltype(GetGameData)(InSDKUtils::GetImageBase() + 0xEE89F0);
+		return GetGameData();
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -21807,12 +21813,6 @@ static_assert(offsetof(UFortGameData, BannerColorData) == 0x0041D8, "Member 'UFo
 static_assert(offsetof(UFortGameData, BannerColorCategoryData) == 0x004200, "Member 'UFortGameData::BannerColorCategoryData' has a wrong offset!");
 static_assert(offsetof(UFortGameData, BannerColorMap) == 0x004228, "Member 'UFortGameData::BannerColorMap' has a wrong offset!");
 static_assert(offsetof(UFortGameData, BannerIconItemDefinition) == 0x004250, "Member 'UFortGameData::BannerIconItemDefinition' has a wrong offset!");
-
-static UFortGameData* GetGameData()
-{
-	static UFortGameData* (*GetGameData)() = decltype(GetGameData)(InSDKUtils::GetImageBase() + 0xEE89F0);
-	return GetGameData();
-}
 
 // Class FortniteGame.BuildingTrapDefender
 // 0x0050 (0x0E10 - 0x0DC0)

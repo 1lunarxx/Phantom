@@ -18,8 +18,8 @@ void FortPlayerControllerZone::ServerAcknowledgePossession_Implementation(AFortP
 			{
 				TScriptInterface<IAbilitySystemInterface> AbilitySystemInterfaceActor;
 
-				AbilitySystemInterfaceActor.ObjectPointer = PS;
-				AbilitySystemInterfaceActor.InterfacePointer = PS->GetInterfaceAddress<IAbilitySystemInterface>();
+				AbilitySystemInterfaceActor.ObjectPointer = FortPlayerControllerZone->MyFortPawn;
+				AbilitySystemInterfaceActor.InterfacePointer = FortPlayerControllerZone->MyFortPawn->GetInterfaceAddress<IAbilitySystemInterface>();
 
 				UFortKismetLibrary::EquipFortAbilitySet(AbilitySystemInterfaceActor, GenericPlayerAbilitySet, NULL);
 			}

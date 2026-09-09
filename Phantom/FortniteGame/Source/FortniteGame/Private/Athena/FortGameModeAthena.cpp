@@ -50,12 +50,14 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 
 APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot)
 {
+	APawn* DefaultPawn = FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);;
+
 	if (AFortPlayerControllerAthena* FortPlayerController = Cast<AFortPlayerControllerAthena>(NewPlayer))
 	{
 		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
 		{
 			TArray<FItemAndCount> StartingItems;
-			FortGameModeAthena->GetStartingItems(&StartingItems, true, NewPlayer);
+			FortGameModeAthena->GetStartingItems(&StartingItems, !FortPlayerController->bHasInitiallySpawned, NewPlayer);
 
 			for (const FItemAndCount& StartingItem : StartingItems)
 				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
@@ -64,7 +66,7 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 		}
 	}
 
-	return FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
+	return DefaultPawn;
 }
 
 void FortGameModeAthena::Setup()

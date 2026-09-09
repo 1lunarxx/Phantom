@@ -14,7 +14,7 @@ void FortCheatManager::GiveWood(UFortCheatManager* FortCheatManager, FFrame& Sta
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortResourceItemDefinition* WoodItemDefinition = GetGameData()->WoodItemDefinition.LoadSynchronous();
+	UFortResourceItemDefinition* WoodItemDefinition = UFortGameData::Get()->WoodItemDefinition.LoadSynchronous();
 
 	if (WoodItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(WoodItemDefinition, Amount);
@@ -32,7 +32,7 @@ void FortCheatManager::GiveMetal(UFortCheatManager* FortCheatManager, FFrame& St
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortResourceItemDefinition* MetalItemDefinition = GetGameData()->MetalItemDefinition.LoadSynchronous();
+	UFortResourceItemDefinition* MetalItemDefinition = UFortGameData::Get()->MetalItemDefinition.LoadSynchronous();
 
 	if (MetalItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(MetalItemDefinition, Amount);
@@ -50,7 +50,7 @@ void FortCheatManager::GiveStone(UFortCheatManager* FortCheatManager, FFrame& St
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortResourceItemDefinition* StoneItemDefinition = GetGameData()->StoneItemDefinition.LoadSynchronous();
+	UFortResourceItemDefinition* StoneItemDefinition = UFortGameData::Get()->StoneItemDefinition.LoadSynchronous();
 
 	if (StoneItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(StoneItemDefinition, Amount);
@@ -115,7 +115,7 @@ void FortCheatManager::GiveBluGlo(UFortCheatManager* FortCheatManager, FFrame& S
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortNeverPersistItemDefinition* BluGloItemDefinition = GetGameData()->BluGloItemDefinition.LoadSynchronous();
+	UFortNeverPersistItemDefinition* BluGloItemDefinition = UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous();
 
 	if (BluGloItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);

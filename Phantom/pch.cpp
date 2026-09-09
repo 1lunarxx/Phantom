@@ -25,3 +25,16 @@ FVector FAircraftFlightInfo::GetFlightEnd()
 
 	return FlightStartLocation + Direction * (FlightSpeed * TimeTillFlightEnd);
 }
+
+void FFortItemEntry::SetLoadedAmmo(int InCount)
+{
+	if (InCount != LoadedAmmo)
+	{
+		LoadedAmmo = InCount;
+
+		if (AFortInventory* FortInventory = ParentInventory.Get())
+			FortInventory->SetItemRequiresUpdate(this);
+
+		bIsDirty = 1;
+	}
+}

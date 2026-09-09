@@ -5,7 +5,7 @@
 class FortWorldItem
 {
 private:
-	static bool SetLoadedAmmo(UFortWorldItem* FortWorldItem, int InCount);
+	static void SetLoadedAmmo(UFortWorldItem* FortWorldItem, int InCount);
 public:
 	static void Setup();
 };

@@ -114,9 +114,6 @@
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\Abilities\GameplayAbility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Pawns\FortPlayerPawn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -252,9 +249,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\Abilities\GameplayAbility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Pawns\FortPlayerPawn.cpp">

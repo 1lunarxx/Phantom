@@ -21,6 +21,8 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 	}
 }
 
+// todo: make this better.
+
 void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash)
 {
 	AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory();
@@ -40,7 +42,7 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 		if (Count > ItemEntryToRemove->Count)
 			Count = ItemEntryToRemove->Count;
 
-		AFortPickup::SpawnPickup(*ItemEntryToRemove, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 20), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
+		AFortPickup::SpawnPickup(*ItemEntryToRemove, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
 		WorldInventory->RemoveItem(ItemEntryToRemove->ItemGuid, Count);
 	}
 }
@@ -82,7 +84,7 @@ void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* F
 			{
 				/*if (FortPlayerController->CanPerformNativeAction(SomeTag))*/
 				{
-					UFortGameData* GameData = GetGameData();
+					UFortGameData* GameData = UFortGameData::Get();
 
 					if (GameData == NULL)
 						return;
@@ -193,6 +195,8 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 					NewBuilding->SetMirrored(bMirrored);
 					NewBuilding->InitializeKismetSpawnedBuildingActor(NewBuilding, FortPlayerController, true);
 
+					int32 BuildableClassPlacementCost = FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
+
 					if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
 					{
 						if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
@@ -200,19 +204,17 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 							switch (NewBuilding->ResourceType)
 							{
 							case EFortResourceType::Wood:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[13] += 10; // GameplayStat.Profile.Match.UsedWood
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[13] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedWood
 								break;
 							case EFortResourceType::Stone:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[14] += 10; // GameplayStat.Profile.Match.UsedStone
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[14] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedStone
 								break;
 							case EFortResourceType::Metal:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[15] += 10; // GameplayStat.Profile.Match.UsedMetal
+								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[15] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedMetal
 								break;
 							}
 						}
 					}
-
-					FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
 
 					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, 0);
 
@@ -249,7 +251,7 @@ void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController
 		{
 			BuildingActorToEdit->SetEditingPlayer(PlayerState);
 
-			UFortEditToolItemDefinition* EditToolItem = GetGameData()->EditToolItem.LoadSynchronous();
+			UFortEditToolItemDefinition* EditToolItem = UFortGameData::Get()->EditToolItem.LoadSynchronous();
 			UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
 			if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))
@@ -283,7 +285,7 @@ void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* 
 	{
 		BuildingActorToEdit->SetEditingPlayer(NULL);
 
-		UFortEditToolItemDefinition* EditToolItem = GetGameData()->EditToolItem.LoadSynchronous();
+		UFortEditToolItemDefinition* EditToolItem = UFortGameData::Get()->EditToolItem.LoadSynchronous();
 		UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
 		if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))
@@ -301,12 +303,8 @@ void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* Fort
 	if (BuildingActorToRepair == NULL)
 		return;
 
-	int32 CostToRepair = BuildingActorToRepair->GetCostToRepair(FortPlayerController);
+	int32 CostToRepair = FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
 
-	if (CostToRepair <= 0)
-		return;
-
-	FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
 	BuildingActorToRepair->RepairBuilding(FortPlayerController, CostToRepair);
 }
 

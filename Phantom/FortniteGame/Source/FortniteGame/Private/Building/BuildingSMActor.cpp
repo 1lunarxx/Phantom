@@ -15,7 +15,7 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 			{
 				EFortResourceType ResourceType = BuildingSMActor->ResourceType;
 
-				UFortGameData* GameData = GetGameData();
+				UFortGameData* GameData = UFortGameData::Get();
 				UFortResourceItemDefinition* ResourceItemDefinition = GameData->GetResourceItemDefinition(ResourceType);
 
 				if (ResourceItemDefinition != NULL)

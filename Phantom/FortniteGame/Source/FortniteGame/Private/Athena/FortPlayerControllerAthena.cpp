@@ -95,7 +95,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 		if (FortPlayerControllerAthena->MatchReport != NULL)
 		{
-			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[1] = FortPlayerStateAthena->Place; // GameplayStat.Profile.Match.Placement
+/*			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[1] = FortPlayerStateAthena->Place; // GameplayStat.Profile.Match.Placement
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[2] = FortPlayerStateAthena->SecondsAlive; // GameplayStat.Profile.Match.SecondsAlive
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[6] = 0; // GameplayStat.Profile.Match.Assists
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[7] = 999; // GameplayStat.Profile.Match.Revives
@@ -103,7 +103,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[9] = 10; // GameplayStat.Profile.Match.TravelDistanceGround
 
 			FortPlayerControllerAthena->MatchReport->MatchStats.MatchID = GGameState->GameSessionId;
-			FortPlayerControllerAthena->MatchReport->MatchStats.MatchPlatform = FortPlayerStateAthena->Platform;
+			FortPlayerControllerAthena->MatchReport->MatchStats.MatchPlatform = FortPlayerStateAthena->Platform;*/
 
 			FortPlayerControllerAthena->ClientSendMatchStatsForPlayer(FortPlayerControllerAthena->MatchReport->MatchStats);
 		}
@@ -123,14 +123,14 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 			if (KillerPlayerController->MatchReport != NULL)
 			{
-				KillerPlayerController->MatchReport->MatchStats.Stats[1] = KillerPlayerState->Place; // GameplayStat.Profile.Match.Placement
+/*				KillerPlayerController->MatchReport->MatchStats.Stats[1] = KillerPlayerState->Place; // GameplayStat.Profile.Match.Placement
 				KillerPlayerController->MatchReport->MatchStats.Stats[2] = KillerPlayerState->SecondsAlive; // GameplayStat.Profile.Match.SecondsAlive
 				KillerPlayerController->MatchReport->MatchStats.Stats[3] = KillerPlayerState->KillScore;
 				KillerPlayerController->MatchReport->MatchStats.Stats[4] = KillerPlayerState->TeamKillScore;
 				KillerPlayerController->MatchReport->MatchStats.Stats[6] = 0; // GameplayStat.Profile.Match.Assists
 				KillerPlayerController->MatchReport->MatchStats.Stats[7] = 999; // GameplayStat.Profile.Match.Revives
 				KillerPlayerController->MatchReport->MatchStats.Stats[8] = 1000; // GameplayStat.Profile.Match.DamageTaken
-				KillerPlayerController->MatchReport->MatchStats.Stats[9] = 10; // GameplayStat.Profile.Match.TravelDistanceGround
+				KillerPlayerController->MatchReport->MatchStats.Stats[9] = 10; // GameplayStat.Profile.Match.TravelDistanceGround*/
 
 				KillerPlayerController->MatchReport->MatchStats.MatchID = GGameState->GameSessionId;
 				KillerPlayerController->MatchReport->MatchStats.MatchPlatform = KillerPlayerState->Platform;
@@ -149,6 +149,6 @@ void FortPlayerControllerAthena::Setup()
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x7E8 / 8, ServerRestartPlayer_Implementation);
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x1270 / 8, ServerReturnToMainMenu_Implementation);
 
-	Utils::Hook(InSDKUtils::GetImageBase() + 0xCE1AB0, OnPawnDied, (void**)&Originals::OnPawnDied);
+	//Utils::Hook(InSDKUtils::GetImageBase() + 0xCE1AB0, OnPawnDied, (void**)&Originals::OnPawnDied);
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xCBAC01, RemoveAllInventoryItems);
 }

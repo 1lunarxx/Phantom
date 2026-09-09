@@ -153,7 +153,6 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\Abilities\GameplayAbility.h" />
     <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\AbilitySystemComponent.h" />
     <ClInclude Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Public\McpProfileGroup.h" />
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\Object.h" />
@@ -198,7 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\Abilities\GameplayAbility.cpp" />
     <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\AbilitySystemComponent_Abilities.cpp" />
     <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Private\McpProfileGroup.cpp" />
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp" />

@@ -7481,6 +7481,8 @@ public:
 	TArray<class UFortAlterationItemDefinition*>  AlterationInstances;                               // 0x00B0(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPrivate)
 	TArray<float>                                 GenericAttributeValues;                            // 0x00C0(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPrivate)
 public:
+	void SetLoadedAmmo(int InCount);
+public:
 	FFortItemEntry() = default;
 
 	FFortItemEntry(UFortItemDefinition* InItemDefinition, int InCount, int InLevel)

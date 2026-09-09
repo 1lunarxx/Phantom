@@ -7,7 +7,6 @@
 #include "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h"
 
 #include "GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h"
-#include "GameplayAbilities/Source/GameplayAbilities/Public/Abilities/GameplayAbility.h"
 
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
@@ -73,7 +72,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     BuildingSMActor::Setup();
     FortInventoryOwnerInterface::Setup();
     Object::Setup();
-    GameplayAbility::Setup();
     FortPickup::Setup();
     FortPlayerPawn::Setup();
     FortWorldItem::Setup();
