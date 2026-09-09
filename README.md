@@ -14,4 +14,10 @@ If you know how to do certain functions properly, feel free to make a pull reque
 - Gadgets (Ghost mode etc)
 - Others: Cheat Commands, Emoting, Some proper stuff
 
+## TODO:
+- Quests
+- Proper Match Stats
+- Deimos Spawning
+- Prefabs
+
 Credits: Andr1ww for some help on Inventory, and Building.
