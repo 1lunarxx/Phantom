@@ -275,9 +275,6 @@
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\ScriptCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerStateAthena.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="minhook.lib" />

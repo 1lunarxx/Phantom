@@ -30,17 +30,20 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 {
 	Originals::OnPawnDied(FortPlayerControllerAthena, Damage, InTags, EffectContext, EventInstigator, DamageCauser);
 
-	AFortPlayerPawn* KilledPawn = FortPlayerControllerAthena != NULL ? FortPlayerControllerAthena->MyFortPawn : NULL;
-
-	if (FortPlayerControllerAthena == NULL || KilledPawn == NULL || InTags == NULL)
+	if (FortPlayerControllerAthena == NULL || InTags == NULL)
 		return;
 
 	if (EventInstigator == NULL)
 		EventInstigator = FortPlayerControllerAthena;
 
-	AFortPlayerStateAthena* PlayerState = Cast<AFortPlayerStateAthena>(FortPlayerControllerAthena->PlayerState);
+	AFortPlayerStateAthena* FortPlayerStateAthena = Cast<AFortPlayerStateAthena>(FortPlayerControllerAthena->PlayerState);
 
-	if (PlayerState == NULL)
+	if (FortPlayerStateAthena == NULL)
+		return;
+
+	AFortPlayerPawn* FortPlayerPawn = FortPlayerControllerAthena != NULL ? FortPlayerControllerAthena->MyFortPawn : Cast<AFortPlayerPawn>(EventInstigator->Pawn);
+
+	if (FortPlayerPawn == NULL)
 		return;
 
 	AFortPlayerStateAthena* KillerPlayerState = Cast<AFortPlayerStateAthena>(EventInstigator->PlayerState);
@@ -49,26 +52,28 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 	FDeathInfo DeathInfo = FDeathInfo();
 
-	DeathInfo.bDBNO = KilledPawn->IsDBNO();
+	DeathInfo.bDBNO = FortPlayerPawn->IsDBNO();
 	DeathInfo.bInitialized = true;
-	DeathInfo.DeathCause = PlayerState->ToDeathCause(*InTags, DeathInfo.bDBNO);
-	DeathInfo.DeathLocation = KilledPawn->K2_GetActorLocation();
-	DeathInfo.FinisherOrDowner = KillerPlayerState != NULL ? KillerPlayerState : PlayerState;
-	DeathInfo.Distance = KillerPawn != NULL ? KillerPawn->GetDistanceTo(KilledPawn) : 0.f;
+	DeathInfo.DeathCause = FortPlayerStateAthena->ToDeathCause(*InTags, DeathInfo.bDBNO);
+	DeathInfo.DeathLocation = FortPlayerPawn->K2_GetActorLocation();
+	DeathInfo.FinisherOrDowner = KillerPlayerState != NULL ? KillerPlayerState : FortPlayerStateAthena;
+	DeathInfo.Distance = KillerPawn != NULL ? KillerPawn->GetDistanceTo(FortPlayerPawn) : 0.f;
 
-	PlayerState->InitializeDeathInfo(&DeathInfo);
+	FortPlayerStateAthena->InitializeDeathInfo(&DeathInfo);
 
-	if (KillerPlayerState != NULL && KillerPlayerState != PlayerState)
+	if (KillerPlayerState != NULL && KillerPlayerState != FortPlayerStateAthena)
 	{
-		KillerPlayerState->IncrementKillStreak();
-		KillerPlayerState->ClientReportKill(PlayerState);
+		KillerPlayerState->KillScore++;
+		KillerPlayerState->OnRep_Kills();
+
+		KillerPlayerState->ClientReportKill(FortPlayerStateAthena);
 
 		if (KillerPlayerController != NULL && KillerPlayerController->MatchReport != NULL)
 		{
 			KillerPlayerController->MatchReport->MatchStats.Stats[3] = KillerPlayerState->KillScore;
 			KillerPlayerController->MatchReport->MatchStats.Stats[4] = KillerPlayerState->TeamKillScore;
 
-			if (KilledPawn->IsDBNO())
+			if (FortPlayerPawn->IsDBNO())
 			{
 				KillerPlayerState->DownScore++;
 				KillerPlayerState->OnRep_Downs();
@@ -78,27 +83,27 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 		}
 	}
 
-	if (!GGameState->IsRespawningAllowed(PlayerState))
+	if (!GGameState->IsRespawningAllowed(FortPlayerStateAthena))
 	{
-		PlayerState->Place = GGameState->PlayersLeft;
-		PlayerState->OnRep_Place();
+		FortPlayerStateAthena->Place = GGameState->PlayersLeft;
+		FortPlayerStateAthena->OnRep_Place();
 
 		FAthenaMatchTeamStats TeamStats = FAthenaMatchTeamStats();
 
-		TeamStats.Place = PlayerState->Place;
+		TeamStats.Place = FortPlayerStateAthena->Place;
 		TeamStats.TotalPlayers = GGameState->TotalPlayers;
 
 		if (FortPlayerControllerAthena->MatchReport != NULL)
 		{
-			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[1] = PlayerState->Place; // GameplayStat.Profile.Match.Placement
-			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[2] = PlayerState->SecondsAlive; // GameplayStat.Profile.Match.SecondsAlive
+			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[1] = FortPlayerStateAthena->Place; // GameplayStat.Profile.Match.Placement
+			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[2] = FortPlayerStateAthena->SecondsAlive; // GameplayStat.Profile.Match.SecondsAlive
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[6] = 0; // GameplayStat.Profile.Match.Assists
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[7] = 999; // GameplayStat.Profile.Match.Revives
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[8] = 1000; // GameplayStat.Profile.Match.DamageTaken
 			FortPlayerControllerAthena->MatchReport->MatchStats.Stats[9] = 10; // GameplayStat.Profile.Match.TravelDistanceGround
 
 			FortPlayerControllerAthena->MatchReport->MatchStats.MatchID = GGameState->GameSessionId;
-			FortPlayerControllerAthena->MatchReport->MatchStats.MatchPlatform = PlayerState->Platform;
+			FortPlayerControllerAthena->MatchReport->MatchStats.MatchPlatform = FortPlayerStateAthena->Platform;
 
 			FortPlayerControllerAthena->ClientSendMatchStatsForPlayer(FortPlayerControllerAthena->MatchReport->MatchStats);
 		}

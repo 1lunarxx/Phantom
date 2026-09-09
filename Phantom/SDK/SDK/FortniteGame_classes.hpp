@@ -51472,8 +51472,11 @@ public:
 	bool IsDisconnected() const;
 	bool IsSquadDead() const;
 public:
-	void InitializeDeathInfo(const FDeathInfo* InDeathInfo);
-	void IncrementKillStreak();
+	void InitializeDeathInfo(const FDeathInfo* InDeathInfo)
+	{
+		static void(*InitializeDeathInfo)(AFortPlayerStateAthena*, const FDeathInfo*) = decltype(InitializeDeathInfo)(InSDKUtils::GetImageBase() + 0xD08CC0);
+		InitializeDeathInfo(this, InDeathInfo);
+	}
 public:
 	static class UClass* StaticClass()
 	{
