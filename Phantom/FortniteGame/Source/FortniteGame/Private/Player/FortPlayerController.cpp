@@ -40,21 +40,17 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 	if (WorldInventory == NULL)
 		return;
 
-	FFortItemEntry* ItemEntryToRemove = WorldInventory->GetReplicatedItemEntry(ItemGuid);
+	FFortItemEntry* ItemEntry = WorldInventory->GetReplicatedItemEntry(ItemGuid);
 
-	if (ItemEntryToRemove == NULL)
+	if (ItemEntry == NULL)
 		return;
 
 	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
 
 	if (FortPlayerPawn != NULL)
-	{
-		if (Count > ItemEntryToRemove->Count)
-			Count = ItemEntryToRemove->Count;
+		AFortPickup::SpawnPickup(*ItemEntry, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
 
-		AFortPickup::SpawnPickup(*ItemEntryToRemove, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
-		WorldInventory->RemoveItem(ItemEntryToRemove->ItemGuid, Count);
-	}
+	WorldInventory->RemoveItem(ItemEntry->ItemGuid, Count);
 }
 
 void FortPlayerController::ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg)
