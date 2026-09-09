@@ -13667,6 +13667,12 @@ public:
 class alignas(0x08) AFortPlayerController : public APlayerController
 {
 public:
+	enum EPawnDestructionReason : __int32
+	{ 
+		Death = 0x0,
+		Logout = 0x1,
+	};
+public:
 	uint8                                         Pad_678[0x10];                                     // 0x0678(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
 	UMulticastDelegateProperty_                   OnInputFiltered;                                   // 0x0688(0x0010)(ZeroConstructor, InstancedReference, BlueprintAssignable, NativeAccessSpecifierPublic)
 	uint8                                         Pad_698[0x18];                                     // 0x0698(0x0018)(Fixing Size After Last Property [ Dumper-7 ])

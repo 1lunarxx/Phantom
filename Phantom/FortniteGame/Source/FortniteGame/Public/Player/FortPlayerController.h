@@ -19,6 +19,7 @@ private:
 	static void ServerEditBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored);
 	static void ServerEndEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit);
 	static void ServerRepairBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
+	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 public:
 	static void Setup();
 };

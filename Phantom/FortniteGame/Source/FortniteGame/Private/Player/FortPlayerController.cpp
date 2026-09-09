@@ -308,6 +308,21 @@ void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* Fort
 	BuildingActorToRepair->RepairBuilding(FortPlayerController, CostToRepair);
 }
 
+void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
+{
+	if (DestructionPawn == NULL)
+		return;
+
+	if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
+	{
+		for (UFortWorldItem* WorldItem : WorldInventory->Inventory.ItemInstances)
+		{
+			if (WorldItem->CanBeDropped())
+				AFortPickup::SpawnPickup(WorldItem->ItemEntry, DestructionPawn->K2_GetActorLocation(), WorldItem->ItemEntry.Count, EFortPickupSourceTypeFlag::Player, -1);
+		}
+	}
+}
+
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
@@ -321,4 +336,5 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 }
