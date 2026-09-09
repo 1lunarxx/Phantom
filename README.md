@@ -8,9 +8,9 @@ If you know how to do certain functions properly, feel free to make a pull reque
 
 ## FEATURES:
 - Looting
-- Food Fight (unfinished)
+- Food Fight (WIP)
 - Proper Building & Editing
-- Harvesting
+- Semi-Proper Harvesting
 - Gadgets (Ghost mode etc)
 - Others: Cheat Commands, Emoting, Some proper stuff
 
