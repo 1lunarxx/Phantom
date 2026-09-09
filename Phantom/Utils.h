@@ -19,6 +19,12 @@ static AFortGameModeAthena* GetGameMode()
     return Cast<AFortGameModeAthena>(GWorld->AuthorityGameMode);
 }
 
+template<typename T>
+static T* NewObject(UObject* Object, UClass* Class = NULL)
+{
+    return (T*)UGameplayStatics::SpawnObject(Class ? Class : T::StaticClass(), Object);
+}
+
 #define GGameState GetGameState()
 #define GGameMode GetGameMode()
 

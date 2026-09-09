@@ -45,6 +45,20 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 	}
 }
 
+void FortPlayerController::ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg)
+{
+	if (FortPlayerController->CheatManager == NULL)
+		FortPlayerController->CheatManager = NewObject<UCheatManager>(FortPlayerController);
+
+	if (FortPlayerController->CheatManager != NULL)
+	{
+		FString Result;
+		FString* ConsoleCommand = FortPlayerController->ConsoleCommand(&Result, &Msg, true);
+
+		FortPlayerController->ClientMessage(*ConsoleCommand, FName(), 0.f);
+	}
+}
+
 void FortPlayerController::ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset)
 {
 	if (EmoteAsset != NULL)
@@ -282,6 +296,7 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFA0 / 8, ServerExecuteInventoryItem_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1030 / 8, ServerAttemptInventoryDrop_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDB0 / 8, ServerCheat_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor);

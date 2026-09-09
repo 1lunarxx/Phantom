@@ -3079,7 +3079,12 @@ public:
 	bool ProjectWorldLocationToScreen(const struct FVector& WorldLocation, struct FVector2D* ScreenLocation, bool bPlayerViewportRelative) const;
 	bool WasInputKeyJustPressed(const struct FKey& Key) const;
 	bool WasInputKeyJustReleased(const struct FKey& Key) const;
-
+public:
+	FString* ConsoleCommand(FString* result, const FString* Cmd, bool bWriteToLog)
+	{
+		static FString* (*ConsoleCommand)(APlayerController*, FString*, const FString*, bool) = decltype(ConsoleCommand)(InSDKUtils::GetImageBase() + 0x28E0840);
+		return ConsoleCommand(this, result, Cmd, bWriteToLog);
+	}
 public:
 	static class UClass* StaticClass()
 	{
