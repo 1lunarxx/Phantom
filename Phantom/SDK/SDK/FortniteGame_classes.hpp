@@ -51156,7 +51156,8 @@ public:
 	void TeleportToSkyDive(float HeightAboveGround);
 
 	bool IsBackpackEquipped(EBackpackType BackpackType) const;
-
+public:
+	void InitializeDeathInfoOnPawnDeath(const FGameplayTagContainer* InTags, AController* EventInstigator, AController* DBNOFinisher);
 public:
 	static class UClass* StaticClass()
 	{

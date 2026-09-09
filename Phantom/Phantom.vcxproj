@@ -209,6 +209,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierFlag.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierObjective.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBigBaseWall.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerPawnAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameState.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameModeAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventory.cpp" />

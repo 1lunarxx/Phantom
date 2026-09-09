@@ -11,7 +11,7 @@ void AFortAthenaMutator_Barrier::SetupTeamStates()
         {
             Team_0_State.TeamNum = CurrentPlaylistData->DefaultFirstTeam;
             Team_1_State.FoodTeam = EBarrierFoodTeam::Tomato;
-            Team_1_State.TeamNum = (EFortTeam)((int)Team_0_State.TeamNum + 1);
+            Team_1_State.TeamNum = CurrentPlaylistData->DefaultLastTeam;
         }
     }
 }
@@ -43,9 +43,6 @@ void AFortAthenaMutator_Barrier::SpawnModeObjectives()
 
         BarrierFlag->SetCurrentState(EBarrierFlagState::FlagUp);
 
-        FActorSpawnParameters SpawnParams = FActorSpawnParameters();
-        SpawnParams.SpawnCollisionHandlingOverride = 1;
-
         if (AAthenaBarrierObjective* ObjectiveActor = BarrierFlag->GetObjectiveActor())
         {
             ObjectiveActor->SetFoodTeam(Team_0_State.FoodTeam);
@@ -67,9 +64,6 @@ void AFortAthenaMutator_Barrier::SpawnModeObjectives()
         BarrierFlag->SetTeam(Team_1_State.TeamNum);
 
         BarrierFlag->SetCurrentState(EBarrierFlagState::FlagUp);
-
-        FActorSpawnParameters SpawnParams = FActorSpawnParameters();
-        SpawnParams.SpawnCollisionHandlingOverride = 1;
 
         if (AAthenaBarrierObjective* ObjectiveActor = BarrierFlag->GetObjectiveActor())
         {
@@ -115,10 +109,7 @@ void AFortAthenaMutator_Barrier::SpawnModeObjectives()
 
 AAthenaBarrierFlag* AFortAthenaMutator_Barrier::SpawnObjectiveActor(TSubclassOf<AAthenaBarrierFlag> InActorClass, const FVector* InActorLocation, const FRotator* InActorRotation)
 {
-    FActorSpawnParameters SpawnParams = FActorSpawnParameters();
-    SpawnParams.SpawnCollisionHandlingOverride = 1;
-
-    AAthenaBarrierFlag* ObjectiveFlag = Cast<AAthenaBarrierFlag>(GWorld->SpawnActor(InActorClass, InActorLocation, InActorRotation, &SpawnParams));
+    AAthenaBarrierFlag* ObjectiveFlag = Cast<AAthenaBarrierFlag>(GWorld->SpawnActor(InActorClass, InActorLocation, InActorRotation, NULL));
 
     if (ObjectiveFlag != NULL)
         UGameplayStatics::FinishSpawningActor(ObjectiveFlag, UKismetMathLibrary::MakeTransform(*InActorLocation, *InActorRotation, FVector(1, 1, 1)));
@@ -135,13 +126,10 @@ void AFortAthenaMutator_Barrier::OnObjectiveDestroyed(AAthenaBarrierObjective* O
         if (TeamState->TeamNum != Objective->Team)
             TeamState = &Team_1_State;
 
-        if (!(int)WinningTeam)
-        {
-            WinningTeam = Team_0_State.TeamNum;
+        WinningTeam = Team_0_State.TeamNum;
 
-            if (WinningTeam == Objective->Team)
-                WinningTeam = Team_1_State.TeamNum;
-        }
+        if (WinningTeam == Objective->Team)
+            WinningTeam = Team_1_State.TeamNum;
 
         if (Team_0_State.ObjectiveObject != NULL)
             Team_0_State.ObjectiveObject->SetAllowDamage(false);
