@@ -6,7 +6,7 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 {
 	Originals::InitGameState(FortGameModeAthena);
 
-	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_Barrier_12")))
+	if (UFortPlaylistAthena* Playlist = FortGameModeAthena->PlaylistManager->GetAthenaPlaylist(FName(L"Playlist_DefaultSolo")))
 	{
 		FortGameModeAthena->CurrentPlaylistId = Playlist->PlaylistId;
 		FortGameModeAthena->CurrentPlaylistName = Playlist->PlaylistName;
