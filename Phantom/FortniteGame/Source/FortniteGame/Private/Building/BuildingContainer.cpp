@@ -29,11 +29,14 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	BuildingContainer->bAlreadySearched = true;
 	BuildingContainer->OnRep_bAlreadySearched();
 
-	if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
-		BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaTreasure");
+	if (GGameMode != NULL)
+	{
+		if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
+			BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaTreasure");
 
-	else if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Ammo"))
-		BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaAmmoLarge");
+		else if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Ammo"))
+			BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaAmmoLarge");
+	}
 
 	TArray<FFortItemEntry> OutLootDrops;
 	FortLootPackage::PickLootDrops(&OutLootDrops, GGameState->WorldLevel, BuildingContainer->SearchLootTierGroup);

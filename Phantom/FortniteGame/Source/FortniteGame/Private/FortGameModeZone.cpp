@@ -33,5 +33,6 @@ void FortGameModeZone::Setup()
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xC98E3B, CreateAIDirector);
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x134F889, FinishWorldInitialization);
 
+	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xA40 / 8, FinishWorldInitialization);
 	Utils::Virtual(AFortGameModeAthena::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer_Implementation, (void**)&Originals::HandleStartingNewPlayer_Implementation);
 }
