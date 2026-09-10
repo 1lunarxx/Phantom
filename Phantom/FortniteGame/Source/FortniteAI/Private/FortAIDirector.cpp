@@ -3,7 +3,12 @@
 
 AFortAIDirector* FortAIDirector::GetCurrent(UWorld* World)
 {
-	return GGameMode->AIDirector;
+	AFortGameModeZone* FortGameModeZone = Cast<AFortGameModeZone>(World->AuthorityGameMode);
+
+	if (FortGameModeZone != NULL)
+		return FortGameModeZone->AIDirector;
+
+	return NULL;
 }
 
 void FortAIDirector::Setup()
