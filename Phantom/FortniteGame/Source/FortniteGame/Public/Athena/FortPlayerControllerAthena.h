@@ -7,7 +7,7 @@ class FortPlayerControllerAthena
 	class Originals
 	{
 	public:
-		static inline void (*OnPawnDied)(AFortPlayerControllerAthena* FortPlayerControllerAthena, float Damage, const FGameplayTagContainer* InTags, const FGameplayEffectContextHandle* EffectContext, AController* EventInstigator, AActor* DamageCauser);
+		static inline void (*OnPawnDied)(AFortPlayerControllerAthena* FortPlayerControllerAthena, AFortPlayerPawn* KilledPawn, const FGameplayTagContainer* InTags, const FGameplayEffectContextHandle* EffectContext, AController* EventInstigator, AActor* DamageCauser, AController* DBNOFinisher);
 	};
 
 private:
@@ -15,7 +15,7 @@ private:
 	static void ServerReturnToMainMenu_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena);
 
 	static void RemoveAllInventoryItems(AFortPlayerControllerAthena* FortPlayerControllerAthena);
-	static void OnPawnDied(AFortPlayerControllerAthena* FortPlayerControllerAthena, float Damage, const FGameplayTagContainer* InTags, const FGameplayEffectContextHandle* EffectContext, AController* EventInstigator, AActor* DamageCauser);
+	static void OnPawnDied(AFortPlayerControllerAthena* FortPlayerControllerAthena, AFortPlayerPawn* KilledPawn, const FGameplayTagContainer* InTags, const FGameplayEffectContextHandle* EffectContext, AController* EventInstigator, AActor* DamageCauser, AController* DBNOFinisher);
 public:
 	static void Setup();
 };

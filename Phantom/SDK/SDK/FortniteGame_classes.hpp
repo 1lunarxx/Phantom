@@ -41317,10 +41317,12 @@ public:
 	float                                         DelayForStormCapDamage;                            // 0x09E4(0x0004)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	uint8                                         Pad_9E8[0x8];                                      // 0x09E8(0x0008)(Fixing Size After Last Property [ Dumper-7 ])
 	UMulticastDelegateProperty_                   OnSafeZoneUpdated;                                 // 0x09F0(0x0010)(ZeroConstructor, InstancedReference, BlueprintAssignable, NativeAccessSpecifierPublic)
-	bool                                          bAlwaysDBNO;                                       // 0x0A00(0x0001)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_A01[0xF];                                      // 0x0A01(0x000F)(Fixing Size After Last Property [ Dumper-7 ])
-	TArray<class ABuildingActor*>                 ActorsToClear;                                     // 0x0A10(0x0010)(ZeroConstructor, Protected, NativeAccessSpecifierProtected)
-	TArray<class AActor*>                         ClearAreaIgnoreActors;                             // 0x0A20(0x0010)(ZeroConstructor, Protected, NativeAccessSpecifierProtected)
+	bool                                          bAlwaysDBNO;                                       // 0x0A00(0x0001)
+	uint8                                         Pad_A01[0x1];                                      // 0x0A01(0x0001)
+	bool                                          bSquadPlay;                                        // 0x0A02(0x0001)
+	uint8                                         Pad_A03[0xD];                                      // 0x0A03(0x000D)
+	TArray<class ABuildingActor*>                 ActorsToClear;                                     // 0x0A10(0x0010)
+	TArray<class AActor*>                         ClearAreaIgnoreActors;                             // 0x0A20(0x0010)
 	bool                                          bNeverSpawnPickupsOnPawnDeath;                     // 0x0A30(0x0001)(Edit, ZeroConstructor, DisableEditOnInstance, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	bool                                          bLoadTestCosmetics;                                // 0x0A31(0x0001)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         BitPad_A32_0 : 1;                                  // 0x0A32(0x0001)(Fixing Bit-Field Size Between Bits [ Dumper-7 ])
@@ -41470,7 +41472,18 @@ public:
 	{
 		static TArray<FItemAndCount>* (*GetStartingItems)(AFortGameModeAthena*, TArray<FItemAndCount>*, bool, AController*) = decltype(GetStartingItems)(InSDKUtils::GetImageBase() + 0xCA5660);
 		return GetStartingItems(this, result, bInitialSpawn, Controller);
+	}
 
+	void RemoveFromAlivePlayers(AFortPlayerControllerAthena* PC, APlayerState* RemovalInstigator, APawn* FinisherPawn, UFortWeaponItemDefinition* FinishingWeapon, EDeathCause DeathCause, bool bIsTeamSwitching)
+	{
+		static void (*RemoveFromAlivePlayers)(AFortGameModeAthena*, AFortPlayerControllerAthena*, APlayerState*, APawn*, UFortWeaponItemDefinition*, EDeathCause, bool) = decltype(RemoveFromAlivePlayers)(InSDKUtils::GetImageBase() + 0xCB2F50);
+		RemoveFromAlivePlayers(this, PC, RemovalInstigator, FinisherPawn, FinishingWeapon, DeathCause, bIsTeamSwitching);
+	}
+
+	char StartEndGamePhaseTeam(int TeamNum, APlayerState* WinningPS, int Placement, APawn* FinisherPawn, const UFortWeaponItemDefinition* FinishingWeapon, EDeathCause DeathCause)
+	{
+		static char (*StartEndGamePhaseTeam)(AFortGameModeAthena*, int, APlayerState*, int, APawn*, const UFortWeaponItemDefinition*, EDeathCause) = decltype(StartEndGamePhaseTeam)(InSDKUtils::GetImageBase() + 0xCBB190);
+		return StartEndGamePhaseTeam(this, TeamNum, WinningPS, Placement, FinisherPawn, FinishingWeapon, DeathCause);
 	}
 public:
 	static class UClass* StaticClass()
@@ -42639,7 +42652,12 @@ public:
 	bool IsTeamDead() const;
 	bool IsTryToFireRestrictedByTypeCooldowns() const;
 	class FString TryToFilterNameOfPlayerForStreamerMode(const class AFortPlayerState* OtherPlayerState) const;
-
+public:
+	void SetMatchPlacement(int Placement)
+	{
+		static void(*SetMatchPlacement)(AFortPlayerControllerAthena*, int) = decltype(SetMatchPlacement)(InSDKUtils::GetImageBase() + 0xCEA400);
+		SetMatchPlacement(this, Placement);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -43633,6 +43651,12 @@ public:
 	{
 		static void (*InitializePlayerGameplayAbilities)(IAbilitySystemInterface*) = decltype(InitializePlayerGameplayAbilities)(InSDKUtils::GetImageBase() + 0x0);
 		InitializePlayerGameplayAbilities(PlayerStateOrProxy);
+	}
+
+	static FFortGlobalGameplayTags* GameplayTags()
+	{
+		static FFortGlobalGameplayTags*(*GameplayTags)() = decltype(GameplayTags)(InSDKUtils::GetImageBase() + 0xF63700);
+		return GameplayTags();
 	}
 public:
 	static class UClass* StaticClass()
@@ -48196,6 +48220,12 @@ public:
 		static void (*FireEvent_BuildingAction)(class AFortPlayerController*, const wchar_t*, class ABuildingSMActor*, int) = decltype(FireEvent_BuildingAction)(InSDKUtils::GetImageBase() + 0xBBE400);
 		FireEvent_BuildingAction(FortPC, ActionName, Building, ResourcesSpent);
 	}
+
+	static void FireEvent_PlayerDeath(AFortPlayerController* FortPC, int DamageReceived, const FString* DamageReceivedByType, const FString* KillerName, const FString* DamageSourceName, unsigned __int8 KillerAiType, float HostilityLevel, const FString* BuildingName)
+	{
+		static void (*FireEvent_PlayerDeath)(AFortPlayerController*, int, const FString*, const FString*, const FString*, unsigned __int8, float, const FString*) = decltype(FireEvent_PlayerDeath)(InSDKUtils::GetImageBase() + 0xBDD0C0);
+		FireEvent_PlayerDeath(FortPC, DamageReceived, DamageReceivedByType, KillerName, DamageSourceName, KillerAiType, HostilityLevel, BuildingName);;
+	}
 };
 // Class FortniteGame.FortMatchmakingSingleSession
 // 0x0040 (0x0170 - 0x0130)
@@ -51443,10 +51473,11 @@ public:
 	struct FVector2D                              MapIndicatorPos;                                   // 0x1008(0x0008)(Net, Transient, DuplicateTransient, IsPlainOldData, RepNotify, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	int32                                         SecondsAlive;                                      // 0x1010(0x0004)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	bool                                          bIsDisconnected;                                   // 0x1014(0x0001)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
-	uint8                                         Pad_1015[0x1B];                                    // 0x1015(0x001B)(Fixing Size After Last Property [ Dumper-7 ])
-	class UTexture2D*                             GameModeIcon;                                      // 0x1030(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
-	struct FDeathInfo                             DeathInfo;                                         // 0x1038(0x0028)(Net, RepNotify, NoDestructor, NativeAccessSpecifierPrivate)
-
+	uint8                                         Pad_1015[0x3];                                     // 0x1015(0x0003)(Fixing Size After Last Property [ Dumper-7 ])
+	int32                                         OutlivedCount;                                     // 0x1018(0x0004)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
+	uint8                                         Pad_101C[0x14];                                    // 0x101C(0x0014)(Fixing Size After Last Property [ Dumper-7 ])
+	class UTexture2D* GameModeIcon;                                      // 0x1030(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
+	struct FDeathInfo                             DeathInfo;
 public:
 	static EDeathCause ToDeathCause(const struct FGameplayTagContainer& InTags, bool bWasDBNO);
 
@@ -51490,6 +51521,12 @@ public:
 	{
 		static void(*InitializeDeathInfo)(AFortPlayerStateAthena*, const FDeathInfo*) = decltype(InitializeDeathInfo)(InSDKUtils::GetImageBase() + 0xD08CC0);
 		InitializeDeathInfo(this, InDeathInfo);
+	}
+
+	__int64 SomethingAboutSecondsAliveFuncICantFindName()
+	{
+		static __int64(*SomethingAboutSecondsAliveFuncICantFindName)(AFortPlayerStateAthena*) = decltype(SomethingAboutSecondsAliveFuncICantFindName)(InSDKUtils::GetImageBase() + 0xD06740);
+		return SomethingAboutSecondsAliveFuncICantFindName(this);
 	}
 public:
 	static class UClass* StaticClass()

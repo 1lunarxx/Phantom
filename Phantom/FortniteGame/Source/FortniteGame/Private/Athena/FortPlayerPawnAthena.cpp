@@ -15,18 +15,9 @@ void AFortPlayerPawnAthena::InitializeDeathInfoOnPawnDeath(const FGameplayTagCon
 	if (EventInstigatorAthena == NULL)
 		return;
 
-	if (!bWasDBNOOnDeath && IsDBNO())
-		bWasDBNOOnDeath = true;
+	FortPlayerStateAthena->DeathInfo.bDBNO = IsDBNO();
+	FortPlayerStateAthena->DeathInfo.bInitialized = true;
+	FortPlayerStateAthena->DeathInfo.DeathLocation = K2_GetActorLocation();
 
-	FDeathInfo DeathInfo = FDeathInfo{};
-
-	DeathInfo.bDBNO = IsDBNO();
-	DeathInfo.bInitialized = true;
-	DeathInfo.DeathCause = AFortPlayerStateAthena::ToDeathCause(*InTags, bWasDBNOOnDeath);
-	DeathInfo.DeathLocation = K2_GetActorLocation();
-	DeathInfo.Distance = EventInstigatorAthena->Pawn ? GetDistanceTo(EventInstigatorAthena->Pawn) : 0.0f;
-	DeathInfo.FinisherOrDowner = EventInstigator;
-
-	FortPlayerStateAthena->DeathInfo = DeathInfo;
 	FortPlayerStateAthena->OnRep_DeathInfo();
 }
