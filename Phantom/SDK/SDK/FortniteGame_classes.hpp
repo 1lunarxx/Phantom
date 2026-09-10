@@ -34414,7 +34414,8 @@ public:
 	void ListGadgets() const;
 	void ListTraps() const;
 	void ListWeapons() const;
-
+public:
+	void AddScoreStat(unsigned int ScoreStat, unsigned int Amount);
 public:
 	static class UClass* StaticClass()
 	{
