@@ -2,7 +2,7 @@
 #include "pch.h"
 
 template< class T >
-static T* NewObject(UObject* Outer)
+static T* NewObject(UObject* Outer, UClass* InClass = NULL)
 {
-    return static_cast<T*>(UGameplayStatics::SpawnObject(T::StaticClass(), Outer));
+    return static_cast<T*>(UGameplayStatics::SpawnObject(InClass != NULL ? InClass : T::StaticClass(), Outer));
 }

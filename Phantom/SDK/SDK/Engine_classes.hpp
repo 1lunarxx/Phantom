@@ -2587,6 +2587,12 @@ public:
 		static UWorld* (*GetWorld)(AActor*) = decltype(GetWorld)(InSDKUtils::GetImageBase() + 0x24628B0);
 		return GetWorld(this);
 	}
+
+	class AWorldSettings* GetWorldSettings()
+	{
+		static AWorldSettings* (*GetWorldSettings)(AActor*) = decltype(GetWorldSettings)(InSDKUtils::GetImageBase() + 0x2462960);
+		return GetWorldSettings(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

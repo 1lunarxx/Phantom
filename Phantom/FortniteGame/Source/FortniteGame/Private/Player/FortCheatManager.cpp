@@ -115,6 +115,7 @@ void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* FortCheatManager
 }
 
 // this should be something with UFortAssetManager::GetItemTypeData but i cba to do that
+
 void FortCheatManager::AthenaEmote(UFortCheatManager* FortCheatManager, FFrame& Stack)
 {
 	FString EmoteName;
@@ -176,10 +177,10 @@ void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* FortCheatManager, FF
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return;
+	if (FortPlayerController != NULL)
+		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 
-	UFortPlaylistAthena* CurrentPlaylistData = GGameState->GetCurrentPlaylistData();
+/*	UFortPlaylistAthena* CurrentPlaylistData = GGameState->GetCurrentPlaylistData();
 
 	if (CurrentPlaylistData != NULL)
 	{
@@ -202,9 +203,7 @@ void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* FortCheatManager, FF
 				}
 			}
 		}
-	}
-
-	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}*/
 }
 
 void FortCheatManager::BackpackSetSize(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -216,10 +215,8 @@ void FortCheatManager::BackpackSetSize(UFortCheatManager* FortCheatManager, FFra
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return;
-
-	FortPlayerController->OverriddenBackpackSize = Size;
+	if (FortPlayerController != NULL)
+		FortPlayerController->OverriddenBackpackSize = Size;
 }
 
 void FortCheatManager::Badass(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -231,8 +228,8 @@ void FortCheatManager::Badass(UFortCheatManager* FortCheatManager, FFrame& Stack
 	if (FortPlayerController == NULL)
 		return;
 
-/*	FortCheatManager->SetShieldPercent(1000);
-	FortCheatManager->SetHealthPercent(1000);*/
+	FortCheatManager->SetShieldPercent(1000);
+	FortCheatManager->SetHealthPercent(1000);
 
 	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
@@ -243,10 +240,8 @@ void FortCheatManager::BringDownWall(UFortCheatManager* FortCheatManager, FFrame
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return;
-
-	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (FortPlayerController != NULL)
+		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
 void FortCheatManager::BuildFree(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -495,10 +490,8 @@ void FortCheatManager::GoFast(UFortCheatManager* FortCheatManager, FFrame& Stack
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return
-
-	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (FortPlayerController != NULL)
+		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
 void FortCheatManager::GiveWood(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -645,13 +638,8 @@ void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* FortCheatManager
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return;
-
-	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
-	{
-		FortPlayerPawn->SetHealth(99999999999999); // idk what to do here tbh
-	}
+	if (FortPlayerController != NULL)
+		FortCheatManager->God();
 }
 
 void FortCheatManager::Setup()
@@ -691,7 +679,6 @@ void FortCheatManager::Setup()
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveMetal"), GiveMetal);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveStone"), GiveStone);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GoFast"), GoFast);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.MassSuicide"), MassSuicide);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetHealthPercent"), SetHealthPercent);
@@ -701,4 +688,10 @@ void FortCheatManager::Setup()
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ToggleInfiniteAmmo"), ToggleInfiniteAmmo);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ToggleUnlimitedHealth"), ToggleUnlimitedHealth);
+
+	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x260 / 8, UCheatManager::GetDefaultObj()->VTable[0x260 / 8]); // Fly
+	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x278 / 8, UCheatManager::GetDefaultObj()->VTable[0x278 / 8]); // God
+	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x270 / 8, UCheatManager::GetDefaultObj()->VTable[0x270 / 8]); // Ghost
+	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x268 / 8, UCheatManager::GetDefaultObj()->VTable[0x268 / 8]); // Walk
+	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x280 / 8, UCheatManager::GetDefaultObj()->VTable[0x280 / 8]); // Slomo
 }

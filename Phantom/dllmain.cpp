@@ -6,6 +6,9 @@
 #include "Engine/NetDriver.h"
 #include "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h"
 
+#include "GameFramework/Character.h"
+#include "GameFramework/CheatManager.h"
+
 #include "GameplayAbilities/Source/GameplayAbilities/Public/AbilitySystemComponent.h"
 
 #include "FortniteGame/Public/FortGameState.h"
@@ -78,6 +81,8 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortAthenaSupplyDrop::Setup();
     FortPlayerControllerGameplay::Setup();
     FortCheatManager::Setup();
+    Character::Setup();
+    CheatManager::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
