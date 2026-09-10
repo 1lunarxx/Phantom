@@ -19909,7 +19909,7 @@ public:
 public:
 	char ServerExecute(UFortItem* Item, AFortPlayerController* Instigator)
 	{
-		static char(*ServerExecute)(UFortWeaponItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(InSDKUtils::GetImageBase() + 0x145BDA0);
+		char(*ServerExecute)(UFortWeaponItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(VTable[0x418 / 8]);
 		return ServerExecute(this, Item, Instigator);
 	}
 public:
@@ -27897,7 +27897,12 @@ public:
 	bool ShouldIgnoreCollisionWithVehicles() const;
 	bool ShouldSnapYawToHorizontalAxes() const;
 	bool ShouldUseRelativeCameraRotation() const;
-
+public:
+	char ServerExecute(const UFortItem* Item, AFortPlayerController* Instigator)
+	{
+		static char (*ServerExecute)(UFortDecoItemDefinition*, const UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(InSDKUtils::GetImageBase() + 0x1075EF0);
+		return ServerExecute(this, Item, Instigator);
+	}
 public:
 	static class UClass* StaticClass()
 	{
