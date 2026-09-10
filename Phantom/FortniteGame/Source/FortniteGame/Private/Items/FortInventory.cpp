@@ -170,6 +170,12 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
 	else
 	{
 		ItemEntry->Count -= Count;
+
+		UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
+
+		if (WorldItem != NULL)
+			WorldItem->ItemEntry.Count = ItemEntry->Count;
+
 		UpdateItemEntry(ItemEntry);
 	}
 }

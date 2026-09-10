@@ -21,8 +21,6 @@ void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayer
 	}
 }
 
-// todo: make this better.
-
 void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash)
 {
 	AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory();
@@ -30,17 +28,30 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 	if (WorldInventory == NULL)
 		return;
 
-	FFortItemEntry* ItemEntry = WorldInventory->GetReplicatedItemEntry(ItemGuid);
+	IFortInventoryInterface* InventoryInterface = WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
+	IFortInventoryOwnerInterface* InventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>();
 
-	if (ItemEntry == NULL)
+	if (InventoryInterface == NULL || InventoryOwnerInterface == NULL)
 		return;
 
-	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
+	UFortWorldItem* WorldItem = InventoryInterface->GetItem(ItemGuid);
 
-	if (FortPlayerPawn != NULL)
-		AFortPickup::SpawnPickup(*ItemEntry, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, false, FortPlayerPawn);
+	if (WorldItem == NULL)
+		return;
 
-	WorldInventory->RemoveItem(ItemEntry->ItemGuid, Count);
+	if (WorldItem->ItemEntry.Count <= 0)
+	{
+		InventoryOwnerInterface->RemoveInventoryItem(*ItemGuid, Count, true, true);
+		return;
+	}
+
+	if (InventoryOwnerInterface->RemoveInventoryItem(*ItemGuid, Count, false, false))
+	{
+		AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
+		
+		if (FortPlayerPawn != NULL)
+			AFortPickup::SpawnPickup(WorldItem->ItemEntry, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, true, FortPlayerPawn);
+	}
 }
 
 void FortPlayerController::ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg)

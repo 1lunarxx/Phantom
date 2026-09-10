@@ -46457,6 +46457,12 @@ static_assert(offsetof(AFortInventoryOutpost, bHasUnavailableItems) == 0x000510,
 class IFortInventoryOwnerInterface final : public IInterface
 {
 public:
+	bool RemoveInventoryItem(FGuid& ItemGuid, int32 Count, bool bForceRemoval, bool bForcePersistWhenEmpty)
+	{
+		static bool(*RemoveInventoryItem)(IFortInventoryOwnerInterface*, FGuid&, int32, bool, bool) = decltype(RemoveInventoryItem)(InSDKUtils::GetImageBase() + 0x12E7790);
+		return RemoveInventoryItem(this, ItemGuid, Count, bForceRemoval, bForcePersistWhenEmpty);
+	}
+public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"FortInventoryOwnerInterface">();
