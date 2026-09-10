@@ -231,8 +231,10 @@ void FortCheatManager::Badass(UFortCheatManager* FortCheatManager, FFrame& Stack
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->SetShieldPercent(1000);
-	FortCheatManager->SetHealthPercent(1000);
+/*	FortCheatManager->SetShieldPercent(1000);
+	FortCheatManager->SetHealthPercent(1000);*/
+
+	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
 void FortCheatManager::BringDownWall(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -282,9 +284,11 @@ void FortCheatManager::GetWorldLevel(UFortCheatManager* FortCheatManager, FFrame
 	if (FortPlayerController == NULL)
 		return;
 
-	FString Message = (L"World Level: " + std::to_wstring(GGameState->WorldLevel)).c_str();
+/*	FString Message = (L"World Level: " + std::to_wstring(GGameState->WorldLevel)).c_str();
 
-	FortPlayerController->ClientMessage(Message, FName(), 0.f);
+	FortPlayerController->ClientMessage(Message, FName(), 0.f);*/
+
+	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
 void FortCheatManager::GiveConsumable(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -482,8 +486,6 @@ void FortCheatManager::GiveWeapon(UFortCheatManager* FortCheatManager, FFrame& S
 	FortPlayerController->WorldInventory->AddItem(FortWeaponItemDefinition, Count);
 }
 
-// bad way to do it but why not
-
 void FortCheatManager::GoFast(UFortCheatManager* FortCheatManager, FFrame& Stack)
 {
 	float NewSpeed;
@@ -494,12 +496,9 @@ void FortCheatManager::GoFast(UFortCheatManager* FortCheatManager, FFrame& Stack
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
 	if (FortPlayerController == NULL)
-		return;
+		return
 
-	int32 Speed = (int)NewSpeed;
-	FString Message = (L"demospeed " + std::to_wstring(Speed)).c_str();
-
-	UKismetSystemLibrary::ExecuteConsoleCommand(UWorld::GetWorld(), Message, FortPlayerController);
+	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
 void FortCheatManager::GiveWood(UFortCheatManager* FortCheatManager, FFrame& Stack)
