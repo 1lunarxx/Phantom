@@ -15246,6 +15246,12 @@ public:
 
 	bool IsGameReadyToSelectLoot() const;
 public:
+	void CreateAIGoalManager()
+	{
+		static void(*CreateAIGoalManager)(AFortGameModeZone*) = decltype(CreateAIGoalManager)(InSDKUtils::GetImageBase() + 0xF12B10);
+		CreateAIGoalManager(this);
+	}
+public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"FortGameModeZone">();
@@ -16792,7 +16798,12 @@ public:
 	uint8                                         Pad_4C8[0x88];                                     // 0x04C8(0x0088)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<struct FClientIdRestrictions>          ClientIdRestrictions;                              // 0x0550(0x0010)(ZeroConstructor, Config, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_560[0x8];                                      // 0x0560(0x0008)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	void ShutdownDedicatedServer(int ExitCode)
+	{
+		static void(*ShutdownDedicatedServer)(AFortGameSessionDedicated*, int) = decltype(ShutdownDedicatedServer)(InSDKUtils::GetImageBase() + 0x1147260);
+		ShutdownDedicatedServer(this, ExitCode);
+	}
 public:
 	static class UClass* StaticClass()
 	{

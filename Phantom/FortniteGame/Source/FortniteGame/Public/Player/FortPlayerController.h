@@ -4,10 +4,18 @@
 
 class FortPlayerController
 {
+	class Originals
+	{
+	public:
+		static inline void (*ClientRestart_Implementation)(AFortPlayerController* FortPlayerController, APawn* NewPawn);
+	};
+
 private:
 	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid);
 	static void ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash);
 	static void ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg);
+	static void ServerTeleportToReticle_Implementation(AFortPlayerController* FortPlayerController, FVector* TeleportLocation);
+	static void ClientRestart_Implementation(AFortPlayerController* FortPlayerController, APawn* NewPawn);
 
 	static void ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset);
 	static void ServerPlayEmoteItem_Internal(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset);

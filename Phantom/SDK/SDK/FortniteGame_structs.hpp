@@ -28696,6 +28696,21 @@ static_assert(offsetof(FFortMissionEntry, GenerationCategory) == 0x000030, "Memb
 static_assert(offsetof(FFortMissionEntry, GeneratedDifficultyOptions) == 0x000038, "Member 'FFortMissionEntry::GeneratedDifficultyOptions' has a wrong offset!");
 static_assert(offsetof(FFortMissionEntry, BlueprintLookupData) == 0x000078, "Member 'FFortMissionEntry::BlueprintLookupData' has a wrong offset!");
 
+struct FObjectKey
+{
+public:
+	UObject* ResolveObjectPtr() const
+	{
+		FWeakObjectPtr WeakPtr;
+		WeakPtr.ObjectIndex = ObjectIndex;
+		WeakPtr.ObjectSerialNumber = ObjectSerialNumber;
+
+		return WeakPtr.Get();
+	}
+
+	int32 ObjectIndex;
+	int32 ObjectSerialNumber;
+};
 // ScriptStruct FortniteGame.FortMissionRecord
 // 0x0138 (0x0138 - 0x0000)
 struct FFortMissionRecord final

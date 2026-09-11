@@ -4,16 +4,11 @@
 
 class FortGameModeZone
 {
-	class Originals
-	{
-	public:
-		static inline void (*HandleStartingNewPlayer_Implementation)(AFortGameModeZone* FortGameModeZone, AFortPlayerController* NewPlayer);
-	};
-
 private:
 	static void CreateAIDirector(AFortGameModeZone* FortGameModeZone);
 	static void FinishWorldInitialization(AFortGameModeZone* FortGameModeZone, AFortWorldManager* WorldManager);
-	static void HandleStartingNewPlayer_Implementation(AFortGameModeZone* FortGameModeZone, AFortPlayerController* NewPlayer);
+
+	static APawn* SpawnDefaultPawnFor_Implementation(AFortGameModeZone* FortGameModeZone, AController* NewPlayer, AActor* StartSpot);
 public:
 	static void Setup();
 };

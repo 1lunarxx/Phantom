@@ -17,15 +17,28 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 	SetConsoleTitleA("Phantom | Ready");
 }
 
-void FortGameModeZone::HandleStartingNewPlayer_Implementation(AFortGameModeZone* FortGameModeZone, AFortPlayerController* NewPlayer)
+APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* FortGameModeZone, AController* NewPlayer, AActor* StartSpot)
 {
-	Originals::HandleStartingNewPlayer_Implementation(FortGameModeZone, NewPlayer);
+	APawn* DefaultPawn = FortGameModeZone->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
 
-	if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(NewPlayer))
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(NewPlayer))
 	{
-		if (FortPlayerControllerAthena->MatchReport == NULL)
-			FortPlayerControllerAthena->MatchReport = NewObject<UAthenaPlayerMatchReport>(FortPlayerControllerAthena);
+		if (FortPlayerController->QuickBars == NULL)
+			FortPlayerController->QuickBars = GWorld->SpawnActor<AFortQuickBars>(FVector(), FRotator(), AFortQuickBars::StaticClass(), FortPlayerController);
+
+		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
+		{
+			for (const FItemAndCount& StartingItem : FortGameModeZone->StartingItems)
+				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
+
+			UAthenaPickaxeItemDefinition* AthenaPickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(TEXT("DefaultPickaxe"), ANY_PACKAGE);
+
+			if (AthenaPickaxeItemDefinition != NULL)
+				WorldInventory->AddItem(AthenaPickaxeItemDefinition->WeaponDefinition, 1);
+		}
 	}
+
+	return DefaultPawn;
 }
 
 void FortGameModeZone::Setup()
@@ -34,5 +47,5 @@ void FortGameModeZone::Setup()
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x134F889, FinishWorldInitialization);
 
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xA40 / 8, FinishWorldInitialization);
-	Utils::Virtual(AFortGameModeAthena::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer_Implementation, (void**)&Originals::HandleStartingNewPlayer_Implementation);
+	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0x610 / 8, SpawnDefaultPawnFor_Implementation);
 }

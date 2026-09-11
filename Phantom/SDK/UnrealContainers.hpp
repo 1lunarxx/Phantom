@@ -457,6 +457,13 @@ namespace UC
 
 			return L"";
 		}
+		
+	public:
+		static FString* PrintfImpl(FString* result, const wchar_t* Fmt, ...)
+		{
+			static FString* (*PrintfImpl)(FString*, const wchar_t*, ...) = decltype(PrintfImpl)(GetModuleHandleA(0) + 0x16FA340);
+			return PrintfImpl(result, Fmt);
+		}
 
 	public:
 		inline       wchar_t* CStr()       { return Data; }
@@ -707,7 +714,6 @@ namespace UC
 
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }
-
 	public:
 		inline decltype(auto) Find(const KeyElementType& Key, bool(*Equals)(const KeyElementType& LeftKey, const KeyElementType& RightKey))
 		{
@@ -717,7 +723,7 @@ namespace UC
 					return It;
 			}
 		
-			return end(*this);
+			return end(*this);	
 		}
 
 		inline int32 Add(const KeyElementType& Key, const ValueElementType& Value)
