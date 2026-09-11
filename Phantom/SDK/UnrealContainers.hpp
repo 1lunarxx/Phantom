@@ -461,7 +461,7 @@ namespace UC
 	public:
 		static FString* PrintfImpl(FString* result, const wchar_t* Fmt, ...)
 		{
-			static FString* (*PrintfImpl)(FString*, const wchar_t*, ...) = decltype(PrintfImpl)(GetModuleHandleA(0) + 0x16FA340);
+			static FString* (*PrintfImpl)(FString*, const wchar_t*, ...) = decltype(PrintfImpl)(((uintptr_t)GetModuleHandleA(0)) + 0x16FA340);
 			return PrintfImpl(result, Fmt);
 		}
 

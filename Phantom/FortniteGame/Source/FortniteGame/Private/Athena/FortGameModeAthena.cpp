@@ -52,6 +52,16 @@ void FortGameModeAthena::InitGameState(AFortGameModeAthena* FortGameModeAthena)
 	FortGameModeAthena->WarmupRequiredPlayerCount = 1;
 }
 
+void FortGameModeAthena::HandleStartingNewPlayer(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer)
+{
+	if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(NewPlayer))
+	{
+		FortPlayerControllerAthena->MatchReport = NewObject<UAthenaPlayerMatchReport>(FortPlayerControllerAthena);
+	}
+
+	Originals::HandleStartingNewPlayer(FortGameModeAthena, NewPlayer);
+}
+
 APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot)
 {
 	APawn* DefaultPawn = FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);;
@@ -75,6 +85,8 @@ APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthen
 
 void FortGameModeAthena::Setup()
 {
+	Utils::Virtual(AFortGameModeAthena::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer, (void**)&Originals::HandleStartingNewPlayer);
+
 	Utils::Hook(InSDKUtils::GetImageBase() + 0xCA8320, InitGameState, (void**)&Originals::InitGameState);
 	Utils::Hook(InSDKUtils::GetImageBase() + 0xCB8C30, SpawnDefaultPawnFor_Implementation);
 }

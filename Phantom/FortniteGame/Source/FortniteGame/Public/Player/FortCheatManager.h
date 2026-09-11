@@ -29,8 +29,6 @@ private:
 	static void BuildFree(UFortCheatManager* FortCheatManager, FFrame& Stack);
 	static void ForceServerShutdown(UFortCheatManager* FortCheatManager, FFrame& Stack);
 
-	static void GetWorldLevel(UFortCheatManager* FortCheatManager, FFrame& Stack);
-
 	static void GiveConsumable(UFortCheatManager* FortCheatManager, FFrame& Stack);
 	static void GiveGadget(UFortCheatManager* FortCheatManager, FFrame& Stack);
 	static void GiveGadgets(UFortCheatManager* FortCheatManager, FFrame& Stack);

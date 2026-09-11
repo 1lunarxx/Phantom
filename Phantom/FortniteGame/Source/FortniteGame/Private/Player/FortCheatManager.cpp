@@ -261,29 +261,28 @@ void FortCheatManager::ForceServerShutdown(UFortCheatManager* FortCheatManager, 
 	Stack.StepCompiledIn(&ExitCode);
 	Stack.IncrementCode();
 
-	for (AFortPlayerControllerAthena* FortPlayerController : GGameMode->AlivePlayers)
-	{
-		FortPlayerController->ServerReturnToMainMenu();
-	}
-
-	if (!ExitCode)
-		FGenericPlatformMisc::RequestExit(false);
-}
-
-void FortCheatManager::GetWorldLevel(UFortCheatManager* FortCheatManager, FFrame& Stack)
-{
-	Stack.IncrementCode();
-
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-/*	FString Message = (L"World Level: " + std::to_wstring(GGameState->WorldLevel)).c_str();
+	if (FortPlayerController->Role == ENetRole::ROLE_Authority)
+	{
+		UWorld* World = FortPlayerController->GetWorld();
 
-	FortPlayerController->ClientMessage(Message, FName(), 0.f);*/
+		if (World != NULL)
+		{
+			AFortGameModeAthena* GameMode = World->GetGameMode();
 
-	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+			if (GameMode != NULL)
+			{
+				AGameSession* GameSession = GameMode->GameSession;
+
+				if (AFortGameSessionDedicated* GameSessionDedicated = Cast<AFortGameSessionDedicated>(GameSession))
+					GameSessionDedicated->ShutdownDedicatedServer(ExitCode);
+			}
+		}
+	}
 }
 
 void FortCheatManager::GiveConsumable(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -570,12 +569,12 @@ void FortCheatManager::SetHealthPercent(UFortCheatManager* FortCheatManager, FFr
 	if (FortPlayerController == NULL)
 		return;
 
-	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
+	if (AFortPlayerPawn* PlayerPawn = FortPlayerController->GetPlayerPawn())
 	{
-		if (Percent > FortPlayerPawn->GetMaxHealth())
+		if (Percent > PlayerPawn->GetMaxHealth())
 			return;
 
-		FortPlayerPawn->SetHealth(Percent);
+		PlayerPawn->SetHealth(Percent);
 	}
 }
 
@@ -613,13 +612,8 @@ void FortCheatManager::TeleportToLocation(UFortCheatManager* FortCheatManager, F
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController == NULL)
-		return;
-
-	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
-	{
-		FortPlayerPawn->K2_TeleportTo(FVector(X, Y, Z), FRotator());
-	}
+	if (FortPlayerController != NULL)
+		FortPlayerController->ServerTeleportToReticle(FVector(X, Y, Z));
 }
 
 void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -628,8 +622,15 @@ void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* FortCheatManager, F
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController != NULL)
-		FortPlayerController->bInfiniteAmmo = true;
+	if (FortPlayerController == NULL)
+		return;
+
+	FortPlayerController->bInfiniteAmmo = (bool)!FortPlayerController->bInfiniteAmmo;
+
+	FString Message;
+	FString::PrintfImpl(&Message, FortPlayerController->bInfiniteAmmo ? L"Infinite ammo is true" : L"Infinite ammo is false");
+
+	FortPlayerController->ClientMessage(Message, FName(), 0.f);
 }
 
 void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* FortCheatManager, FFrame& Stack)
@@ -638,8 +639,20 @@ void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* FortCheatManager
 
 	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
 
-	if (FortPlayerController != NULL)
-		FortCheatManager->God();
+	if (FortPlayerController == NULL)
+		return;
+
+	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
+
+	if (FortPlayerPawn == NULL)
+		return;
+
+	FortPlayerPawn->bIsInvulnerable = !FortPlayerPawn->bIsInvulnerable;
+
+	FString Message;
+	FString::PrintfImpl(&Message, FortPlayerPawn->bIsInvulnerable ? L"Unlimited health is true" : L"Unlimited health is false");
+
+	FortPlayerController->ClientMessage(Message, FName(), 0.f);
 }
 
 void FortCheatManager::Setup()
