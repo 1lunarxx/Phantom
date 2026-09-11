@@ -295,6 +295,36 @@ void FortPlayerController::ServerRepairBuildingActor_Implementation(AFortPlayerC
 		UFortAIFunctionLibrary::MakeNoiseEventAtLocation(FortPlayerPawn, 0, BuildingActorToRepair->K2_GetActorLocation());
 }
 
+void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid)
+{
+	IFortInventoryInterface* FortInventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
+
+	if (FortInventoryInterface == NULL)
+		return;
+
+	UFortWorldItem* TargetWorldItem = FortInventoryInterface->GetItem(&TargetItemGuid);
+	UFortWorldItem* SourceWorldItem = FortInventoryInterface->GetItem(&SourceItemGuid);
+
+	if (TargetWorldItem == NULL || SourceWorldItem == NULL)
+		return;
+
+	UFortItemDefinition* TargetItemDefinition = TargetWorldItem->ItemEntry.ItemDefinition;
+	UFortItemDefinition* SourceItemDefinition = SourceWorldItem->ItemEntry.ItemDefinition;
+
+	if (TargetItemDefinition == NULL || SourceItemDefinition == NULL)
+		return;
+
+	if (TargetItemDefinition->IsStackable())
+	{
+		int32 Count = TargetWorldItem->ItemEntry.Count += SourceWorldItem->ItemEntry.Count;
+
+		if (Count <= 0)
+			return;
+
+		FortPlayerController->WorldInventory->AddItemStack(TargetItemDefinition, Count);
+	}
+}
+
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
 {
 	if (DestructionPawn == NULL)
@@ -375,7 +405,9 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10B0 / 8, ServerEndEditingBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor_Implementation);
-
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor_Implementation);
+
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1040 / 8, ServerCombineInventoryItems_Implementation);
+
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 }

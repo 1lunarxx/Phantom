@@ -13,6 +13,7 @@ class FortPlayerControllerAthena
 private:
 	static void ServerRestartPlayer_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena);
 	static void ServerReturnToMainMenu_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena);
+	static void ServerEmote_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena, const FName* AssetName);
 
 	static void RemoveAllInventoryItems(AFortPlayerControllerAthena* FortPlayerControllerAthena);
 	static void OnPawnDied(AFortPlayerControllerAthena* FortPlayerControllerAthena, AFortPlayerPawn* KilledPawn, const FGameplayTagContainer* InTags, const FGameplayEffectContextHandle* EffectContext, AController* EventInstigator, AActor* DamageCauser, AController* DBNOFinisher);

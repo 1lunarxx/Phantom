@@ -13,6 +13,12 @@ void FortPlayerControllerAthena::ServerReturnToMainMenu_Implementation(AFortPlay
 	ServerReturnToMainMenu(FortPlayerControllerAthena);
 }
 
+void FortPlayerControllerAthena::ServerEmote_Implementation(AFortPlayerControllerAthena* FortPlayerControllerAthena, const FName* AssetName)
+{
+	static void(*ServerEmote)(AFortPlayerController*, const FName*) = decltype(ServerEmote)(AFortPlayerController::GetDefaultObj()->VTable[0xDD0 / 8]);
+	ServerEmote(FortPlayerControllerAthena, AssetName);
+}
+
 void FortPlayerControllerAthena::RemoveAllInventoryItems(AFortPlayerControllerAthena* FortPlayerControllerAthena)
 {
 	AFortInventory* WorldInventory = FortPlayerControllerAthena->GetWorldInventory();
@@ -139,6 +145,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 void FortPlayerControllerAthena::Setup()
 {
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x7E8 / 8, ServerRestartPlayer_Implementation);
+	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0xDD0 / 8, ServerEmote_Implementation);
 	Utils::Virtual(AFortPlayerControllerAthena::GetDefaultObj()->VTable, 0x1270 / 8, ServerReturnToMainMenu_Implementation);
 
 	Utils::Hook(InSDKUtils::GetImageBase() + 0xCE1AB0, OnPawnDied, (void**)&Originals::OnPawnDied);

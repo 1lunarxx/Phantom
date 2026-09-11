@@ -18,8 +18,10 @@ private:
 	static void ServerEditBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored);
 	static void ServerEndEditingBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit);
 	static void ServerRepairBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
-	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 
+	static void ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid);
+
+	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);
 public:
 	static void Setup();
