@@ -1658,6 +1658,12 @@ public:
 		ScoreBuildingEdit(this, EditingController, EditedBuilding);
 	}
 
+	void ScoreBuildingRepair(AController* RepairingController, ABuildingSMActor* RepairedBuilding)
+	{
+		static void(*ScoreBuildingRepair)(AFortGameMode*, AController*, ABuildingSMActor*) = decltype(ScoreBuildingRepair)(InSDKUtils::GetImageBase() + 0xF2FC30);
+		ScoreBuildingRepair(this, RepairingController, RepairedBuilding);
+	}
+
 	void FinishWorldInitialization(class AFortWorldManager* WorldManager)
 	{
 		static void(*FinishWorldInitialization)(AFortGameMode*, AFortWorldManager*) = decltype(FinishWorldInitialization)(InSDKUtils::GetImageBase() + 0xF181C0);
@@ -2675,6 +2681,18 @@ public:
 	bool CanBePlayerEdited(AFortPlayerController* EditingPC)
 	{
 		return true;
+	}
+
+	bool NeedsRepair()
+	{
+		static bool(*NeedsRepair)(ABuildingSMActor*) = decltype(NeedsRepair)(InSDKUtils::GetImageBase() + 0xDA41A0);
+		return NeedsRepair(this);
+	}
+
+	bool IsBeingPlayerEdited()
+	{
+		static bool(*IsBeingPlayerEdited)(ABuildingSMActor*) = decltype(IsBeingPlayerEdited)(InSDKUtils::GetImageBase() + 0xDA32F0);
+		return IsBeingPlayerEdited(this);
 	}
 
 	int GetCostToRepair(AFortPlayerController* FPC)
@@ -14150,6 +14168,30 @@ public:
 	class UFortItem* K2_GetInventoryItemWithGuid(const struct FGuid& ItemGuid) const;
 public:
 	AFortInventory* GetWorldInventory() { return this->WorldInventory; };
+
+	FText BuildingLockedText()
+	{
+		static FText* BuildingLockedText = (FText*)(InSDKUtils::GetImageBase() + 0x55B7210);
+		return *BuildingLockedText;
+	}
+
+	FText UnableToAffordRepairText()
+	{
+		static FText* UnableToAffordRepairText = (FText*)(InSDKUtils::GetImageBase() + 0x55B71E0);
+		return *UnableToAffordRepairText;
+	}
+
+	void TriggerUIFeedbackEvent(FName EventName)
+	{
+		static void(*TriggerUIFeedbackEvent)(AFortPlayerController*, FName) = decltype(TriggerUIFeedbackEvent)(InSDKUtils::GetImageBase() + 0x12F8410);
+		TriggerUIFeedbackEvent(this, EventName);
+	}
+
+	bool CanAffordToRepair(ABuildingSMActor* BuildingToRepair)
+	{
+		static bool(*CanAffordToRepair)(AFortPlayerController*, ABuildingSMActor*) = decltype(CanAffordToRepair)(InSDKUtils::GetImageBase() + 0x12B04E0);
+		return CanAffordToRepair(this, BuildingToRepair);
+	}
 
 	bool CanAffordToPlaceBuildableClass(FBuildingClassData* ClassToBuildData)
 	{

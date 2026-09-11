@@ -320,12 +320,36 @@ void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* 
 
 void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair)
 {
-	if (BuildingActorToRepair == NULL)
+	if (BuildingActorToRepair == NULL || !BuildingActorToRepair->NeedsRepair())
 		return;
 
-	int32 CostToRepair = FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
+	// TODO: StartRepairSound, BroadcastSoundAtLocation, and fix error messages.
 
-	BuildingActorToRepair->RepairBuilding(FortPlayerController, CostToRepair);
+	if (BuildingActorToRepair->IsBeingPlayerEdited())
+	{
+		FortPlayerController->ClientSendMessage(FortPlayerController->BuildingLockedText());
+		FortPlayerController->TriggerUIFeedbackEvent(FName(L"BuildPreviewUnableToPlace"));
+
+		return;
+	}
+
+	if (!FortPlayerController->CanAffordToRepair(BuildingActorToRepair))
+	{
+		FortPlayerController->ClientSendMessage(FortPlayerController->UnableToAffordRepairText());
+		FortPlayerController->TriggerUIFeedbackEvent(FName(L"BuildPreviewUnableToAfford"));
+
+		return;
+	}
+
+	int32 ResourcesSpent = FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
+
+	BuildingActorToRepair->RepairBuilding(FortPlayerController, ResourcesSpent);
+
+	if (AFortGameMode* GameMode = GWorld->GetGameMode())
+		GameMode->ScoreBuildingRepair(FortPlayerController, BuildingActorToRepair);
+
+	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
+		UFortAIFunctionLibrary::MakeNoiseEventAtLocation(FortPlayerPawn, 0, BuildingActorToRepair->K2_GetActorLocation());
 }
 
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)

@@ -9,6 +9,12 @@ FName::FName(FString String)
 	*this = UKismetStringLibrary::Conv_StringToName(String);
 }
 
+FRotator FQuat::Rotator()
+{
+	static FRotator(*Rotator)(FQuat*) = decltype(Rotator)(InSDKUtils::GetImageBase() + 0x1793430);
+	return Rotator(this);
+}
+
 FVector FAircraftFlightInfo::GetFlightEnd()
 {
 	FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FlightStartRotation);
