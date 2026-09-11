@@ -76,11 +76,6 @@ void FortPlayerController::ServerTeleportToReticle_Implementation(AFortPlayerCon
 		FortPlayerPawn->K2_TeleportTo(*TeleportLocation, FRotator());
 }
 
-void FortPlayerController::ClientRestart_Implementation(AFortPlayerController* FortPlayerController, APawn* NewPawn)
-{
-	Originals::ClientRestart_Implementation(FortPlayerController, NewPawn);
-}
-
 void FortPlayerController::ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset)
 {
 	if (EmoteAsset != NULL)
@@ -131,59 +126,7 @@ void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* F
 	}
 }
 
-bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* PlayerController, FBuildingClassData* BuildingClassData)
-{
-	if (BuildingClassData == NULL || BuildingClassData->BuildingClass.Get() == NULL)
-		return false;
-
-	ABuildingSMActor* BuildingSMActor = Cast<ABuildingSMActor>(BuildingClassData->BuildingClass.Get()->DefaultObject);
-
-	if (BuildingSMActor == NULL)
-		return false;
-
-	FPlayerBuildableClassFilter ClassFilter = FPlayerBuildableClassFilter{};
-
-	ClassFilter.BuildingType = BuildingSMActor->BuildingType;
-	ClassFilter.EditModeMetadata = BuildingSMActor->EditModePatternData;
-	ClassFilter.Level = 0;
-	ClassFilter.ResourceType = BuildingSMActor->ResourceType;
-
-	TArray<TSubclassOf<ABuildingSMActor>> MatchingPlayerBuildableClasses;
-
-	GGameState->GetPlayerBuildableClasses(&MatchingPlayerBuildableClasses, &ClassFilter);
-
-	if (MatchingPlayerBuildableClasses.Num() <= 0)
-		return false;
-
-	TSubclassOf<ABuildingSMActor> BuildingClass;
-
-	for (TSubclassOf<ABuildingSMActor> MatchingPlayerBuildableClass : MatchingPlayerBuildableClasses)
-	{
-		if (MatchingPlayerBuildableClass.Get() == NULL)
-			continue;
-
-		ABuildingSMActor* MatchingBuildingSMActor = Cast<ABuildingSMActor>(MatchingPlayerBuildableClass.Get()->DefaultObject);
-
-		if (MatchingBuildingSMActor == BuildingSMActor)
-		{
-			BuildingClass = MatchingPlayerBuildableClass;
-			break;
-		}
-	}
-
-	if (BuildingClass.Get() != NULL)
-	{
-		BuildingClassData->PreviousBuildingLevel = -1;
-		BuildingClassData->UpgradeLevel = 0;
-		BuildingClassData->BuildingClass = BuildingClass.Get();
-
-		return true;
-	}
-
-	return false;
-}
-
-void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* FortPlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey)
+void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerController* FortPlayerController, FBuildingClassData& BuildingClassData, FVector_NetQuantize10& BuildLoc, FRotator& BuildRot, bool bMirrored, float SyncKey)
 {
 	if (!FixUpCreateBuildingClassData(FortPlayerController, &BuildingClassData))
 		return;
@@ -261,7 +204,7 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 	}
 }
 
-void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
+void FortPlayerController::ServerBeginEditingBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
 {
 	if (BuildingActorToEdit != NULL && FortPlayerController->MyFortPawn != NULL)
 	{
@@ -285,7 +228,7 @@ void FortPlayerController::ServerBeginEditingBuildingActor(AFortPlayerController
 	}
 }
 
-void FortPlayerController::ServerEditBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored)
+void FortPlayerController::ServerEditBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored)
 {
 	if (BuildingActorToEdit != NULL && BuildingActorToEdit->EditingPlayer == FortPlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
 	{
@@ -299,7 +242,7 @@ void FortPlayerController::ServerEditBuildingActor(AFortPlayerController* FortPl
 	}
 }
 
-void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
+void FortPlayerController::ServerEndEditingBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit)
 {
 	if (BuildingActorToEdit != NULL && FortPlayerController->MyFortPawn != NULL && BuildingActorToEdit->EditingPlayer == FortPlayerController->PlayerState && !BuildingActorToEdit->bDestroyed)
 	{
@@ -318,7 +261,7 @@ void FortPlayerController::ServerEndEditingBuildingActor(AFortPlayerController* 
 	}
 }
 
-void FortPlayerController::ServerRepairBuildingActor(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair)
+void FortPlayerController::ServerRepairBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair)
 {
 	if (BuildingActorToRepair == NULL || !BuildingActorToRepair->NeedsRepair())
 		return;
@@ -367,6 +310,58 @@ void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* For
 	}
 }
 
+bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* PlayerController, FBuildingClassData* BuildingClassData)
+{
+	if (BuildingClassData == NULL || BuildingClassData->BuildingClass.Get() == NULL)
+		return false;
+
+	ABuildingSMActor* BuildingSMActor = Cast<ABuildingSMActor>(BuildingClassData->BuildingClass.Get()->DefaultObject);
+
+	if (BuildingSMActor == NULL)
+		return false;
+
+	FPlayerBuildableClassFilter ClassFilter = FPlayerBuildableClassFilter{};
+
+	ClassFilter.BuildingType = BuildingSMActor->BuildingType;
+	ClassFilter.EditModeMetadata = BuildingSMActor->EditModePatternData;
+	ClassFilter.Level = 0;
+	ClassFilter.ResourceType = BuildingSMActor->ResourceType;
+
+	TArray<TSubclassOf<ABuildingSMActor>> MatchingPlayerBuildableClasses;
+
+	GGameState->GetPlayerBuildableClasses(&MatchingPlayerBuildableClasses, &ClassFilter);
+
+	if (MatchingPlayerBuildableClasses.Num() <= 0)
+		return false;
+
+	TSubclassOf<ABuildingSMActor> BuildingClass;
+
+	for (TSubclassOf<ABuildingSMActor> MatchingPlayerBuildableClass : MatchingPlayerBuildableClasses)
+	{
+		if (MatchingPlayerBuildableClass.Get() == NULL)
+			continue;
+
+		ABuildingSMActor* MatchingBuildingSMActor = Cast<ABuildingSMActor>(MatchingPlayerBuildableClass.Get()->DefaultObject);
+
+		if (MatchingBuildingSMActor == BuildingSMActor)
+		{
+			BuildingClass = MatchingPlayerBuildableClass;
+			break;
+		}
+	}
+
+	if (BuildingClass.Get() != NULL)
+	{
+		BuildingClassData->PreviousBuildingLevel = -1;
+		BuildingClassData->UpgradeLevel = 0;
+		BuildingClassData->BuildingClass = BuildingClass.Get();
+
+		return true;
+	}
+
+	return false;
+}
+
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1030 / 8, ServerAttemptInventoryDrop_Implementation);
@@ -375,13 +370,12 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDB0 / 8, ServerCheat_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xD80 / 8, ServerTeleportToReticle_Implementation);
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x8D8 / 8, ClientRestart_Implementation, (void**)&Originals::ClientRestart_Implementation);
 
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor);
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor);
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10B0 / 8, ServerEndEditingBuildingActor);
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10B0 / 8, ServerEndEditingBuildingActor_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor_Implementation);
 
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 }
