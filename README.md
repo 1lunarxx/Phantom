@@ -9,10 +9,12 @@ If you know how to do certain functions properly, feel free to make a pull reque
 ## FEATURES:
 - Looting
 - Food Fight (WIP)
-- Proper Building & Editing
-- Semi-Proper Harvesting
+- Proper Building & Editing & Repairing
+- Proper Emoting
+- Half reimplemented FortCheatManager
+- Semi-Proper Harvesting 
+- Semi-Proper OnPawnDied
 - Gadgets (Ghost mode etc)
-- Others: Cheat Commands, Emoting, Unfinished Matchstats, Semi-Proper Dying, Some proper stuff
 
 ## TODO:
 - Quests
