@@ -217,7 +217,7 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 
 					int32 BuildableClassPlacementCost = FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
 
-					if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
+/*					if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
 					{
 						if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
 						{
@@ -234,9 +234,9 @@ void FortPlayerController::ServerCreateBuildingActor(AFortPlayerController* Fort
 								break;
 							}
 						}
-					}
+					}*/
 
-					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, 0);
+					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, BuildableClassPlacementCost);
 
 					if (GGameMode != NULL)
 						GGameMode->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
@@ -294,8 +294,8 @@ void FortPlayerController::ServerEditBuildingActor(AFortPlayerController* FortPl
 
 		UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Edit", BuildingActorToEdit, 0);
 
-		if (GGameMode != NULL)
-			GGameMode->ScoreBuildingEdit(FortPlayerController, BuildingActorToEdit);
+		if (AFortGameMode* GameMode = GWorld->GetGameMode())
+			GameMode->ScoreBuildingEdit(FortPlayerController, BuildingActorToEdit);
 	}
 }
 
