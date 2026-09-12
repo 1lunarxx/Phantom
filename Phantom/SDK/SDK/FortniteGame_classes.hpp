@@ -13289,7 +13289,8 @@ public:
 	uint8                                         Pad_6B9[0x7];                                      // 0x06B9(0x0007)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<struct FFortItemEntry>                 ConsumablesToSpawn;                                // 0x06C0(0x0010)(ZeroConstructor, Transient, Protected, NativeAccessSpecifierProtected)
 	uint8                                         Pad_6D0[0x28];                                     // 0x06D0(0x0028)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	void SetupAndAttemptToSpawnConsumables();
 public:
 	static class UClass* StaticClass()
 	{

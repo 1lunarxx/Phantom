@@ -158,7 +158,7 @@ public:
         return NULL;
     }
 
-    static void Rel32(uintptr_t Target, void* Detour, void** Original = nullptr)
+    static void Rel32(uintptr_t Target, void* Detour)
     {
         uint8* Impl = (uint8*)(Target);
         uint8_t* NearPage = AllocateNearbyPage(Impl);
