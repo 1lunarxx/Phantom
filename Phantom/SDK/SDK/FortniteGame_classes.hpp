@@ -14218,6 +14218,12 @@ public:
 		return HasRequiredBuildingLevel(this, NewLevel, ResourceType);
 	}
 
+	void OnRep_UpdatedObjectiveStatsInternal()
+	{
+		static void(*OnRep_UpdatedObjectiveStat)(AFortPlayerController*) = decltype(OnRep_UpdatedObjectiveStat)(InSDKUtils::GetImageBase() + 0x12DD630);
+		OnRep_UpdatedObjectiveStat(this);
+	}
+
 	EFortStructuralGridQueryResults CanPlaceBuildableClassInStructuralGrid(TSubclassOf<ABuildingActor> ClassToBuild, FVector* WorldLocation, FRotator* WorldRotation, bool bMirrored, TArray<ABuildingActor*>* ExistingBuildings)
 	{
 		static EFortStructuralGridQueryResults(*CanPlaceBuildableClassInStructuralGrid)(AFortPlayerController*, TSubclassOf<ABuildingActor>, FVector*, FRotator*, bool, TArray<ABuildingActor*>*, void*) = decltype(CanPlaceBuildableClassInStructuralGrid)(InSDKUtils::GetImageBase() + 0x12B0F10);
@@ -53649,11 +53655,6 @@ public:
 	void MarkQuestsSeen(bool bOnlyMarkPendingSeenQuests) const;
 	void RerollDailyQuest(const class UFortQuestItem* QuestToDiscard) const;
 public:
-	__int64 GetChangesInPendingSaveRequests(FString* BackendName)
-	{
-		return 1;
-	}
-
 	FFortQuestObjectiveCompletion* GetPendingChange(FString* BackendName)
 	{
 		for (FFortQuestObjectiveCompletion& PendingChange : PendingChanges)

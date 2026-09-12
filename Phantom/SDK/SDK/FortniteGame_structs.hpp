@@ -8936,7 +8936,7 @@ public:
 	class UFortQuestItemDefinition*               Quest;                                             // 0x0000(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	class FName                                   BackendName;                                       // 0x0008(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	int32                                         StatValue;                                         // 0x0010(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_14[0x4];                                       // 0x0014(0x0004)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	int32                                         StatDelta;                                         // 0x0014(0x0004)(Fixing Struct Size After Last Property [ Dumper-7 ])
 };
 static_assert(alignof(FFortUpdatedObjectiveStat) == 0x000008, "Wrong alignment on FFortUpdatedObjectiveStat");
 static_assert(sizeof(FFortUpdatedObjectiveStat) == 0x000018, "Wrong size on FFortUpdatedObjectiveStat");
@@ -26784,6 +26784,26 @@ static_assert(offsetof(FFortSprayDecalRepPayload, BannerName) == 0x000008, "Memb
 static_assert(offsetof(FFortSprayDecalRepPayload, BannerColor) == 0x000010, "Member 'FFortSprayDecalRepPayload::BannerColor' has a wrong offset!");
 static_assert(offsetof(FFortSprayDecalRepPayload, SavedStatValue) == 0x000018, "Member 'FFortSprayDecalRepPayload::SavedStatValue' has a wrong offset!");
 
+struct FQuestFilterExpressionContext
+{
+public:
+	uint8 Pad[0xB0];
+public:
+	void Construct(UObject* TargetObject, class UFortMcpProfileAthena* McpProfileQuest, class AFortPlayerController* PlayerController, FGameDifficultyInfo* InDifficultyInfo, FGameplayTagContainer* SourceTags, FGameplayTagContainer* TargetTags, bool bInLogEvaluationErrors)
+	{
+		static void(*Constructor)(FQuestFilterExpressionContext*, UObject*, UFortMcpProfileAthena*, AFortPlayerController*, FGameDifficultyInfo*, FGameplayTagContainer*, FGameplayTagContainer*, bool) = decltype(Constructor)(InSDKUtils::GetImageBase() + 0x1333EB0);
+		Constructor(this, TargetObject, McpProfileQuest, PlayerController, InDifficultyInfo, SourceTags, TargetTags, bInLogEvaluationErrors);
+	}
+};
+
+struct FFortQuestFilterExpressionEvaluator
+{
+	bool Evaluate(const void* Code, const FQuestFilterExpressionContext* Context, FText* OutError)
+	{
+		static bool (*Evaluate)(FFortQuestFilterExpressionEvaluator*, const void*, const FQuestFilterExpressionContext*, FText*) = decltype(Evaluate)(InSDKUtils::GetImageBase() + 0x134BD90);
+		return Evaluate(this, Code, Context, OutError);
+	}
+};
 // ScriptStruct FortniteGame.FortStatEventSequence
 // 0x0050 (0x0050 - 0x0000)
 struct FFortStatEventSequence final

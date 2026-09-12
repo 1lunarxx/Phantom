@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
 
+// UNFINISHED
+
 void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EFortQuestObjectiveStatEvent Type, UObject* TargetObject, FGameplayTagContainer* TargetTags, FGameplayTagContainer* SourceTags, FGameplayTagContainer* ContextTags, int Count)
 {
 	UFortRegisteredPlayerInfo* FortRegisteredPlayerInfo = Cast<UFortRegisteredPlayerInfo>(QuestManager->Outer);
 
-	if (FortRegisteredPlayerInfo == NULL || TargetTags == NULL)
+	if (FortRegisteredPlayerInfo == NULL || TargetTags == NULL || FortRegisteredPlayerInfo->GetPlayerController() == NULL)
 		return;
-
-	printf(__FUNCTION__);
 
 	for (UFortQuestItem* CurrentQuest : QuestManager->CurrentQuests)
 	{
@@ -24,9 +24,9 @@ void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EF
 		{
 			if (Objective.Stage == -1 || Objective.Stage == CurrentQuest->CurrentStage)
 			{	
-				FFortQuestObjectiveStatTableRow* QuestObjectiveStatTableRow = Objective.ObjectiveStatHandle.FindRow<FFortQuestObjectiveStatTableRow>(QuestItemDefinition->Name);
+				FFortQuestObjectiveStatTableRow* QuestObjectiveStatTableRow = Objective.ObjectiveStatHandle.FindRow<FFortQuestObjectiveStatTableRow>(Objective.ObjectiveStatHandle.RowName);
 				
-				if (QuestObjectiveStatTableRow == NULL)
+				if (QuestObjectiveStatTableRow == NULL || QuestObjectiveStatTableRow->Type != Type)
 					continue;
 
 				static void(*watthisdo)(FFortQuestObjectiveStatTableRow*) = decltype(watthisdo)(InSDKUtils::GetImageBase() + 0x13445C0);
@@ -35,12 +35,14 @@ void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EF
 				if (UFortMcpProfileAthena* BoundProfile = Cast<UFortMcpProfileAthena>(QuestManager->BoundProfile.Get()))
 				{
 					FQuestFilterExpressionContext QuestFilterExpressionContext;
-					QuestFilterExpressionContext.Construct(TargetTags, BoundProfile, FortRegisteredPlayerInfo->GetPlayerController(), false);
+					QuestFilterExpressionContext.Construct(TargetObject, BoundProfile, FortRegisteredPlayerInfo->GetPlayerController(), NULL, SourceTags, TargetTags, false);
 
 					FText OutError;
 					FFortQuestFilterExpressionEvaluator* FortQuestFilterExpressionEvaluator = (FFortQuestFilterExpressionEvaluator*)(InSDKUtils::GetImageBase() + 0x55B8E40);
 
-					if (!FortQuestFilterExpressionEvaluator->Evaluate((void*)((uintptr_t)QuestObjectiveStatTableRow + 0xD8), &QuestFilterExpressionContext, &OutError))
+					bool bEvaluate = FortQuestFilterExpressionEvaluator->Evaluate((void*)((uintptr_t)QuestObjectiveStatTableRow + 0xD8), &QuestFilterExpressionContext, &OutError);
+
+					if (!bEvaluate)
 						continue;
 
 					FString BackendName = UKismetStringLibrary::Conv_NameToString(Objective.BackendName);
@@ -55,41 +57,65 @@ void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EF
 
 						QuestManager->PendingChanges.Add(FortQuestObjectiveCompletion);
 					}
-
-					printf("gay\n");
-
-					std::cout << "uh: " << QuestItemDefinition->GetFullName() << std::endl;
-
-/*					if (QuestManager->GetChangesInPendingSaveRequests(NULL)) // this should be a if statement where it checks if this is greater then Objective->Count but uh lazy
-					{
-						int32 InCount = 0;
-
-						int* CompletionCount = CurrentQuest->CompletionCounts.Find(Objective.BackendName);
-
-						if (CompletionCount)
-							InCount = *CompletionCount;
-
-						if (InCount < Objective.Count)
-						{
-							FString BackendName = UKismetStringLibrary::Conv_NameToString(Objective.BackendName);
-							FFortQuestObjectiveCompletion* PendingChange = QuestManager->GetPendingChange(&BackendName);
-
-							if (PendingChange == NULL)
-							{
-								FFortQuestObjectiveCompletion FortQuestObjectiveCompletion = FFortQuestObjectiveCompletion{};
-
-								QuestManager->PendingChanges.Add(FortQuestObjectiveCompletion);
-							}
-						}
-					}*/
 				}
 			}
 		}
 	}
 }
 
-void FortQuestManager::SendCustomStatEvent(UFortQuestManager* QuestManager, FDataTableRowHandle& ObjectiveStat, int32 Count, bool bForceFlush)
+void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, FDataTableRowHandle& ObjectiveStat, int32 Count, bool bForceFlush)
 {
+	Originals::SendCustomStatEvent(FortQuestManager, ObjectiveStat, Count, bForceFlush);
+
+	UFortRegisteredPlayerInfo* FortRegisteredPlayerInfo = Cast<UFortRegisteredPlayerInfo>(FortQuestManager->Outer);
+
+	if (FortRegisteredPlayerInfo == NULL)
+		return;
+
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerControllerAthena>(FortRegisteredPlayerInfo->GetPlayerController());
+
+	if (FortPlayerController == NULL)
+		return;
+
+	for (UFortQuestItem* CurrentQuest : FortQuestManager->CurrentQuests)
+	{
+		UFortQuestObjectiveInfo* FortQuestObjectiveInfo = CurrentQuest->GetObjectiveInfo(ObjectiveStat);
+
+		if (FortQuestObjectiveInfo == NULL)
+			continue;
+
+		FortQuestObjectiveInfo->AchievedCount += Count;
+		FortQuestObjectiveInfo->DisplayDynamicQuestUpdate();
+
+		FString BackendName = UKismetStringLibrary::Conv_NameToString(FortQuestObjectiveInfo->BackendName);
+		FFortUpdatedObjectiveStat UpdatedObjectiveStat = FFortUpdatedObjectiveStat{};
+
+		UpdatedObjectiveStat.BackendName = BackendName;
+		UpdatedObjectiveStat.Quest = Cast<UFortQuestItemDefinition>(CurrentQuest->ItemDefinition);
+		UpdatedObjectiveStat.StatValue = FortQuestObjectiveInfo->AchievedCount;
+		UpdatedObjectiveStat.StatDelta = UpdatedObjectiveStat.StatValue;
+
+		for (FFortUpdatedObjectiveStat& UpdatedObjectiveStat : FortPlayerController->UpdatedObjectiveStats)
+		{
+			if (UpdatedObjectiveStat.BackendName == BackendName)
+			{
+				UpdatedObjectiveStat.StatValue = FortQuestObjectiveInfo->AchievedCount;
+				break;
+			}
+		}
+
+		FortPlayerController->UpdatedObjectiveStats.Add(UpdatedObjectiveStat);
+		FortPlayerController->OnRep_UpdatedObjectiveStatsInternal(); // not needed but maybe does something and its a good find.
+
+		FFortQuestObjectiveCompletion FortQuestObjectiveCompletion = FFortQuestObjectiveCompletion{};
+
+		FortQuestObjectiveCompletion.Count = Count;
+		FortQuestObjectiveCompletion.StatName = BackendName;
+
+		FortQuestManager->PendingChanges.Add(FortQuestObjectiveCompletion);
+
+		break;
+	}
 }
 
 void FortQuestManager::Setup()
@@ -111,4 +137,7 @@ void FortQuestManager::Setup()
 
 	for (uintptr_t Addr : SendStatEventWithTags_NullSubs)
 		Utils::Rel32(Addr, SendStatEventWithTags);
+
+	Utils::Hook(InSDKUtils::GetImageBase() + 0xD81700, SendStatEventWithTags);
+	Utils::Hook(InSDKUtils::GetImageBase() + 0x136D2E0, SendCustomStatEvent, (void**)&Originals::SendCustomStatEvent);
 }
