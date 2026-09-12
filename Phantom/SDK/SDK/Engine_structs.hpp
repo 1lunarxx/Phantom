@@ -6296,6 +6296,9 @@ struct FDataTableRowHandle final
 public:
 	class UDataTable*                             DataTable;                                         // 0x0000(0x0008)(Edit, BlueprintVisible, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	class FName                                   RowName;                                           // 0x0008(0x0008)(Edit, BlueprintVisible, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+public:
+	template<class T>
+	T* FindRow(FName InRowName);
 };
 static_assert(alignof(FDataTableRowHandle) == 0x000008, "Wrong alignment on FDataTableRowHandle");
 static_assert(sizeof(FDataTableRowHandle) == 0x000010, "Wrong size on FDataTableRowHandle");

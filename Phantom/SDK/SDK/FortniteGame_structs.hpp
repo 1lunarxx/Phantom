@@ -26390,6 +26390,12 @@ public:
 	int32                                         DynamicStatusUpdatePercentInterval;                // 0x00D8(0x0004)(Edit, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	float                                         DynamicUpdateCompletionDelay;                      // 0x00DC(0x0004)(Edit, ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	TSoftClassPtr<class UClass>                   ScriptedAction;                                    // 0x00E0(0x0028)(Edit, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+public:
+	bool sub_133EC70(UObject* StatEventData, FGameplayTagContainer* SourceTags)
+	{
+		static bool (*sub_133EC70)(FFortMcpQuestObjectiveInfo*, UObject*, FGameplayTagContainer*) = decltype(sub_133EC70)(InSDKUtils::GetImageBase() + 0x133EC70);
+		return sub_133EC70(this, StatEventData, SourceTags);
+	}
 };
 static_assert(alignof(FFortMcpQuestObjectiveInfo) == 0x000008, "Wrong alignment on FFortMcpQuestObjectiveInfo");
 static_assert(sizeof(FFortMcpQuestObjectiveInfo) == 0x000108, "Wrong size on FFortMcpQuestObjectiveInfo");

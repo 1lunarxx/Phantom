@@ -726,6 +726,17 @@ namespace UC
 			return end(*this);	
 		}
 
+		inline ValueElementType* Find(const KeyElementType& Key)
+		{
+			for (auto It = begin(*this); It != end(*this); ++It)
+			{
+				if (It->Key() == Key)
+					return &It->Value();
+			}
+
+			return nullptr;
+		}
+
 		inline int32 Add(const KeyElementType& Key, const ValueElementType& Value)
 		{
 			return Elements.Add(ElementType(Key, Value));

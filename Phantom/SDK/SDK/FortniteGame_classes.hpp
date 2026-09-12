@@ -53649,10 +53649,20 @@ public:
 	void MarkQuestsSeen(bool bOnlyMarkPendingSeenQuests) const;
 	void RerollDailyQuest(const class UFortQuestItem* QuestToDiscard) const;
 public:
-	void UpdateStatsForSingleMatchQuests()
+	__int64 GetChangesInPendingSaveRequests(FString* BackendName)
 	{
-		static void (*UpdateStatsForSingleMatchQuests)(UFortQuestManager*) = decltype(UpdateStatsForSingleMatchQuests)(InSDKUtils::GetImageBase() + 0x13743B0);
-		UpdateStatsForSingleMatchQuests(this);
+		return 1;
+	}
+
+	FFortQuestObjectiveCompletion* GetPendingChange(FString* BackendName)
+	{
+		for (FFortQuestObjectiveCompletion& PendingChange : PendingChanges)
+		{
+			if (PendingChange.StatName == *BackendName)
+				return &PendingChange;
+		}
+
+		return NULL;
 	}
 public:
 	static class UClass* StaticClass()

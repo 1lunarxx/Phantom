@@ -213,6 +213,21 @@ T* UWorld::SpawnActor(FVector Location, FRotator Rotation, UClass* InClass, AAct
     return (T*)Actor;
 }
 
+template<class T>
+T* FDataTableRowHandle::FindRow(FName InRowName)
+{
+    if (DataTable == NULL)
+        return NULL;
+
+    for (const auto& [RowName, RowValue] : DataTable->RowMap)
+    {
+        if (RowName == InRowName)
+            return reinterpret_cast<T*>(RowValue);
+    }
+
+    return NULL;
+}
+
 FORCEINLINE AFortGameStateAthena* UWorld::GetGameState()
 {
     return Cast<AFortGameStateAthena>(GameState);
