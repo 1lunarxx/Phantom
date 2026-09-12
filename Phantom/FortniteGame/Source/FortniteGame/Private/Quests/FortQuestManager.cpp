@@ -63,6 +63,8 @@ void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EF
 	}
 }
 
+TMap<UFortQuestManager*, UFortQuestItemDefinition*> ObjectiveOncePerMatchMap;
+
 void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, FDataTableRowHandle& ObjectiveStat, int32 Count, bool bForceFlush)
 {
 	Originals::SendCustomStatEvent(FortQuestManager, ObjectiveStat, Count, bForceFlush);
@@ -83,6 +85,22 @@ void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, 
 
 		if (FortQuestObjectiveInfo == NULL)
 			continue;
+
+		UFortQuestItemDefinition* FortQuestItemDefinition = Cast<UFortQuestItemDefinition>(CurrentQuest);
+
+		if (FortQuestItemDefinition == NULL)
+			continue;
+
+		if (FortQuestItemDefinition->bAthenaUpdateObjectiveOncePerMatch)
+		{
+			for (const auto& [QuestManager, QuestItemDef] : ObjectiveOncePerMatchMap)
+			{
+				if (QuestManager == FortQuestManager && QuestItemDef == FortQuestItemDefinition)
+					return;
+			}
+
+			ObjectiveOncePerMatchMap.Add(FortQuestManager, FortQuestItemDefinition);
+		}
 
 		FortQuestObjectiveInfo->AchievedCount += Count;
 		FortQuestObjectiveInfo->DisplayDynamicQuestUpdate();
