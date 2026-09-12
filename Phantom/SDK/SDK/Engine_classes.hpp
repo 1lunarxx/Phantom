@@ -6994,7 +6994,7 @@ public:
 		return FindCollectionByType(this, InType);
 	}
 
-	AActor* SpawnActor(UClass* Class, const FVector* Location, const FRotator* Rotation, const struct FActorSpawnParameters* SpawnParameters)
+	AActor* SpawnActor(UClass* Class, FVector Location, FRotator Rotation, const struct FActorSpawnParameters* SpawnParameters)
 	{
 		if (SpawnParameters == NULL)
 		{
@@ -7002,7 +7002,7 @@ public:
 			SpawnParameters = &NewSpawnParams;
 		}
 
-		static AActor* (*SpawnActor)(UWorld*, UClass*, const FVector*, const FRotator*, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
+		static AActor* (*SpawnActor)(UWorld*, UClass*, FVector&, FRotator&, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
 		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
 	}
 

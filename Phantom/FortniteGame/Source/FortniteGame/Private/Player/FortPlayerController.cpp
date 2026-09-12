@@ -148,7 +148,7 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 				FActorSpawnParameters SpawnParams = FActorSpawnParameters();
 				SpawnParams.SpawnCollisionHandlingOverride = 1;
 
-				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, &BuildLoc, &BuildRot, &SpawnParams));
+				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, BuildLoc, BuildRot, &SpawnParams));
 
 				if (NewBuilding != NULL)
 				{
