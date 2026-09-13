@@ -9,6 +9,41 @@ FName::FName(FString String)
 	*this = UKismetStringLibrary::Conv_StringToName(String);
 }
 
+bool AFortPlayerController::UpdateQuest(FName BackendName, int32 AchievedCount)
+{
+	for (FFortUpdatedObjectiveStat& UpdatedObjectiveStat : UpdatedObjectiveStats)
+	{
+		if (UpdatedObjectiveStat.BackendName == BackendName)
+		{
+			UpdatedObjectiveStat.StatValue = AchievedCount;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AFortPlayerController::ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap)
+{
+	if (!FortQuestItemDefinition->bAthenaUpdateObjectiveOncePerMatch)
+		return false;
+
+	UFortQuestManager* FortQuestManager = GetQuestManager(ESubGame::Athena);
+
+	if (FortQuestManager == NULL)
+		return false;
+	
+	for (const auto& [QuestManager, QuestItemDef] : *ObjectiveOncePerMatchMap)
+	{
+		if (QuestManager == FortQuestManager && QuestItemDef == FortQuestItemDefinition)
+			return true;
+	}
+
+	ObjectiveOncePerMatchMap->Add(FortQuestManager, FortQuestItemDefinition);
+
+	return false;
+}
+
 FRotator FQuat::Rotator()
 {
 	static FRotator(*Rotator)(FQuat*) = decltype(Rotator)(InSDKUtils::GetImageBase() + 0x1793430);

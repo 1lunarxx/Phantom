@@ -91,36 +91,20 @@ void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, 
 		if (FortQuestItemDefinition == NULL)
 			continue;
 
-		if (FortQuestItemDefinition->bAthenaUpdateObjectiveOncePerMatch)
-		{
-			for (const auto& [QuestManager, QuestItemDef] : ObjectiveOncePerMatchMap)
-			{
-				if (QuestManager == FortQuestManager && QuestItemDef == FortQuestItemDefinition)
-					return;
-			}
-
-			ObjectiveOncePerMatchMap.Add(FortQuestManager, FortQuestItemDefinition);
-		}
+		if (FortPlayerController->ObjectiveOncePerMatch(FortQuestItemDefinition, &ObjectiveOncePerMatchMap))
+			return;
 
 		FortQuestObjectiveInfo->AchievedCount += Count;
 		FortQuestObjectiveInfo->DisplayDynamicQuestUpdate();
 
-		FString BackendName = UKismetStringLibrary::Conv_NameToString(FortQuestObjectiveInfo->BackendName);
 		FFortUpdatedObjectiveStat UpdatedObjectiveStat = FFortUpdatedObjectiveStat{};
 
-		UpdatedObjectiveStat.BackendName = BackendName;
+		UpdatedObjectiveStat.BackendName = FortQuestObjectiveInfo->BackendName;
 		UpdatedObjectiveStat.Quest = FortQuestItemDefinition;
 		UpdatedObjectiveStat.StatValue = FortQuestObjectiveInfo->AchievedCount;
-		UpdatedObjectiveStat.StatDelta = UpdatedObjectiveStat.StatValue;
+		UpdatedObjectiveStat.StatDelta = FortQuestObjectiveInfo->AchievedCount;
 
-		for (FFortUpdatedObjectiveStat& UpdatedObjectiveStat : FortPlayerController->UpdatedObjectiveStats)
-		{
-			if (UpdatedObjectiveStat.BackendName == BackendName)
-			{
-				UpdatedObjectiveStat.StatValue = FortQuestObjectiveInfo->AchievedCount;
-				break;
-			}
-		}
+		FortPlayerController->UpdateQuest(FortQuestObjectiveInfo->BackendName, FortQuestObjectiveInfo->AchievedCount);
 
 		FortPlayerController->UpdatedObjectiveStats.Add(UpdatedObjectiveStat);
 		FortPlayerController->OnRep_UpdatedObjectiveStatsInternal(); // not needed but maybe does something and its a good find.
@@ -128,7 +112,7 @@ void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, 
 		FFortQuestObjectiveCompletion FortQuestObjectiveCompletion = FFortQuestObjectiveCompletion{};
 
 		FortQuestObjectiveCompletion.Count = Count;
-		FortQuestObjectiveCompletion.StatName = BackendName;
+		FortQuestObjectiveCompletion.StatName = UKismetStringLibrary::Conv_NameToString(FortQuestObjectiveInfo->BackendName);
 
 		FortQuestManager->PendingChanges.Add(FortQuestObjectiveCompletion);
 

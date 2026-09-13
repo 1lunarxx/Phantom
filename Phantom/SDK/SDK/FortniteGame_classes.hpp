@@ -14200,6 +14200,9 @@ public:
 		return CanAffordToPlaceBuildableClass(this, ClassToBuildData);
 	}
 
+	bool UpdateQuest(FName BackendName, int32 AchievedCount);
+	bool ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap);
+
 	__int64 PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
 	{
 		static __int64 (*PayBuildableClassPlacementCost)(AFortPlayerController*, FBuildingClassData*) = decltype(PayBuildableClassPlacementCost)(InSDKUtils::GetImageBase() + 0x12DF940);
