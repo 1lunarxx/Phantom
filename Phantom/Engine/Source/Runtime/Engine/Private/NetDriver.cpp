@@ -7,17 +7,20 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 	{
 		ReplicationDriver->ServerReplicateActors();
 
-		static TMap<FObjectKey, EClassRepNodeMapping> ClassReplicationNodePolicies = *(TMap<FObjectKey, EClassRepNodeMapping>*)((uintptr_t)ReplicationDriver + 0x560);
-
-		for (auto& [ObjectKey, RepNodeMapping] : ClassReplicationNodePolicies)
+		if (!UFortGlobals::IsInAthena(GWorld))
 		{
-			UObject* Object = ObjectKey.ResolveObjectPtr();
+			static TMap<FObjectKey, EClassRepNodeMapping> ClassReplicationNodePolicies = *(TMap<FObjectKey, EClassRepNodeMapping>*)((uintptr_t)ReplicationDriver + 0x560);
 
-			if (Object == NULL)
-				continue;
+			for (auto& [ObjectKey, RepNodeMapping] : ClassReplicationNodePolicies)
+			{
+				UObject* Object = ObjectKey.ResolveObjectPtr();
 
-			if (Object == AFortInventory::StaticClass() || Object == AFortQuickBars::StaticClass())
-				RepNodeMapping = EClassRepNodeMapping::RelevantAllConnections;
+				if (Object == NULL)
+					continue;
+
+				if (Object == AFortInventory::StaticClass() || Object == AFortQuickBars::StaticClass())
+					RepNodeMapping = EClassRepNodeMapping::RelevantAllConnections;
+			}
 		}
 	}
 
