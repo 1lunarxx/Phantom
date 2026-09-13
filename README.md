@@ -15,10 +15,10 @@ If you know how to do certain functions properly, feel free to make a pull reque
 - Semi-Proper Harvesting 
 - Semi-Proper OnPawnDied
 - Gadgets (Ghost mode etc)
+- Deimos Spawning (Server Assets required)
 
 ## TODO:
 - Quests
 - Proper Match Stats
-- Deimos Spawning
 
 Credits: Andr1ww for some help on Inventory, and Building.
