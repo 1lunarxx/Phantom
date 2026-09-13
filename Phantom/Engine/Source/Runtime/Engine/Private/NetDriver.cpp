@@ -6,6 +6,19 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 	if (UReplicationDriver* ReplicationDriver = NetDriver->ReplicationDriver)
 	{
 		ReplicationDriver->ServerReplicateActors();
+
+		static TMap<FObjectKey, EClassRepNodeMapping> ClassReplicationNodePolicies = *(TMap<FObjectKey, EClassRepNodeMapping>*)((uintptr_t)ReplicationDriver + 0x560);
+
+		for (auto& [ObjectKey, RepNodeMapping] : ClassReplicationNodePolicies)
+		{
+			UObject* Object = ObjectKey.ResolveObjectPtr();
+
+			if (Object == NULL)
+				continue;
+
+			if (Object == AFortInventory::StaticClass() || Object == AFortQuickBars::StaticClass())
+				RepNodeMapping = EClassRepNodeMapping::RelevantAllConnections;
+		}
 	}
 
 	Originals::TickFlush(NetDriver, DeltaSeconds);
