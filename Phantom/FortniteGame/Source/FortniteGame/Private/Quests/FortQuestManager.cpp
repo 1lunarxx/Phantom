@@ -86,7 +86,7 @@ void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, 
 		if (FortQuestObjectiveInfo == NULL)
 			continue;
 
-		UFortQuestItemDefinition* FortQuestItemDefinition = Cast<UFortQuestItemDefinition>(CurrentQuest);
+		UFortQuestItemDefinition* FortQuestItemDefinition = Cast<UFortQuestItemDefinition>(CurrentQuest->ItemDefinition);
 
 		if (FortQuestItemDefinition == NULL)
 			continue;
@@ -109,7 +109,7 @@ void FortQuestManager::SendCustomStatEvent(UFortQuestManager* FortQuestManager, 
 		FFortUpdatedObjectiveStat UpdatedObjectiveStat = FFortUpdatedObjectiveStat{};
 
 		UpdatedObjectiveStat.BackendName = BackendName;
-		UpdatedObjectiveStat.Quest = Cast<UFortQuestItemDefinition>(CurrentQuest->ItemDefinition);
+		UpdatedObjectiveStat.Quest = FortQuestItemDefinition;
 		UpdatedObjectiveStat.StatValue = FortQuestObjectiveInfo->AchievedCount;
 		UpdatedObjectiveStat.StatDelta = UpdatedObjectiveStat.StatValue;
 
