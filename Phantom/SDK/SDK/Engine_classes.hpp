@@ -6925,12 +6925,12 @@ public:
 		Construct(this);
 	}
 
-	FActorSpawnParameters(uint8 InSpawnCollisionHandlingOverride, AActor* InOwner = NULL)
+	FActorSpawnParameters(uint8 InSpawnCollisionHandlingOverride, AActor* InOwner = NULL) : FActorSpawnParameters()
 	{
-		*this = FActorSpawnParameters();
-
 		this->SpawnCollisionHandlingOverride = InSpawnCollisionHandlingOverride;
-		this->Owner = InOwner;
+
+		if (InOwner != NULL)
+			this->Owner = InOwner;
 	}
 };
 
@@ -7001,8 +7001,8 @@ public:
 
 	AActor* SpawnActor(UClass* Class, FVector Location, FRotator Rotation, struct FActorSpawnParameters SpawnParameters)
 	{
-		static AActor* (*SpawnActor)(UWorld*, UClass*, FVector&, FRotator&, struct FActorSpawnParameters) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
-		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
+		static AActor* (*SpawnActor)(UWorld*, UClass*, FVector&, FRotator&, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
+		return SpawnActor(this, Class, Location, Rotation, &SpawnParameters);
 	}
 
 	template <class T>
