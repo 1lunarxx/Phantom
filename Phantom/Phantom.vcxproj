@@ -171,6 +171,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIDirector.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Building\AthenaBarrierFlag.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaSupplyDrop.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaVehicle.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPlayerControllerAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
@@ -244,6 +245,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortCheatManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingRift.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\BGAConsumableSpawner.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

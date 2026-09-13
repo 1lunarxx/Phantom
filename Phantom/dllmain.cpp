@@ -25,6 +25,7 @@
 #include "FortniteGame/Public/Athena/Building/AthenaBarrierFlag.h"
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
 #include "FortniteGame/Public/Athena/FortAthenaSupplyDrop.h"
+#include "FortniteGame/Public/Athena/FortAthenaVehicle.h"
 
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
@@ -90,6 +91,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     CheatManager::Setup();
     BuildingRift::Setup();
     BGAConsumableSpawner::Setup();
+    FortAthenaVehicle::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
