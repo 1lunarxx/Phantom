@@ -205,7 +205,7 @@ UEType* TSoftClassPtr<UEType>::Get() const
 template <class T>
 T* UWorld::SpawnActor(FVector Location, FRotator Rotation, UClass* InClass, AActor* Owner)
 {
-    AActor* Actor = SpawnActor(InClass, Location, Rotation, NULL);
+    AActor* Actor = SpawnActor(InClass, Location, Rotation, FActorSpawnParameters(1, Owner));
 
     if (Actor != NULL)
         UGameplayStatics::FinishSpawningActor(Actor, UKismetMathLibrary::MakeTransform(Location, Rotation, FVector(1, 1, 1)));

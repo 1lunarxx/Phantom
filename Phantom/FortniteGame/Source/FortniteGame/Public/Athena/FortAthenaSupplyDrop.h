@@ -5,7 +5,7 @@
 class FortAthenaSupplyDrop
 {
 private:
-	static AFortPickup* SpawnPickup(AFortAthenaSupplyDrop* FortAthenaSupplyDrop, FFrame& Stack, AFortPickup** Ret);
+	static AFortPickup* SpawnPickup(AFortAthenaSupplyDrop* Context, FFrame* Stack, AFortPickup** Result);
 public:
 	static void Setup();
 };

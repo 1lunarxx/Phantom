@@ -14,7 +14,7 @@ AAthenaBigBaseWall* AAthenaBigBaseWall::CreateWall(UWorld* World, TSubclassOf<AA
 	SpawnParams.SpawnCollisionHandlingOverride = 1;
 	SpawnParams.bDeferConstruction = true;
 
-	AAthenaBigBaseWall* BigBaseWall = Cast<AAthenaBigBaseWall>(World->SpawnActor(BigBaseWallClass.Get(), WallLocation, WallRotation, &SpawnParams));
+	AAthenaBigBaseWall* BigBaseWall = Cast<AAthenaBigBaseWall>(World->SpawnActor(BigBaseWallClass.Get(), WallLocation, WallRotation, SpawnParams));
 
 	if (BigBaseWall != NULL)
 	{

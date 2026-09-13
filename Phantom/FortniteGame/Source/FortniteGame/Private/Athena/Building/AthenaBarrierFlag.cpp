@@ -16,16 +16,16 @@ void AAthenaBarrierFlag::SetCurrentState(EBarrierFlagState NewState)
         CurrentState = NewState;
 }
 
-AAthenaBarrierObjective* AthenaBarrierFlag::GetObjectiveActor(AAthenaBarrierFlag* _this, FFrame& Stack, AAthenaBarrierObjective** Ret)
+AAthenaBarrierObjective* AthenaBarrierFlag::GetObjectiveActor(AAthenaBarrierFlag* Context, FFrame* Stack, AAthenaBarrierObjective** Result)
 {
-    Stack.IncrementCode();
+    Stack->IncrementCode();
 
-    UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(_this->GetComponentByClass(UChildActorComponent::StaticClass()));
+    UChildActorComponent* ChildActorComponent = Cast<UChildActorComponent>(Context->GetComponentByClass(UChildActorComponent::StaticClass()));
 
     if (ChildActorComponent == NULL || ChildActorComponent->ChildActor == NULL)
-        return *Ret = NULL;
+        return *Result = NULL;
 
-    return *Ret = Cast<AAthenaBarrierObjective>(ChildActorComponent->ChildActor);
+    return *Result = Cast<AAthenaBarrierObjective>(ChildActorComponent->ChildActor);
 }
 
 void AthenaBarrierFlag::Setup()

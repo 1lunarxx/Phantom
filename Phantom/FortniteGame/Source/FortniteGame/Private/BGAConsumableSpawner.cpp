@@ -13,7 +13,7 @@ void ABGAConsumableSpawner::SetupAndAttemptToSpawnConsumables()
         if (BGAConsumableWrapperItemDefinition == NULL)
             continue;
 
-        GWorld->SpawnActor(BGAConsumableWrapperItemDefinition->ConsumableClass.Get(), UFortKismetLibrary::FindStaticGroundLocationAt(GWorld, K2_GetActorLocation(), this, -1000, 2500), K2_GetActorRotation(), NULL);
+        GWorld->SpawnActor(BGAConsumableWrapperItemDefinition->ConsumableClass.Get(), UFortKismetLibrary::FindStaticGroundLocationAt(GWorld, K2_GetActorLocation(), this, -1000, 2500), K2_GetActorRotation(), FActorSpawnParameters(1));
 
         break;
     }

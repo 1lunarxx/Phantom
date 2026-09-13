@@ -6919,13 +6919,18 @@ public:
 	void* CallbackSum_Callable;
 	void* CallbackSum_HeapAllocation;
 public:
-	FActorSpawnParameters(bool SpawnCollisionHandlingOverride = false)
+	FActorSpawnParameters()
 	{
 		static void(*Construct)(FActorSpawnParameters*) = decltype(Construct)(InSDKUtils::GetImageBase() + 0x2AA4F60);
 		Construct(this);
+	}
 
-		if (SpawnCollisionHandlingOverride)
-			this->SpawnCollisionHandlingOverride = 1;
+	FActorSpawnParameters(uint8 InSpawnCollisionHandlingOverride, AActor* InOwner = NULL)
+	{
+		*this = FActorSpawnParameters();
+
+		this->SpawnCollisionHandlingOverride = InSpawnCollisionHandlingOverride;
+		this->Owner = InOwner;
 	}
 };
 
@@ -6994,15 +6999,9 @@ public:
 		return FindCollectionByType(this, InType);
 	}
 
-	AActor* SpawnActor(UClass* Class, FVector Location, FRotator Rotation, const struct FActorSpawnParameters* SpawnParameters)
+	AActor* SpawnActor(UClass* Class, FVector Location, FRotator Rotation, struct FActorSpawnParameters SpawnParameters)
 	{
-		if (SpawnParameters == NULL)
-		{
-			FActorSpawnParameters NewSpawnParams = FActorSpawnParameters(true);
-			SpawnParameters = &NewSpawnParams;
-		}
-
-		static AActor* (*SpawnActor)(UWorld*, UClass*, FVector&, FRotator&, const struct FActorSpawnParameters*) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
+		static AActor* (*SpawnActor)(UWorld*, UClass*, FVector&, FRotator&, struct FActorSpawnParameters) = decltype(SpawnActor)(InSDKUtils::GetImageBase() + 0x275DF40);
 		return SpawnActor(this, Class, Location, Rotation, SpawnParameters);
 	}
 

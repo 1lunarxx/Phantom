@@ -23,6 +23,8 @@ private:
 
 	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);
+
+	static AActor* SpawnToyInstance(AFortPlayerController* Context, FFrame* Stack, AActor** Result);
 public:
 	static void Setup();
 };

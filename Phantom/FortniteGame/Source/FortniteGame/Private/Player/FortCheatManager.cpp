@@ -6,81 +6,81 @@ void UFortCheatManager::AddScoreStat(unsigned int ScoreStat, unsigned int Amount
 {
 }
 
-void FortCheatManager::AddAllScores(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AddAllScores(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->AddScoreStat(1u, Amount);
-	FortCheatManager->AddScoreStat(9u, Amount);
-	FortCheatManager->AddScoreStat(0x18u, Amount);
+	Context->AddScoreStat(1u, Amount);
+	Context->AddScoreStat(9u, Amount);
+	Context->AddScoreStat(0x18u, Amount);
 }
 
-void FortCheatManager::AddBuildingScore(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AddBuildingScore(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->AddScoreStat(9, Amount);
+	Context->AddScoreStat(9, Amount);
 }
 
-void FortCheatManager::AddCombatScore(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AddCombatScore(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->AddScoreStat(1u, Amount);
+	Context->AddScoreStat(1u, Amount);
 }
 
-void FortCheatManager::AddKillFeedMessage(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AddKillFeedMessage(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 }
 
-void FortCheatManager::AddUtilityScore(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AddUtilityScore(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->AddScoreStat(0x18u, Amount);
+	Context->AddScoreStat(0x18u, Amount);
 }
 
-void FortCheatManager::AllowRespawn(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AllowRespawn(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
 	UFortPlaylistAthena* FortPlaylistAthena = GGameState->GetCurrentPlaylistData();
 
@@ -88,27 +88,27 @@ void FortCheatManager::AllowRespawn(UFortCheatManager* FortCheatManager, FFrame&
 		FortPlaylistAthena->RespawnType = EAthenaRespawnType::InfiniteRespawn;
 }
 
-void FortCheatManager::ApplyGameplayModifier(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::ApplyGameplayModifier(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString ModifierName;
 
-	Stack.StepCompiledIn(&ModifierName);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&ModifierName);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
-void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString AlterationName;
 
-	Stack.StepCompiledIn(&AlterationName);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&AlterationName);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
@@ -116,14 +116,14 @@ void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* FortCheatManager
 
 // this should be something with UFortAssetManager::GetItemTypeData but i cba to do that
 
-void FortCheatManager::AthenaEmote(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AthenaEmote(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString EmoteName;
 
-	Stack.StepCompiledIn(&EmoteName);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&EmoteName);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -136,24 +136,24 @@ void FortCheatManager::AthenaEmote(UFortCheatManager* FortCheatManager, FFrame& 
 	FortPlayerController->ServerPlayEmoteItem(DanceItemDefinition);
 }
 
-void FortCheatManager::AthenaEndlessGame(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AthenaEndlessGame(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
-void FortCheatManager::AthenaForceVictory(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AthenaForceVictory(UFortCheatManager* Context, FFrame* Stack)
 {
 	bool bVictory;
 
-	Stack.StepCompiledIn(&bVictory);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&bVictory);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -166,16 +166,16 @@ void FortCheatManager::AthenaForceVictory(UFortCheatManager* FortCheatManager, F
 	GGameMode->StartEndGamePhaseTeam((int)FortPlayerState->TeamIndex, FortPlayerState, 1, FortPlayerController->Pawn, NULL, EDeathCause::WonMatch);
 }
 
-void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 PlayerStateIdx;
 	int32 Score;
 
-	Stack.StepCompiledIn(&PlayerStateIdx);
-	Stack.StepCompiledIn(&Score);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&PlayerStateIdx);
+	Stack->StepCompiledIn(&Score);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
@@ -206,62 +206,62 @@ void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* FortCheatManager, FF
 	}*/
 }
 
-void FortCheatManager::BackpackSetSize(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::BackpackSetSize(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Size;
 
-	Stack.StepCompiledIn(&Size);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Size);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->OverriddenBackpackSize = Size;
 }
 
-void FortCheatManager::Badass(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::Badass(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
 
-	FortCheatManager->SetShieldPercent(1000);
-	FortCheatManager->SetHealthPercent(1000);
+	Context->SetShieldPercent(1000);
+	Context->SetHealthPercent(1000);
 
 	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
-void FortCheatManager::BringDownWall(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::BringDownWall(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
-void FortCheatManager::BuildFree(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::BuildFree(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->bBuildFree = true;
 }
 
-void FortCheatManager::ForceServerShutdown(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 ExitCode;
 
-	Stack.StepCompiledIn(&ExitCode);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&ExitCode);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -285,18 +285,18 @@ void FortCheatManager::ForceServerShutdown(UFortCheatManager* FortCheatManager, 
 	}
 }
 
-void FortCheatManager::GiveConsumable(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveConsumable(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString ConsumableName;
 	int32 RequestedLevel;
 	int32 Count;
 
-	Stack.StepCompiledIn(&ConsumableName);
-	Stack.StepCompiledIn(&RequestedLevel);
-	Stack.StepCompiledIn(&Count);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&ConsumableName);
+	Stack->StepCompiledIn(&RequestedLevel);
+	Stack->StepCompiledIn(&Count);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -312,16 +312,16 @@ void FortCheatManager::GiveConsumable(UFortCheatManager* FortCheatManager, FFram
 	FortPlayerController->WorldInventory->AddItem(FortItemDefinition, Count);
 }
 
-void FortCheatManager::GiveGadget(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveGadget(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString GadgetName;
 	int32 ItemLevel;
 
-	Stack.StepCompiledIn(&GadgetName);
-	Stack.StepCompiledIn(&ItemLevel);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&GadgetName);
+	Stack->StepCompiledIn(&ItemLevel);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -337,18 +337,18 @@ void FortCheatManager::GiveGadget(UFortCheatManager* FortCheatManager, FFrame& S
 	FortPlayerController->WorldInventory->AddItem(FortGadgetItemDefinition, 1);
 }
 
-void FortCheatManager::GiveGadgets(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveGadgets(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString GadgetName;
 	int32 Quantity;
 	int32 ItemLevel;
 
-	Stack.StepCompiledIn(&GadgetName);
-	Stack.StepCompiledIn(&Quantity);
-	Stack.StepCompiledIn(&ItemLevel);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&GadgetName);
+	Stack->StepCompiledIn(&Quantity);
+	Stack->StepCompiledIn(&ItemLevel);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -364,14 +364,14 @@ void FortCheatManager::GiveGadgets(UFortCheatManager* FortCheatManager, FFrame& 
 	FortPlayerController->WorldInventory->AddItem(FortGadgetItemDefinition, Quantity);
 }
 
-void FortCheatManager::GivePickaxe(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GivePickaxe(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString PickName;
 
-	Stack.StepCompiledIn(&PickName);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&PickName);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -387,30 +387,30 @@ void FortCheatManager::GivePickaxe(UFortCheatManager* FortCheatManager, FFrame& 
 	FortPlayerController->WorldInventory->AddItem(PickaxeItemDefinition, 1);
 }
 
-void FortCheatManager::GiveResources(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveResources(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	FortCheatManager->GiveMetal(Amount);
-	FortCheatManager->GiveWood(Amount);
-	FortCheatManager->GiveStone(Amount);
+	Context->GiveMetal(Amount);
+	Context->GiveWood(Amount);
+	Context->GiveStone(Amount);
 }
 
-void FortCheatManager::GiveSpecificItem(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveSpecificItem(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString ItemPath;
 	int32 ItemAmount;
 	int32 ItemLevel;
 
-	Stack.StepCompiledIn(&ItemPath);
-	Stack.StepCompiledIn(&ItemAmount);
-	Stack.StepCompiledIn(&ItemLevel);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&ItemPath);
+	Stack->StepCompiledIn(&ItemAmount);
+	Stack->StepCompiledIn(&ItemLevel);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -426,18 +426,18 @@ void FortCheatManager::GiveSpecificItem(UFortCheatManager* FortCheatManager, FFr
 	FortPlayerController->WorldInventory->AddItem(FortItemDefinition, ItemAmount);
 }
 
-void FortCheatManager::GiveTrap(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveTrap(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString TrapName;
 	int32 RequestedLevel;
 	int32 NumTrapsToGive;
 
-	Stack.StepCompiledIn(&TrapName);
-	Stack.StepCompiledIn(&RequestedLevel);
-	Stack.StepCompiledIn(&NumTrapsToGive);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&TrapName);
+	Stack->StepCompiledIn(&RequestedLevel);
+	Stack->StepCompiledIn(&NumTrapsToGive);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -453,18 +453,18 @@ void FortCheatManager::GiveTrap(UFortCheatManager* FortCheatManager, FFrame& Sta
 	FortPlayerController->WorldInventory->AddItem(FortTrapItemDefinition, NumTrapsToGive);
 }
 
-void FortCheatManager::GiveWeapon(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveWeapon(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString WeaponName;
 	int32 RequestedLevel;
 	int32 Count;
 
-	Stack.StepCompiledIn(&WeaponName);
-	Stack.StepCompiledIn(&RequestedLevel);
-	Stack.StepCompiledIn(&Count);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&WeaponName);
+	Stack->StepCompiledIn(&RequestedLevel);
+	Stack->StepCompiledIn(&Count);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -480,27 +480,27 @@ void FortCheatManager::GiveWeapon(UFortCheatManager* FortCheatManager, FFrame& S
 	FortPlayerController->WorldInventory->AddItem(FortWeaponItemDefinition, Count);
 }
 
-void FortCheatManager::GoFast(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GoFast(UFortCheatManager* Context, FFrame* Stack)
 {
 	float NewSpeed;
 
-	Stack.StepCompiledIn(&NewSpeed);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&NewSpeed);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
 }
 
-void FortCheatManager::GiveWood(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveWood(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -511,14 +511,14 @@ void FortCheatManager::GiveWood(UFortCheatManager* FortCheatManager, FFrame& Sta
 		FortPlayerController->WorldInventory->AddItemStack(WoodItemDefinition, Amount);
 }
 
-void FortCheatManager::GiveMetal(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveMetal(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -529,14 +529,14 @@ void FortCheatManager::GiveMetal(UFortCheatManager* FortCheatManager, FFrame& St
 		FortPlayerController->WorldInventory->AddItemStack(MetalItemDefinition, Amount);
 }
 
-void FortCheatManager::GiveStone(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::GiveStone(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 Amount;
 
-	Stack.StepCompiledIn(&Amount);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -547,9 +547,9 @@ void FortCheatManager::GiveStone(UFortCheatManager* FortCheatManager, FFrame& St
 		FortPlayerController->WorldInventory->AddItemStack(StoneItemDefinition, Amount);
 }
 
-void FortCheatManager::MassSuicide(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::MassSuicide(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
 	for (AFortPlayerControllerAthena* FortPlayerController : GGameMode->AlivePlayers)
 	{
@@ -557,14 +557,14 @@ void FortCheatManager::MassSuicide(UFortCheatManager* FortCheatManager, FFrame& 
 	}
 }
 
-void FortCheatManager::SetHealthPercent(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::SetHealthPercent(UFortCheatManager* Context, FFrame* Stack)
 {
 	float Percent;
 
-	Stack.StepCompiledIn(&Percent);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Percent);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -578,14 +578,14 @@ void FortCheatManager::SetHealthPercent(UFortCheatManager* FortCheatManager, FFr
 	}
 }
 
-void FortCheatManager::SetShieldPercent(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::SetShieldPercent(UFortCheatManager* Context, FFrame* Stack)
 {
 	float Percent;
 
-	Stack.StepCompiledIn(&Percent);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&Percent);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -599,28 +599,28 @@ void FortCheatManager::SetShieldPercent(UFortCheatManager* FortCheatManager, FFr
 	}
 }
 
-void FortCheatManager::TeleportToLocation(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::TeleportToLocation(UFortCheatManager* Context, FFrame* Stack)
 {
 	float X;
 	float Y;
 	float Z;
 
-	Stack.StepCompiledIn(&X);
-	Stack.StepCompiledIn(&Y);
-	Stack.StepCompiledIn(&Z);
-	Stack.IncrementCode();
+	Stack->StepCompiledIn(&X);
+	Stack->StepCompiledIn(&Y);
+	Stack->StepCompiledIn(&Z);
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController != NULL)
 		FortPlayerController->ServerTeleportToReticle(FVector(X, Y, Z));
 }
 
-void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;
@@ -633,11 +633,11 @@ void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* FortCheatManager, F
 	FortPlayerController->ClientMessage(Message, FName(), 0.f);
 }
 
-void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* FortCheatManager, FFrame& Stack)
+void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* Context, FFrame* Stack)
 {
-	Stack.IncrementCode();
+	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(FortCheatManager->Outer);
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
 
 	if (FortPlayerController == NULL)
 		return;

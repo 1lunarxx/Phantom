@@ -5,7 +5,7 @@
 class AthenaBarrierFlag
 {
 private:
-	static AAthenaBarrierObjective* GetObjectiveActor(AAthenaBarrierFlag* _this, FFrame& Stack, AAthenaBarrierObjective** Ret);
+	static AAthenaBarrierObjective* GetObjectiveActor(AAthenaBarrierFlag* Context, FFrame* Stack, AAthenaBarrierObjective** Result);
 public:
 	static void Setup();
 };

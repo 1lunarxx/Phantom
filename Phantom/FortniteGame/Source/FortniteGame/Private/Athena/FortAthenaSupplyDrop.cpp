@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "FortniteGame/Public/Athena/FortAthenaSupplyDrop.h"
 
-AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* FortAthenaSupplyDrop, FFrame& Stack, AFortPickup** Ret)
+AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* Context, FFrame* Stack, AFortPickup** Result)
 {
     UFortWorldItemDefinition* ItemDefinition;
     int32 NumberToSpawn;
@@ -9,13 +9,13 @@ AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* FortAthena
     FVector Position;
     FVector Direction;
 
-    Stack.StepCompiledIn(&ItemDefinition);
-    Stack.StepCompiledIn(&NumberToSpawn);
-    Stack.StepCompiledIn(&TriggeringPawn);
-    Stack.StepCompiledIn(&Position);
-    Stack.StepCompiledIn(&Direction);
+    Stack->StepCompiledIn(&ItemDefinition);
+    Stack->StepCompiledIn(&NumberToSpawn);
+    Stack->StepCompiledIn(&TriggeringPawn);
+    Stack->StepCompiledIn(&Position);
+    Stack->StepCompiledIn(&Direction);
 
-    Stack.IncrementCode();
+    Stack->IncrementCode();
 
     FFortItemEntry ItemEntry = FFortItemEntry(ItemDefinition, NumberToSpawn, 0);
 
@@ -27,7 +27,7 @@ AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* FortAthena
         ItemEntry.LoadedAmmo = OutRow.ClipSize;
     }
 
-    return *Ret = AFortPickup::SpawnPickup(ItemEntry, Position, NumberToSpawn, EFortPickupSourceTypeFlag::Container_SupplyDrop, 3);
+    return *Result = AFortPickup::SpawnPickup(ItemEntry, Position, NumberToSpawn, EFortPickupSourceTypeFlag::Container_SupplyDrop, 3);
 }
 
 void FortAthenaSupplyDrop::Setup()

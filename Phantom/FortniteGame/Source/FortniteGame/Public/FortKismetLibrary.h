@@ -5,10 +5,10 @@
 class FortKismetLibrary
 {
 private:
-	static AFortAIGoalManager* GetAIGoalManager(UFortKismetLibrary* FortKismetLibrary, FFrame& Stack, AFortAIGoalManager** Ret);
-	static AFortPickup* K2_SpawnPickupInWorld(UFortKismetLibrary* FortKismetLibrary, FFrame& Stack, AFortPickup** Ret);
+	static AFortAIGoalManager* GetAIGoalManager(UFortKismetLibrary* Context, FFrame* Stack, AFortAIGoalManager** Result);
+	static AFortPickup* K2_SpawnPickupInWorld(UFortKismetLibrary* Context, FFrame* Stack, AFortPickup** Result);
 
-	static bool PickLootDrops(UFortKismetLibrary* FortKismetLibrary, FFrame& Stack, bool* Ret);
+	static bool PickLootDrops(UFortKismetLibrary* Context, FFrame* Stack, bool* Result);
 public:
 	static void Setup();
 };

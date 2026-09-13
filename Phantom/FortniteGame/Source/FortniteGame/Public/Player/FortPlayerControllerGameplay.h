@@ -7,12 +7,12 @@ class FortPlayerControllerGameplay
 	class Originals
 	{
 	public:
-		static inline void (*EndGhostMode)(AFortPlayerControllerGameplay* FortPlayerControllerGameplay, FFrame& Stack);
+		static inline void (*EndGhostMode)(AFortPlayerControllerGameplay* FortPlayerControllerGameplay, FFrame* Stack);
 	};
 
 private:
 	static void GiveItemToInventoryOwner_StartGhostMode(TScriptInterface<IFortInventoryOwnerInterface> InventoryOwner, UFortWorldItemDefinition* ItemDefinition, int NumberToGive);
-	static void EndGhostMode(AFortPlayerControllerGameplay* FortPlayerControllerGameplay, FFrame& Stack);
+	static void EndGhostMode(AFortPlayerControllerGameplay* Context, FFrame* Stack);
 public:
 	static void Setup();
 };

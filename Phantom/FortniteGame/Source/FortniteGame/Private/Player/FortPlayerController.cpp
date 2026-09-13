@@ -104,8 +104,19 @@ void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* F
 					if (GameData == NULL)
 						return;
 
+					TSoftClassPtr<UClass>* AssetSubclassOf = &GameData->EmoteGameplayAbility;
+
+					if (EmoteAsset->IsA(UAthenaSprayItemDefinition::StaticClass()))
+					{
+						AssetSubclassOf = &GameData->SprayGameplayAbility;
+					}
+					else if (UAthenaToyItemDefinition* ToyItemDefinition = Cast<UAthenaToyItemDefinition>(EmoteAsset))
+					{
+						AssetSubclassOf = &ToyItemDefinition->ToySpawnAbility;
+					}
+
 					TSubclassOf<UFortGameplayAbility> GameplayAbility;
-					FFortAssets::GetSubclassOf(&GameplayAbility, EmoteAsset->IsA(UAthenaSprayItemDefinition::StaticClass()) ? &GameData->SprayGameplayAbility : &GameData->EmoteGameplayAbility, true);
+					FFortAssets::GetSubclassOf(&GameplayAbility, AssetSubclassOf, true);
 
 					if (GameplayAbility != NULL)
 					{
@@ -148,7 +159,7 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 				FActorSpawnParameters SpawnParams = FActorSpawnParameters();
 				SpawnParams.SpawnCollisionHandlingOverride = 1;
 
-				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, BuildLoc, BuildRot, &SpawnParams));
+				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, BuildLoc, BuildRot, SpawnParams));
 
 				if (NewBuilding != NULL)
 				{
@@ -392,6 +403,26 @@ bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* P
 	return false;
 }
 
+AActor* FortPlayerController::SpawnToyInstance(AFortPlayerController* Context, FFrame* Stack, AActor** Result)
+{
+	TSubclassOf<AActor> ToyClass;
+	FTransform SpawnPosition;
+
+	Stack->StepCompiledIn(&ToyClass);
+	Stack->StepCompiledIn(&SpawnPosition);
+	Stack->IncrementCode();
+
+	AActor* ToyInstance = GWorld->SpawnActor(ToyClass.Get(), SpawnPosition.Translation, SpawnPosition.Rotation.Rotator(), FActorSpawnParameters(1, Context));
+
+	if (ToyInstance == NULL)
+		return *Result = NULL;
+
+	Context->ActiveToyInstances.Free();
+	Context->ActiveToyInstances.Add(ToyInstance);
+
+	return *Result = ToyInstance;
+}
+
 void FortPlayerController::Setup()
 {
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1030 / 8, ServerAttemptInventoryDrop_Implementation);
@@ -408,6 +439,7 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1040 / 8, ServerCombineInventoryItems_Implementation);
-
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
+
+	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);
 }
