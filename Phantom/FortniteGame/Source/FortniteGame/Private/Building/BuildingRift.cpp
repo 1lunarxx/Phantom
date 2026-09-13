@@ -4,8 +4,6 @@
 
 void BuildingRift::BeginPlay(ABuildingRift* BuildingRift)
 {
-	printf(__FUNCTION__);
-
 	Originals::BeginPlay(BuildingRift);
 }
 

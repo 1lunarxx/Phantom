@@ -3,7 +3,12 @@
 
 void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 {
-	FortGameModeZone->AIDirector = GWorld->SpawnActor<AFortAIDirector>(FVector(), FRotator(), AFortAIDirector::StaticClass(), FortGameModeZone);
+	UClass* AIDirectorClass = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Deimos/AIDirector/Deimos_AIDirector.Deimos_AIDirector_C"));
+
+	if (AIDirectorClass == NULL)
+		AIDirectorClass = AFortAIDirector::StaticClass();
+
+	FortGameModeZone->AIDirector = GWorld->SpawnActor<AFortAIDirector>(FVector(), FRotator(), AIDirectorClass, FortGameModeZone);
 	FortGameModeZone->AIDirector->Activate();
 }
 

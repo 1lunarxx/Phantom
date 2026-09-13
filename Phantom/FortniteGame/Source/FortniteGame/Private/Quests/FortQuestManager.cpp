@@ -140,6 +140,6 @@ void FortQuestManager::Setup()
 	for (uintptr_t Addr : SendStatEventWithTags_NullSubs)
 		Utils::Rel32(Addr, SendStatEventWithTags);
 
-	Utils::Hook(InSDKUtils::GetImageBase() + 0xD81700, SendStatEventWithTags);
+	//Utils::Hook(InSDKUtils::GetImageBase() + 0xD81700, SendStatEventWithTags);
 	Utils::Hook(InSDKUtils::GetImageBase() + 0x136D2E0, SendCustomStatEvent, (void**)&Originals::SendCustomStatEvent);
 }

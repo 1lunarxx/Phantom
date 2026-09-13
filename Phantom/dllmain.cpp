@@ -95,6 +95,9 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
+    UKismetSystemLibrary::ExecuteConsoleCommand(GWorld, L"log LogFortMission VeryVerbose", NULL);
+    UKismetSystemLibrary::ExecuteConsoleCommand(GWorld, L"log LogFortAIDirector VeryVerbose", NULL);
+
     *GIsClient = false;
     *GIsServer = true;
 
