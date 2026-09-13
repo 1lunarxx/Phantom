@@ -5,7 +5,7 @@
 class FortPoiVolume
 {
 private:
-	static void CheckPawnOverlap(AFortPoiVolume* FortPoiVolume, AFortPlayerPawn* InPawn);
+	static bool OverlapsPawn(AFortPoiVolume* FortPoiVolume, AFortPlayerPawn* InPawn);
 public:
 	static void Setup();
 };

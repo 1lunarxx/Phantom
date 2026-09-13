@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "FortniteGame/Public/Athena/FortPoiVolume.h"
 
-void FortPoiVolume::CheckPawnOverlap(AFortPoiVolume* FortPoiVolume, AFortPlayerPawn* InPawn)
+bool FortPoiVolume::OverlapsPawn(AFortPoiVolume* FortPoiVolume, AFortPlayerPawn* InPawn)
 {
+    return true;
 }
 
 void FortPoiVolume::Setup()
 {
-	Utils::Hook(InSDKUtils::GetImageBase() + 0xCFD880, CheckPawnOverlap);
+    Utils::Hook(InSDKUtils::GetImageBase() + 0xD14090, OverlapsPawn);
 }
