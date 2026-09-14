@@ -16,20 +16,17 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 {
 	Originals::InitGameState(FortGameModeOutpost);
 
-	if (!UFortGlobals::IsInAthena(GWorld))
+	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeOutpost->GameState))
 	{
-		if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeOutpost->GameState))
-		{
-			UFortGameData* GameData = UFortGameData::Get();
+		UFortGameData* GameData = UFortGameData::Get();
 
-			if (FortGameStateZone->MissionManager == NULL)
-				FortGameStateZone->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeOutpost->MissionManagerClass.Get(), FortGameStateZone);
+		if (FortGameStateZone->MissionManager == NULL)
+			FortGameStateZone->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeOutpost->MissionManagerClass.Get(), FortGameStateZone);
 
-			FortGameStateZone->MissionManager->BluGloManager = GWorld->SpawnActor<AFortBluGloManager>(FVector(), FRotator(), GameData->BluGloManagerClass.Get(), FortGameStateZone->MissionManager);
-			FortGameStateZone->OnRep_MissionManager();
+		FortGameStateZone->MissionManager->BluGloManager = GWorld->SpawnActor<AFortBluGloManager>(FVector(), FRotator(), GameData->BluGloManagerClass.Get(), FortGameStateZone->MissionManager);
+		FortGameStateZone->OnRep_MissionManager();
 
-			FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
-		}
+		FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
 	}
 }
 
