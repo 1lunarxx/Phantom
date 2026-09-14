@@ -33,6 +33,23 @@ APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* F
 
 		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
 		{
+			// stw doesnt want startingitems so im forced to do this!!!!
+
+			if (FortGameModeZone->StartingItems.Num() <= 0)
+			{
+				UFortBuildingItemDefinition* BuildingItemData_Wall = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Wall"), ANY_PACKAGE);
+				UFortBuildingItemDefinition* BuildingItemData_Floor = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Floor"), ANY_PACKAGE);
+				UFortBuildingItemDefinition* BuildingItemData_Stair_W = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Stair_W"), ANY_PACKAGE);
+				UFortBuildingItemDefinition* BuildingItemData_RoofS = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_RoofS"), ANY_PACKAGE);
+				UFortEditToolItemDefinition* EditToolItemDefinition = Utils::StaticFindObject<UFortEditToolItemDefinition>(TEXT("EditTool"), ANY_PACKAGE);
+
+				WorldInventory->AddItem(BuildingItemData_Wall, 1);
+				WorldInventory->AddItem(BuildingItemData_Floor, 1);
+				WorldInventory->AddItem(BuildingItemData_Stair_W, 1);
+				WorldInventory->AddItem(BuildingItemData_RoofS, 1);
+				WorldInventory->AddItem(EditToolItemDefinition, 1);
+			}
+
 			UAthenaPickaxeItemDefinition* AthenaPickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(TEXT("DefaultPickaxe"), ANY_PACKAGE);
 
 			if (AthenaPickaxeItemDefinition != NULL)

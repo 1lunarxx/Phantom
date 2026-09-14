@@ -5,32 +5,42 @@
 
 UDataTable* FortLootPackage::GetLootTierData()
 {
-	UFortPlaylistAthena* Playlist = GGameState->CurrentPlaylistInfo.BasePlaylist;
-
-	if (Playlist != NULL)
+	if (UFortGlobals::IsInAthena(GWorld))
 	{
-		UDataTable* LootTierData = Playlist->LootTierData.Get();
+		UFortPlaylistAthena* Playlist = GWorld->GetGameStateAthena()->CurrentPlaylistInfo.BasePlaylist;
 
-		if (LootTierData != NULL)
-			return LootTierData;
+		if (Playlist != NULL)
+		{
+			UDataTable* LootTierData = Playlist->LootTierData.Get();
+
+			if (LootTierData != NULL)
+				return LootTierData;
+		}
+
+		return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client"));
 	}
 
-	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client"));
+	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
 }
 
 UDataTable* FortLootPackage::GetLootPackageData()
 {
-	UFortPlaylistAthena* Playlist = GGameState->CurrentPlaylistInfo.BasePlaylist;
-
-	if (Playlist != NULL)
+	if (UFortGlobals::IsInAthena(GWorld))
 	{
-		UDataTable* LootPackageData = Playlist->LootPackages.Get();
+		UFortPlaylistAthena* Playlist = GWorld->GetGameStateAthena()->CurrentPlaylistInfo.BasePlaylist;
 
-		if (LootPackageData != NULL)
-			return LootPackageData;
+		if (Playlist != NULL)
+		{
+			UDataTable* LootPackageData = Playlist->LootPackages.Get();
+
+			if (LootPackageData != NULL)
+				return LootPackageData;
+		}
+
+		return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client"));
 	}
 
-	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client"));
+	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
 }
 
 void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)
@@ -78,7 +88,7 @@ void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int F
 	for (const auto& [LootPackageCategory, NumDrops] : NumLootPackageDropsPerCategory)
 	{
 		for (int32 i = 0; i < NumDrops; i++)
-			PickLootDropsFromLootPackage(OutLootToDrop, LootPackage, ForcedLootTier, LootPackageCategory, GGameState->WorldLevel);
+			PickLootDropsFromLootPackage(OutLootToDrop, LootPackage, ForcedLootTier, LootPackageCategory, GWorld->GetGameState()->WorldLevel);
 	}
 }
 

@@ -29,7 +29,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	BuildingContainer->bAlreadySearched = true;
 	BuildingContainer->OnRep_bAlreadySearched();
 
-	if (GGameMode != NULL)
+	if (UFortGlobals::IsInAthena(GWorld))
 	{
 		if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
 			BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaTreasure");
@@ -39,7 +39,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	}
 
 	TArray<FFortItemEntry> OutLootDrops;
-	FortLootPackage::PickLootDrops(&OutLootDrops, GGameState->WorldLevel, BuildingContainer->SearchLootTierGroup);
+	FortLootPackage::PickLootDrops(&OutLootDrops, BuildingContainer->GetLootTier(), BuildingContainer->SearchLootTierGroup);
 
 	FVector LocationToSpawn = BuildingContainer->K2_GetActorLocation() + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
 
