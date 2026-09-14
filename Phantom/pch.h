@@ -19,7 +19,7 @@
 #include "SDK/SDK/Engine_structs.hpp"
 #include "SDK/SDK/FortniteGame_classes.hpp"
 #include "SDK/SDK/FortniteGame_structs.hpp"
-
+#include "SDK/SDK/CraftingIngredient_classes.hpp"
 using namespace SDK;
 
 #include "MinHook.h"

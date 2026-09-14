@@ -16,18 +16,18 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 {
 	Originals::InitGameState(FortGameModeOutpost);
 
-	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeOutpost->GameState))
+	if (AFortGameStateOutpost* FortGameStateOutpost = Cast<AFortGameStateOutpost>(FortGameModeOutpost->GameState))
 	{
 		UFortGameData* GameData = UFortGameData::Get();
 
-		if (FortGameStateZone->MissionManager == NULL)
-			FortGameStateZone->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeOutpost->MissionManagerClass.Get(), FortGameStateZone);
+		if (FortGameStateOutpost->MissionManager == NULL)
+			FortGameStateOutpost->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeOutpost->MissionManagerClass.Get(), FortGameStateOutpost);
 
-		FortGameStateZone->MissionManager->BluGloManager = GWorld->SpawnActor<AFortBluGloManager>(FVector(), FRotator(), GameData->BluGloManagerClass.Get(), FortGameStateZone->MissionManager);
-		FortGameStateZone->OnRep_MissionManager();
-
-		FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
+		FortGameStateOutpost->MissionManager->BluGloManager = GWorld->SpawnActor<AFortBluGloManager>(FVector(), FRotator(), GameData->BluGloManagerClass.Get(), FortGameStateOutpost->MissionManager);
+		FortGameStateOutpost->OnRep_MissionManager();
 	}
+
+	FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
 }
 
 void FortGameModeOutpost::FinishWorldInitialization(AFortGameModeOutpost* FortGameModeOutpost, AFortWorldManager* WorldManager)
@@ -44,9 +44,7 @@ void FortGameModeOutpost::FinishWorldInitialization(AFortGameModeOutpost* FortGa
 
 APawn* FortGameModeOutpost::SpawnDefaultPawnFor_Implementation(AFortGameModeOutpost* FortGameModeOutpost, AController* NewPlayer, AActor* StartSpot)
 {
-	APawn* DefaultPawn = FortGameModeOutpost->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(NewPlayer))
+	if (AFortPlayerControllerZone* FortPlayerController = Cast<AFortPlayerControllerZone>(NewPlayer))
 	{
 		if (FortPlayerController->QuickBars == NULL)
 			FortPlayerController->QuickBars = GWorld->SpawnActor<AFortQuickBars>(FVector(), FRotator(), AFortQuickBars::StaticClass(), FortPlayerController);
@@ -55,29 +53,16 @@ APawn* FortGameModeOutpost::SpawnDefaultPawnFor_Implementation(AFortGameModeOutp
 		{
 			// stw doesnt want startingitems so im forced to do this!!!!
 
-			if (FortGameModeOutpost->StartingItems.Num() <= 0)
+			UFortGameData* GameData = UFortGameData::Get();
+
+			for (const FItemDefinitionAndCount& InventoryItem : GameData->FastLoadDefaultInventoryList)
 			{
-				UFortBuildingItemDefinition* BuildingItemData_Wall = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Wall"), ANY_PACKAGE);
-				UFortBuildingItemDefinition* BuildingItemData_Floor = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Floor"), ANY_PACKAGE);
-				UFortBuildingItemDefinition* BuildingItemData_Stair_W = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_Stair_W"), ANY_PACKAGE);
-				UFortBuildingItemDefinition* BuildingItemData_RoofS = Utils::StaticFindObject<UFortBuildingItemDefinition>(TEXT("BuildingItemData_RoofS"), ANY_PACKAGE);
-				UFortEditToolItemDefinition* EditToolItemDefinition = Utils::StaticFindObject<UFortEditToolItemDefinition>(TEXT("EditTool"), ANY_PACKAGE);
-
-				WorldInventory->AddItem(BuildingItemData_Wall, 1);
-				WorldInventory->AddItem(BuildingItemData_Floor, 1);
-				WorldInventory->AddItem(BuildingItemData_Stair_W, 1);
-				WorldInventory->AddItem(BuildingItemData_RoofS, 1);
-				WorldInventory->AddItem(EditToolItemDefinition, 1);
+				WorldInventory->AddItem(InventoryItem.ItemDefinition.LoadSynchronous(), InventoryItem.Count);
 			}
-
-			UAthenaPickaxeItemDefinition* AthenaPickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(TEXT("DefaultPickaxe"), ANY_PACKAGE);
-
-			if (AthenaPickaxeItemDefinition != NULL)
-				WorldInventory->AddItem(AthenaPickaxeItemDefinition->WeaponDefinition, 1);
 		}
 	}
 
-	return DefaultPawn;
+	return FortGameModeOutpost->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
 }
 
 void FortGameModeOutpost::Setup()
