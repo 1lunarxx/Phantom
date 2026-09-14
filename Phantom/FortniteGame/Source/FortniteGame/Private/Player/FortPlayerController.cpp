@@ -317,6 +317,10 @@ void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlaye
 	}
 }
 
+void FortPlayerController::ServerCraftSchematic_Implementation(AFortPlayerController* FortPlayerController, const FString* ItemId, unsigned int PostCraftSlot, unsigned int CraftAmount, EFortItemTier RequestedTier, bool bIsQuickCrafted)
+{
+}
+
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
 {
 	if (DestructionPawn == NULL)
@@ -412,6 +416,7 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDB0 / 8, ServerCheat_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xD80 / 8, ServerTeleportToReticle_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFD8 / 8, ServerTeleportToReticle_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor_Implementation);
