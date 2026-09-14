@@ -12,23 +12,6 @@ void BuildingContainer::PostUpdate(ABuildingContainer* BuildingContainer, EFortB
 
 bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPlayerPawn* PlayerPawn, const EFortPickupSourceTypeFlag InSourceTypeFlag, const uint8 InSpawnSource)
 {
-	if (PlayerPawn != NULL)
-	{
-		FVector BounceNormal = PlayerPawn->K2_GetActorLocation() - BuildingContainer->K2_GetActorLocation();
-		BounceNormal.Z = 0.0f;
-
-		if (!BounceNormal.IsZero())
-			BounceNormal.Normalize();
-
-		BuildingContainer->SearchBounceData.BounceNormal = BounceNormal;
-	}
-
-	BuildingContainer->SearchBounceData.SearchAnimationCount++;
-	BuildingContainer->BounceContainer();
-
-	BuildingContainer->bAlreadySearched = true;
-	BuildingContainer->OnRep_bAlreadySearched();
-
 	if (UFortGlobals::IsInAthena(GWorld))
 	{
 		if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
@@ -55,6 +38,26 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 
 		AFortPickup::SpawnPickup(LootDrop, LocationToSpawn, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
 	}
+
+	if (PlayerPawn != NULL)
+	{
+		FVector BounceNormal = PlayerPawn->K2_GetActorLocation() - BuildingContainer->K2_GetActorLocation();
+		BounceNormal.Z = 0.0f;
+
+		if (!BounceNormal.IsZero())
+			BounceNormal.Normalize();
+
+		BuildingContainer->SearchBounceData.BounceNormal = BounceNormal;
+	}
+
+	BuildingContainer->SearchBounceData.SearchAnimationCount++;
+	BuildingContainer->BounceContainer();
+
+	BuildingContainer->bAlreadySearched = true;
+	BuildingContainer->OnRep_bAlreadySearched();
+
+	if (BuildingContainer->bDestroyContainerOnSearch)
+		BuildingContainer->K2_DestroyActor();
 
 	return true;
 }

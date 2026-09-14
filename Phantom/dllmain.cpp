@@ -43,6 +43,8 @@
 #include "FortniteGame/Public/Player/FortPlayerControllerZone.h"
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 
+#include "FortniteGame/Public/STW/FortGameModeOutpost.h"
+
 #include "FortniteAI/Public/FortAIDirector.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
@@ -92,14 +94,14 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     BuildingRift::Setup();
     BGAConsumableSpawner::Setup();
     FortAthenaVehicle::Setup();
+    FortGameModeOutpost::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
-    UKismetSystemLibrary::ExecuteConsoleCommand(GWorld, L"log LogFortMission VeryVerbose", NULL);
-    UKismetSystemLibrary::ExecuteConsoleCommand(GWorld, L"log LogFortAIDirector VeryVerbose", NULL);
-
     *GIsClient = false;
     *GIsServer = true;
+
+    // Zone_Outpost_Stonewood, Athena_Terrain
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

@@ -197,6 +197,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerGameplay.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Quests\FortQuestManager.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\STW\FortGameModeOutpost.h" />
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="pch.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingRift.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\BGAConsumableSpawner.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortGameModeOutpost.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
