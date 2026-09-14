@@ -14,7 +14,6 @@
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
-#include "FortniteGame/Public/BGAConsumableSpawner.h"
 
 #include "FortniteGame/Public/Online/FortGameSession.h"
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
@@ -26,6 +25,7 @@
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
 #include "FortniteGame/Public/Athena/FortAthenaSupplyDrop.h"
 #include "FortniteGame/Public/Athena/FortAthenaVehicle.h"
+#include "FortniteGame/Public/Athena/BGAConsumableSpawner.h"
 
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
@@ -101,7 +101,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     *GIsClient = false;
     *GIsServer = true;
 
-    // Zone_Outpost_Stonewood, Athena_Terrain
+    // Zone_Outpost_Stonewood, Athena_Terrain, Zone_Onboarding_Forest_a, Zone_Outpost_Plankerton_AD, Zone_Outpost_TwinePeaks, Zone_Outpost_CannyValley
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

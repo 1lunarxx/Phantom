@@ -176,7 +176,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPlayerControllerAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Modifiers\FortAthenaMutator_Barrier.h" />
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\BGAConsumableSpawner.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\BGAConsumableSpawner.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingRift.h" />
@@ -186,6 +186,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortKismetLibrary.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventory.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortInventoryOwnerInterface.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootLevel.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootPackage.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortPickup.h" />
@@ -245,9 +246,10 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerControllerGameplay.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortCheatManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingRift.cpp" />
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\BGAConsumableSpawner.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\BGAConsumableSpawner.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortGameModeOutpost.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootLevel.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

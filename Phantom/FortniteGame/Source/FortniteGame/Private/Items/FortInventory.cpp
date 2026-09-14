@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortInventory.h"
+#include "FortniteGame/Public/Items/FortLootLevel.h"
 
 void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
 {

@@ -22,7 +22,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	}
 
 	TArray<FFortItemEntry> OutLootDrops;
-	FortLootPackage::PickLootDrops(&OutLootDrops, BuildingContainer->GetLootTier(), BuildingContainer->SearchLootTierGroup);
+	UFortLootPackage::PickLootDrops(&OutLootDrops, BuildingContainer->GetLootTier(), BuildingContainer->SearchLootTierGroup);
 
 	FVector LocationToSpawn = BuildingContainer->K2_GetActorLocation() + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
 

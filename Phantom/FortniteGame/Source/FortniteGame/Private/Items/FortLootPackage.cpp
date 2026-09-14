@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 #include "FortniteGame/Public/Items/FortLootTier.h"
+#include "FortniteGame/Public/Items/FortLootLevel.h"
 #include "Core/Public/Math/UnrealMathUtility.h"
 
-UDataTable* FortLootPackage::GetLootTierData()
+UDataTable* UFortLootPackage::GetLootTierData()
 {
 	if (UFortGlobals::IsInAthena(GWorld))
 	{
@@ -23,7 +24,7 @@ UDataTable* FortLootPackage::GetLootTierData()
 	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
 }
 
-UDataTable* FortLootPackage::GetLootPackageData()
+UDataTable* UFortLootPackage::GetLootPackageData()
 {
 	if (UFortGlobals::IsInAthena(GWorld))
 	{
@@ -43,7 +44,7 @@ UDataTable* FortLootPackage::GetLootPackageData()
 	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
 }
 
-void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)
+void UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)
 {
 	if (OutLootToDrop == NULL)
 		return;
@@ -82,7 +83,7 @@ void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int F
 
 	TMap<int32, int32> NumLootPackageDropsPerCategory;
 
-	if (!FortLootTier::GetNumLootPackageDropsPerCategory(FortLootTierData, NumLootPackageDrops, &NumLootPackageDropsPerCategory))
+	if (!UFortLootTier::GetNumLootPackageDropsPerCategory(FortLootTierData, NumLootPackageDrops, &NumLootPackageDropsPerCategory))
 		return;
 
 	for (const auto& [LootPackageCategory, NumDrops] : NumLootPackageDropsPerCategory)
@@ -92,7 +93,7 @@ void FortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int F
 	}
 }
 
-void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLootToDrop, FName LootPackage, int32 ForcedLootTier, int32 LootPackageCategory, int32 WorldLevel)
+void UFortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLootToDrop, FName LootPackage, int32 ForcedLootTier, int32 LootPackageCategory, int32 WorldLevel)
 {
 	UDataTable* LootPackageData = GetLootPackageData();
 
@@ -171,10 +172,15 @@ void FortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLo
 
 		if (UFortItemDefinition* ItemDefinition = LootPackageRow->ItemDefinition.Get())
 		{
+			UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemDefinition);
+
+			if (WorldItemDefinition == NULL)
+				continue;
+
 			int32 Count = LootPackageRow->Count;
 
 			if (Count)
-				OutLootToDrop->Add(FFortItemEntry(ItemDefinition, Count, WorldLevel));
+				OutLootToDrop->Add(FFortItemEntry(ItemDefinition, Count, UFortLootLevel::GetItemLevel(&WorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel)));
 		}
 
 		return;

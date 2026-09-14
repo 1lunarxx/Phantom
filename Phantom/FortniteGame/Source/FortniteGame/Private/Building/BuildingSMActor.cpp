@@ -55,10 +55,10 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 					if (!BuildingSMActor->DestructionLootTierKey.IsNone())
 					{
-						TArray<FFortItemEntry> LootDrops;
-						FortLootPackage::PickLootDrops(&LootDrops, -1, BuildingSMActor->DestructionLootTierKey);
+						TArray<FFortItemEntry> OutLootDrops;
+						UFortLootPackage::PickLootDrops(&OutLootDrops, -1, BuildingSMActor->DestructionLootTierKey);
 
-						for (FFortItemEntry& LootDrop : LootDrops)
+						for (FFortItemEntry& LootDrop : OutLootDrops)
 						{
 							AFortPickup::SpawnPickup(LootDrop, BuildingSMActor->K2_GetActorLocation(), LootDrop.Count, EFortPickupSourceTypeFlag::Destruction, 0);
 						}

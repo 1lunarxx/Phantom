@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "FortniteGame/Public/BGAConsumableSpawner.h"
+#include "FortniteGame/Public/Athena/BGAConsumableSpawner.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
 void ABGAConsumableSpawner::SetupAndAttemptToSpawnConsumables()
 {
-    FortLootPackage::PickLootDrops(&ConsumablesToSpawn, GWorld->GetGameState()->WorldLevel, SpawnLootTierGroup);
+    UFortLootPackage::PickLootDrops(&ConsumablesToSpawn, GWorld->GetGameState()->WorldLevel, SpawnLootTierGroup);
 
     for (FFortItemEntry& Consumable : ConsumablesToSpawn)
     {

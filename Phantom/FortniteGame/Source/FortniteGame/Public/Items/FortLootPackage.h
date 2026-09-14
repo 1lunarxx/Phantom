@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Utils.h"
 
-class FortLootPackage
+class UFortLootPackage
 {
 public:
     static FFortLootTierData* FindLootTierDataRow(UDataTable* DataTable, FName RowName, const TCHAR* ContextString, bool bWarnIfRowMissing)

@@ -285,6 +285,29 @@ void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* S
 	}
 }
 
+void FortCheatManager::GiveAllIngredients(UFortCheatManager* Context, FFrame* Stack)
+{
+	int32 NumIngredients;
+
+	Stack->StepCompiledIn(&NumIngredients);
+	Stack->IncrementCode();
+
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+
+	if (FortPlayerController == NULL)
+		return;
+
+	TArray<UObject*> Ingredients = UFortKismetLibrary::JonLHack_GetAllObjectsOfClassFromPath(L"/Game/Items/Ingredients", UFortIngredientItemDefinition::StaticClass());
+
+	for (UObject* Ingredient : Ingredients)
+	{
+		UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(Ingredient);
+
+		if (FortIngredientItemDefinition != NULL)
+			FortPlayerController->WorldInventory->AddItemStack(FortIngredientItemDefinition, NumIngredients);
+	}
+}
+
 void FortCheatManager::GiveConsumable(UFortCheatManager* Context, FFrame* Stack)
 {
 	FString ConsumableName;
@@ -679,6 +702,7 @@ void FortCheatManager::Setup()
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.BuildFree"), BuildFree);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ForceServerShutdown"), ForceServerShutdown);
 
+	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveAllIngredients"), GiveAllIngredients);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveConsumable"), GiveConsumable);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadget"), GiveGadget);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadgets"), GiveGadgets);

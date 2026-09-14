@@ -4,7 +4,7 @@
 
 // aids
 
-bool FortLootTier::GetNumLootPackageDropsPerCategory(FFortLootTierData* LootTierData, int32 NumLootPackageDrops, TMap<int32, int32>* OutNumLootPackageDropsPerCategory)
+bool UFortLootTier::GetNumLootPackageDropsPerCategory(FFortLootTierData* LootTierData, int32 NumLootPackageDrops, TMap<int32, int32>* OutNumLootPackageDropsPerCategory)
 {
 	if (LootTierData == NULL || OutNumLootPackageDropsPerCategory == NULL)
 		return false;

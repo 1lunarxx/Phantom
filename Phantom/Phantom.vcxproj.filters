@@ -153,13 +153,16 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingRift.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\BGAConsumableSpawner.h">
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\BGAConsumableSpawner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaVehicle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\STW\FortGameModeOutpost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootLevel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -305,13 +308,16 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingRift.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\BGAConsumableSpawner.cpp">
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\BGAConsumableSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortGameModeOutpost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootLevel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -29,6 +29,7 @@ private:
 	static void BuildFree(UFortCheatManager* Context, FFrame* Stack);
 	static void ForceServerShutdown(UFortCheatManager* Context, FFrame* Stack);
 
+	static void GiveAllIngredients(UFortCheatManager* Context, FFrame* Stack);
 	static void GiveConsumable(UFortCheatManager* Context, FFrame* Stack);
 	static void GiveGadget(UFortCheatManager* Context, FFrame* Stack);
 	static void GiveGadgets(UFortCheatManager* Context, FFrame* Stack);

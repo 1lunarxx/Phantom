@@ -61,7 +61,7 @@ bool FortKismetLibrary::PickLootDrops(UFortKismetLibrary* Context, FFrame* Stack
 
     Stack->IncrementCode();
 
-    FortLootPackage::PickLootDrops(&OutLootToDrop, ForcedLootTier, TierGroupName);
+    UFortLootPackage::PickLootDrops(&OutLootToDrop, ForcedLootTier, TierGroupName);
 
     for (FFortItemEntry& LootDrop : OutLootToDrop)
     {

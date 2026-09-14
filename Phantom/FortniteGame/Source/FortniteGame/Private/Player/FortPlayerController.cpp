@@ -354,6 +354,14 @@ void FortPlayerController::ServerCraftSchematic_Implementation(AFortPlayerContro
 
 	if (UFortWorldItemDefinition* ResultWorldItemDefinition = FortSchematicItemDefinition->GetResultWorldItemDefinition())
 	{
+		if (ResultWorldItemDefinition->Tier != RequestedTier)
+			ResultWorldItemDefinition->Tier = RequestedTier;
+
+		if (UFortWeaponRangedItemDefinition* FortWeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(ResultWorldItemDefinition))
+		{
+			printf("FortWeaponRangedItemDefinition\n");
+		}
+
 		FortPlayerController->WorldInventory->AddItemStack(ResultWorldItemDefinition, FortSchematicItemDefinition->GetQuantityProduced());
 	}
 }
