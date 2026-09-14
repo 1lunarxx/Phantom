@@ -465,6 +465,11 @@ namespace UC
 			return PrintfImpl(result, Fmt);
 		}
 
+		bool Split(const FString* InS, FString* LeftS, FString* RightS, uint8 SearchCase, uint8 SearchDir)
+		{
+			static bool (*Split)(FString*, const FString*, FString*, FString*, uint8, uint8) = decltype(Split)(((uintptr_t)GetModuleHandleA(0)) + 0x3967C0);
+			return Split(this, InS, LeftS, RightS, SearchCase, SearchDir);
+		}
 	public:
 		inline       wchar_t* CStr()       { return Data; }
 		inline const wchar_t* CStr() const { return Data; }

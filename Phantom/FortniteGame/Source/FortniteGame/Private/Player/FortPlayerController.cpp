@@ -317,9 +317,45 @@ void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlaye
 	}
 }
 
-void FortPlayerController::ServerCraftSchematic_Implementation(AFortPlayerController* FortPlayerController, const FString* ItemId, unsigned int PostCraftSlot, unsigned int CraftAmount, EFortItemTier RequestedTier, bool bIsQuickCrafted)
+void FortPlayerController::ServerCraftSchematic_Implementation(AFortPlayerController* FortPlayerController, FString* ItemId, unsigned int PostCraftSlot, unsigned int CraftAmount, EFortItemTier RequestedTier, bool bIsQuickCrafted)
 {
-	printf(__FUNCTION__);
+	FString FortSchematicItemDefinitionName;
+	FString Schematic = L":";
+
+	ItemId->Split(&Schematic, NULL, &FortSchematicItemDefinitionName, (uint8)ESearchCase::IgnoreCase, (uint8)ESearchDir::FromStart);
+
+	UFortSchematicItemDefinition* FortSchematicItemDefinition = Utils::StaticFindObject<UFortSchematicItemDefinition>(FortSchematicItemDefinitionName.CStr(), ANY_PACKAGE, UFortSchematicItemDefinition::StaticClass());
+
+	if (FortSchematicItemDefinition == NULL)
+	{
+		FortPlayerController->ClientCancelCrafting();
+		return; 
+	}
+
+	FRecipe Recipe = FortSchematicItemDefinition->GetRecipe();
+
+	for (const FFortItemQuantityPair& RecipeCost : Recipe.RecipeCosts)
+	{
+		UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(UKismetSystemLibrary::GetObjectFromPrimaryAssetId(RecipeCost.ItemPrimaryAssetId));
+
+		if (FortIngredientItemDefinition == NULL)
+			continue;
+
+		UFortWorldItem* ExistingItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(FortIngredientItemDefinition);
+
+		if (ExistingItem == NULL)
+		{
+			FortPlayerController->ClientCancelCrafting();
+			return;
+		}
+
+		FortPlayerController->WorldInventory->RemoveItem(ExistingItem->ItemEntry.ItemGuid, RecipeCost.Quantity);
+	}
+
+	if (UFortWorldItemDefinition* ResultWorldItemDefinition = FortSchematicItemDefinition->GetResultWorldItemDefinition())
+	{
+		FortPlayerController->WorldInventory->AddItemStack(ResultWorldItemDefinition, FortSchematicItemDefinition->GetQuantityProduced());
+	}
 }
 
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
