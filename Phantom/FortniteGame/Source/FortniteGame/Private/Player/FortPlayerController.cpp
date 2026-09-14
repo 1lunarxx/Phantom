@@ -317,55 +317,6 @@ void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlaye
 	}
 }
 
-void FortPlayerController::ServerCraftSchematic_Implementation(AFortPlayerController* FortPlayerController, FString* ItemId, unsigned int PostCraftSlot, unsigned int CraftAmount, EFortItemTier RequestedTier, bool bIsQuickCrafted)
-{
-	FString FortSchematicItemDefinitionName;
-	FString Schematic = L":";
-
-	ItemId->Split(&Schematic, NULL, &FortSchematicItemDefinitionName, (uint8)ESearchCase::IgnoreCase, (uint8)ESearchDir::FromStart);
-
-	UFortSchematicItemDefinition* FortSchematicItemDefinition = Utils::StaticFindObject<UFortSchematicItemDefinition>(FortSchematicItemDefinitionName.CStr(), ANY_PACKAGE, UFortSchematicItemDefinition::StaticClass());
-
-	if (FortSchematicItemDefinition == NULL)
-	{
-		FortPlayerController->ClientCancelCrafting();
-		return; 
-	}
-
-	FRecipe Recipe = FortSchematicItemDefinition->GetRecipe();
-
-	for (const FFortItemQuantityPair& RecipeCost : Recipe.RecipeCosts)
-	{
-		UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(UKismetSystemLibrary::GetObjectFromPrimaryAssetId(RecipeCost.ItemPrimaryAssetId));
-
-		if (FortIngredientItemDefinition == NULL)
-			continue;
-
-		UFortWorldItem* ExistingItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(FortIngredientItemDefinition);
-
-		if (ExistingItem == NULL)
-		{
-			FortPlayerController->ClientCancelCrafting();
-			return;
-		}
-
-		FortPlayerController->WorldInventory->RemoveItem(ExistingItem->ItemEntry.ItemGuid, RecipeCost.Quantity);
-	}
-
-	if (UFortWorldItemDefinition* ResultWorldItemDefinition = FortSchematicItemDefinition->GetResultWorldItemDefinition())
-	{
-		if (ResultWorldItemDefinition->Tier != RequestedTier)
-			ResultWorldItemDefinition->Tier = RequestedTier;
-
-		if (UFortWeaponRangedItemDefinition* FortWeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(ResultWorldItemDefinition))
-		{
-			printf("FortWeaponRangedItemDefinition\n");
-		}
-
-		FortPlayerController->WorldInventory->AddItemStack(ResultWorldItemDefinition, FortSchematicItemDefinition->GetQuantityProduced());
-	}
-}
-
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
 {
 	if (DestructionPawn == NULL)
@@ -461,7 +412,6 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDC0 / 8, ServerPlayEmoteItem_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xDB0 / 8, ServerCheat_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xD80 / 8, ServerTeleportToReticle_Implementation);
-	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0xFD8 / 8, ServerCraftSchematic_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10A0 / 8, ServerEditBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10C0 / 8, ServerBeginEditingBuildingActor_Implementation);

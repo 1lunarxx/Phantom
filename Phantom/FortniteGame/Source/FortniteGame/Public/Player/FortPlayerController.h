@@ -20,7 +20,6 @@ private:
 	static void ServerRepairBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
 
 	static void ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid);
-	static void ServerCraftSchematic_Implementation(AFortPlayerController* FortPlayerController, FString* ItemId, unsigned int PostCraftSlot, unsigned int CraftAmount, EFortItemTier RequestedTier, bool bIsQuickCrafted);
 
 	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);

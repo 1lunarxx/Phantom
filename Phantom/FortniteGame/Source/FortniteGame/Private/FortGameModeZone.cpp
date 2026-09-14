@@ -55,4 +55,8 @@ void FortGameModeZone::Setup()
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xC08 / 8, CreateAIDirector);
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xA40 / 8, FinishWorldInitialization);
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0x610 / 8, SpawnDefaultPawnFor_Implementation);
+
+	Utils::Virtual(AFortGameModeOutpost::GetDefaultObj()->VTable, 0xC08 / 8, CreateAIDirector);
+	Utils::Virtual(AFortGameModeOutpost::GetDefaultObj()->VTable, 0xA40 / 8, FinishWorldInitialization);
+	Utils::Virtual(AFortGameModeOutpost::GetDefaultObj()->VTable, 0x610 / 8, SpawnDefaultPawnFor_Implementation);
 }

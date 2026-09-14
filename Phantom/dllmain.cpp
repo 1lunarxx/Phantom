@@ -30,7 +30,6 @@
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
-#include "FortniteGame/Public/Building/BuildingRift.h"
 
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
 #include "FortniteGame/Public/Items/FortPickup.h"
@@ -44,6 +43,7 @@
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 
 #include "FortniteGame/Public/STW/FortGameModeOutpost.h"
+#include "FortniteGame/Public/STW/Items/FortSchematicItem.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
 
@@ -91,10 +91,10 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortCheatManager::Setup();
     Character::Setup();
     CheatManager::Setup();
-    BuildingRift::Setup();
     BGAConsumableSpawner::Setup();
     FortAthenaVehicle::Setup();
     FortGameModeOutpost::Setup();
+    FortSchematicItem::Setup();
 
     Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
 
@@ -103,7 +103,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
 
     // Zone_Outpost_Stonewood, Athena_Terrain, Zone_Onboarding_Forest_a, Zone_Outpost_Plankerton_AD, Zone_Outpost_TwinePeaks, Zone_Outpost_CannyValley
 
-    GWorld->ServerTravel(L"Athena_Terrain", false, false);
+    GWorld->ServerTravel(L"Zone_Onboarding_Forest_a", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;
