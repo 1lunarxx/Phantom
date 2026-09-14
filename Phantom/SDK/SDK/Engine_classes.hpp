@@ -7008,8 +7008,11 @@ public:
 	template <class T>
 	T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL);
 public:
-	class AFortGameStateAthena* GetGameState();
-	class AFortGameModeAthena* GetGameMode();
+	class AFortGameStateAthena* GetGameStateAthena();
+	class AFortGameModeAthena* GetGameModeAthena();
+
+	class AFortGameStateZone* GetGameState();
+	class AFortGameModeZone* GetGameMode();
 public:
 	static class UClass* StaticClass()
 	{

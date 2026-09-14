@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
-
-// unfinished
+#include "FortniteGame/Public/Items/FortLootPackage.h"
 
 void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, AFortPlayerPawn* InstigatorPawn, float ActualDamageDealt, bool bJustHitWeakspot)
 {
@@ -18,20 +17,73 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 				UFortGameData* GameData = UFortGameData::Get();
 				UFortResourceItemDefinition* ResourceItemDefinition = GameData->GetResourceItemDefinition(ResourceType);
 
+				float ResourcesToSpawn = 0.f;
+				int32 ResourceCount = 0;
+
 				if (ResourceItemDefinition != NULL)
 				{
 					if (BuildingSMActor->MaxResourcesToSpawn < 0)
+					{
 						BuildingSMActor->MaxResourcesToSpawn = BuildingSMActor->DetermineMaxResourcesToSpawn(true);
+					}
 
-					float MaxResourcesToSpawn = BuildingSMActor->MaxResourcesToSpawn;
-					int32 ResourceCount = (int32)((MaxResourcesToSpawn / BuildingSMActor->GetMaxHealth()) * ActualDamageDealt);
+					float MaxResourcesToSpawn = (float)BuildingSMActor->MaxResourcesToSpawn;
+					float MaxHealth = BuildingSMActor->GetMaxHealth();
 
-					bool bDestroyed = false;
+					ResourcesToSpawn = (MaxResourcesToSpawn / MaxHealth) * ActualDamageDealt;
+					ResourcesToSpawn += BuildingSMActor->UndistributedResources;
 
-					if (!BuildingSMActor->HasHealthLeft())
-						bDestroyed = true;
+					ResourceCount = (int32)ResourcesToSpawn;
 
-					if (ResourceCount > 0)
+					BuildingSMActor->UndistributedResources = ResourcesToSpawn - (float)ResourceCount;
+				}
+
+				int32 Something = 1;
+
+				bool bDestroyed = false;
+				bool HasHealthLeft = BuildingSMActor->HasHealthLeft();
+
+				if (!HasHealthLeft)
+				{
+					bDestroyed = true;
+
+					if (ResourceItemDefinition == NULL || ResourcesToSpawn == 0.f)
+						Something = 0;
+
+					if (ResourceCount < Something)
+						ResourceCount = Something;
+
+					if (!BuildingSMActor->DestructionLootTierKey.IsNone())
+					{
+						TArray<FFortItemEntry> LootDrops;
+						FortLootPackage::PickLootDrops(&LootDrops, -1, BuildingSMActor->DestructionLootTierKey);
+
+						for (FFortItemEntry& LootDrop : LootDrops)
+						{
+							AFortPickup::SpawnPickup(LootDrop, BuildingSMActor->K2_GetActorLocation(), LootDrop.Count, EFortPickupSourceTypeFlag::Destruction, 0);
+						}
+					}
+				}
+
+				if (ResourceCount > 0)
+				{
+					if (BuildingSMActor->OwnerPersistentID == -1)
+					{
+						AFortPlayerStateZone* FortPlayerStateZone = Cast<AFortPlayerStateZone>(FortPlayerController->PlayerState);
+
+						if (FortPlayerStateZone != NULL)
+						{
+							if (ResourceItemDefinition != NULL)
+							{
+								EFortReplicatedStat AccumulatingStatType = ResourceItemDefinition->AccumulatingStatType;
+
+								if (AccumulatingStatType != EFortReplicatedStat::None)
+									FortPlayerStateZone->ModifyReplicatedStatValues((int)AccumulatingStatType, ResourceCount, ResourceCount, BuildingSMActor->K2_GetActorLocation());
+							}
+						}
+					}
+
+					if (ResourceItemDefinition != NULL)
 					{
 						UFortWorldItem* ExistingWorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(ResourceItemDefinition);
 
@@ -56,25 +108,6 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 						}
 
 						FortPlayerController->ClientReportDamagedResourceBuilding(BuildingSMActor, ResourceType, ResourceCount, bDestroyed, bJustHitWeakspot);
-
-						if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
-						{
-							if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
-							{
-								switch (ResourceType)
-								{
-								case EFortResourceType::Wood:
-									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[10] += ResourceCount; // GameplayStat.Profile.Match.GatheredWood
-									break;
-								case EFortResourceType::Stone:
-									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[11] += ResourceCount; // GameplayStat.Profile.Match.GatheredStone
-									break;
-								case EFortResourceType::Metal:
-									FortPlayerControllerAthena->MatchReport->MatchStats.Stats[12] += ResourceCount; // GameplayStat.Profile.Match.GatheredMetal
-									break;
-								}
-							}
-						}
 					}
 				}
 			}

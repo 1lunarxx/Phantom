@@ -156,7 +156,7 @@ public:
 	bool ShouldShowPreviewOnCurrentHero() const;
 public:
 	bool IsStackable() { return MaxStackSize > 1; };
-
+	bool IsPrimaryQuickBar() { return ItemType == EFortItemType::Consumable || ItemType == EFortItemType::Weapon || ItemType == EFortItemType::WeaponMelee || ItemType == EFortItemType::WeaponRanged || ItemType == EFortItemType::WeaponHarvest || ItemType == EFortItemType::Gadget || ItemType == EFortItemType::AthenaGadget; }
 public:
 	static class UClass* StaticClass()
 	{
@@ -14227,6 +14227,12 @@ public:
 		OnRep_UpdatedObjectiveStat(this);
 	}
 
+	void TryAddToQuickBar(class UFortWorldItem* Item)
+	{
+		static void(*TryAddToQuickBar)(AFortPlayerController*, UFortWorldItem*) = decltype(TryAddToQuickBar)(InSDKUtils::GetImageBase() + 0x12F88E0);
+		TryAddToQuickBar(this, Item);
+	}
+
 	EFortStructuralGridQueryResults CanPlaceBuildableClassInStructuralGrid(TSubclassOf<ABuildingActor> ClassToBuild, FVector* WorldLocation, FRotator* WorldRotation, bool bMirrored, TArray<ABuildingActor*>* ExistingBuildings)
 	{
 		static EFortStructuralGridQueryResults(*CanPlaceBuildableClassInStructuralGrid)(AFortPlayerController*, TSubclassOf<ABuildingActor>, FVector*, FRotator*, bool, TArray<ABuildingActor*>*, void*) = decltype(CanPlaceBuildableClassInStructuralGrid)(InSDKUtils::GetImageBase() + 0x12B0F10);
@@ -17834,7 +17840,12 @@ public:
 	bool IsGameplayVoteLocked(EFortVoteType VoteType) const;
 	bool IsRespawningAllowed(class AFortPlayerState* PlayerState) const;
 	bool ShouldDisablePlayerTeleportingDuringMissionResults() const;
-
+public:
+	void GetPlayerBuildableClasses(TArray<TSubclassOf<ABuildingSMActor>>* OutBuildableClasses, const FPlayerBuildableClassFilter* ClassFilter)
+	{
+		static void (*GetPlayerBuildableClasses)(AFortGameStateZone*, TArray<TSubclassOf<ABuildingSMActor>>*, const FPlayerBuildableClassFilter*) = decltype(GetPlayerBuildableClasses)(InSDKUtils::GetImageBase() + 0xF6BA30);
+		GetPlayerBuildableClasses(this, OutBuildableClasses, ClassFilter);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -26594,7 +26605,12 @@ public:
 	class FString GetPlayerNameForStreaming() const;
 	float GetSimulatedAttributeValue(const struct FGameplayAttribute& Attribute, const float DefaultValue) const;
 	bool IsPlayerDead() const;
-
+public:
+	void ModifyReplicatedStatValues(int Stat, int StatDelta, int ScoreDelta, const FVector ScoreLocation)
+	{
+		static void (*ModifyReplicatedStatValues)(AFortPlayerStateZone*, int, int, int, const FVector) = decltype(ModifyReplicatedStatValues)(InSDKUtils::GetImageBase() + 0x1360C50);
+		ModifyReplicatedStatValues(this, Stat, StatDelta, ScoreDelta, ScoreLocation);
+	}
 public:
 	static class UClass* StaticClass()
 	{

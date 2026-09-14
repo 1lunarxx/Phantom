@@ -15,7 +15,7 @@ AFortAIGoalManager* FortKismetLibrary::GetAIGoalManager(UFortKismetLibrary* Cont
             return *Result = Cast<AFortGameModeZone>(World->AuthorityGameMode)->AIGoalManager;
     }
 
-    return *Result = GGameMode->AIGoalManager;
+    return *Result = GWorld->GetGameMode()->AIGoalManager;
 }
 
 AFortPickup* FortKismetLibrary::K2_SpawnPickupInWorld(UFortKismetLibrary* Context, FFrame* Stack, AFortPickup** Result)

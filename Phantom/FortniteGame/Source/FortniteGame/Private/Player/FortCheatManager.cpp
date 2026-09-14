@@ -82,7 +82,7 @@ void FortCheatManager::AllowRespawn(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	UFortPlaylistAthena* FortPlaylistAthena = GGameState->GetCurrentPlaylistData();
+	UFortPlaylistAthena* FortPlaylistAthena = GWorld->GetGameStateAthena()->GetCurrentPlaylistData();
 
 	if (FortPlaylistAthena != NULL)
 		FortPlaylistAthena->RespawnType = EAthenaRespawnType::InfiniteRespawn;
@@ -163,7 +163,7 @@ void FortCheatManager::AthenaForceVictory(UFortCheatManager* Context, FFrame* St
 	if (FortPlayerState == NULL)
 		return;
 
-	GGameMode->StartEndGamePhaseTeam((int)FortPlayerState->TeamIndex, FortPlayerState, 1, FortPlayerController->Pawn, NULL, EDeathCause::WonMatch);
+	GWorld->GetGameModeAthena()->StartEndGamePhaseTeam((int)FortPlayerState->TeamIndex, FortPlayerState, 1, FortPlayerController->Pawn, NULL, EDeathCause::WonMatch);
 }
 
 void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* Context, FFrame* Stack)
@@ -272,7 +272,7 @@ void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* S
 
 		if (World != NULL)
 		{
-			AFortGameModeAthena* GameMode = World->GetGameMode();
+			AFortGameModeAthena* GameMode = World->GetGameModeAthena();
 
 			if (GameMode != NULL)
 			{
@@ -551,7 +551,7 @@ void FortCheatManager::MassSuicide(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	for (AFortPlayerControllerAthena* FortPlayerController : GGameMode->AlivePlayers)
+	for (AFortPlayerControllerAthena* FortPlayerController : GWorld->GetGameModeAthena()->AlivePlayers)
 	{
 		FortPlayerController->Suicide();
 	}

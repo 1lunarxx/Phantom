@@ -74,24 +74,8 @@ UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int
 	if (Count <= 0)
 		return NULL;
 
-	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
-
-	if (WorldItem == NULL)
-		return NULL;
-
-	InitializeExistingItem(WorldItem);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-	{
-		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-		{
-			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-		}
-	}
-
-	return WorldItem;
+	FFortItemEntry ItemEntry = FFortItemEntry(ItemDefinition, Count, 0);
+	return AddItem(&ItemEntry);
 }
 
 UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
@@ -110,6 +94,13 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
 		{
 			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+		}
+
+		// i have to manual call since im scuffed
+
+		if (!UFortGlobals::IsInAthena(GWorld))
+		{
+			FortPlayerController->TryAddToQuickBar(WorldItem);
 		}
 	}
 

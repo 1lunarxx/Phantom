@@ -45,6 +45,16 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 	if (FortPlayerStateAthena == NULL || InTags == NULL)
 		return;
 
+	AFortGameStateAthena* FortGameStateAthena = GWorld->GetGameStateAthena();
+
+	if (FortGameStateAthena == NULL)
+		return;
+
+	AFortGameModeAthena* FortGameModeAthena = GWorld->GetGameModeAthena();
+
+	if (FortGameModeAthena == NULL)
+		return;
+
 	FortPlayerStateAthena->DeathInfo.DeathCause = AFortPlayerStateAthena::ToDeathCause(*InTags, FortPlayerPawnAthena->bIsDBNO);
 
 	AFortPlayerControllerAthena* FortPlayerControllerAthenaKiller = Cast<AFortPlayerControllerAthena>(EventInstigator);
@@ -88,7 +98,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 		FortPlayerStateAthena->DeathInfo.FinisherOrDowner = FortPlayerStateAthena;
 	}
 
-	bool IsRespawningAllowed = GGameState->IsRespawningAllowed(FortPlayerStateAthena);
+	bool IsRespawningAllowed = FortGameStateAthena->IsRespawningAllowed(FortPlayerStateAthena);
 
 	FortPlayerPawnAthena->InitializeDeathInfoOnPawnDeath(InTags, EventInstigator, DBNOFinisher);
 
@@ -112,12 +122,12 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 	if (!IsRespawningAllowed)
 	{
-		if (GGameState->GamePhase > EAthenaGamePhase::Warmup && FortPlayerControllerAthena->bMarkedAlive)
+		if (FortGameStateAthena->GamePhase > EAthenaGamePhase::Warmup && FortPlayerControllerAthena->bMarkedAlive)
 		{
 			FortPlayerStateAthena->SecondsAlive = FortPlayerStateAthena->SomethingAboutSecondsAliveFuncICantFindName();
-			FortPlayerStateAthena->OutlivedCount = GGameState->TotalPlayers - GGameState->PlayersLeft;
+			FortPlayerStateAthena->OutlivedCount = FortGameStateAthena->TotalPlayers - FortGameStateAthena->PlayersLeft;
 
-			FortPlayerControllerAthena->SetMatchPlacement(GGameState->TeamsLeft);
+			FortPlayerControllerAthena->SetMatchPlacement(FortGameStateAthena->TeamsLeft);
 
 			if (EventInstigator != NULL)
 			{
@@ -129,10 +139,10 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 					if (FortPlayerStateAthenaEventInstigator != NULL)
 					{
-						GGameMode->RemoveFromAlivePlayers(FortPlayerControllerAthena, FortPlayerStateAthenaEventInstigator == FortPlayerStateAthena ? NULL : FortPlayerStateAthenaEventInstigator, FortPlayerControllerAthenaEventInstigator->Pawn, NULL, FortPlayerStateAthena->DeathInfo.DeathCause, false);
+						FortGameModeAthena->RemoveFromAlivePlayers(FortPlayerControllerAthena, FortPlayerStateAthenaEventInstigator == FortPlayerStateAthena ? NULL : FortPlayerStateAthenaEventInstigator, FortPlayerControllerAthenaEventInstigator->Pawn, NULL, FortPlayerStateAthena->DeathInfo.DeathCause, false);
 
-						if (GGameState->TeamsLeft <= 1)
-							GGameMode->StartEndGamePhaseTeam((int)FortPlayerStateAthenaEventInstigator->TeamIndex, FortPlayerStateAthenaEventInstigator, 1, FortPlayerControllerAthenaEventInstigator->Pawn, NULL, FortPlayerStateAthena->DeathInfo.DeathCause);
+						if (FortGameStateAthena->TeamsLeft <= 1)
+							FortGameModeAthena->StartEndGamePhaseTeam((int)FortPlayerStateAthenaEventInstigator->TeamIndex, FortPlayerStateAthenaEventInstigator, 1, FortPlayerControllerAthenaEventInstigator->Pawn, NULL, FortPlayerStateAthena->DeathInfo.DeathCause);
 
 					/*	UFortAnalytics::FireEvent_PlayerDeath(FortPlayerControllerAthena, 0, NULL, FortPlayerStateAthenaEventInstigator->GetPlayerName(), NULL, 0, 0.f, NULL);	*/
 					}

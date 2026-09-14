@@ -228,16 +228,24 @@ T* FDataTableRowHandle::FindRow(FName InRowName)
     return NULL;
 }
 
-FORCEINLINE AFortGameStateAthena* UWorld::GetGameState()
+FORCEINLINE AFortGameStateAthena* UWorld::GetGameStateAthena()
 {
     return Cast<AFortGameStateAthena>(GameState);
 }
 
-FORCEINLINE AFortGameModeAthena* UWorld::GetGameMode()
+FORCEINLINE AFortGameModeAthena* UWorld::GetGameModeAthena()
 {
     return Cast<AFortGameModeAthena>(AuthorityGameMode);
 }
 
-#define GGameState GWorld->GetGameState()
-#define GGameMode GWorld->GetGameMode()
+FORCEINLINE AFortGameStateZone* UWorld::GetGameState()
+{
+    return Cast<AFortGameStateZone>(GameState);
+}
+
+FORCEINLINE AFortGameModeZone* UWorld::GetGameMode()
+{
+    return Cast<AFortGameModeZone>(AuthorityGameMode);
+}
+
 #define ANY_PACKAGE (UObject*)-1

@@ -27,8 +27,8 @@ void AFortAthenaMutator_Barrier::SpawnModeObjectives()
     float SafeZonePhaseWhenToBringDownWall = UFortScalableFloatUtils::GetValueAtLevel(this->SafeZonePhaseWhenToBringDownWall, 0.f);
     float ObjectiveDistanceFromWall = UFortScalableFloatUtils::GetValueAtLevel(this->ObjectiveDistanceFromWall, 0.f);
 
-    FVector Team_0_Location = GGameMode->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] + (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
-    FVector Team_1_Location = GGameMode->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] - (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
+    FVector Team_0_Location = GWorld->GetGameModeAthena()->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] + (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
+    FVector Team_1_Location = GWorld->GetGameModeAthena()->SafeZoneLocations[(int)SafeZonePhaseWhenToBringDownWall] - (BigBaseWall->GetActorRightVector() * ObjectiveDistanceFromWall);
 
     Team_0_Location.Z = 6500.f;
     Team_1_Location.Z = 6500.f;
@@ -115,7 +115,7 @@ void FortAthenaMutator_Barrier::BeginPlay(AFortAthenaMutator_Barrier* FortAthena
 {
     Originals::BeginPlay(FortAthenaMutator_Barrier);
 
-    FAircraftFlightInfo& FlightPathMidLine = GGameState->FlightPathMidLine;
+    FAircraftFlightInfo& FlightPathMidLine = GWorld->GetGameStateAthena()->FlightPathMidLine;
 
     FVector FlightMidLineEnd = FlightPathMidLine.GetFlightEnd();
     FVector FlightStartLocation = FlightPathMidLine.FlightStartLocation;

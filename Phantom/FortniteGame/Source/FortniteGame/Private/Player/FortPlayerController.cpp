@@ -171,29 +171,10 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 
 					int32 BuildableClassPlacementCost = FortPlayerController->PayBuildableClassPlacementCost(&BuildingClassData);
 
-/*					if (AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(FortPlayerController))
-					{
-						if (GGameState->GamePhase != EAthenaGamePhase::Warmup)
-						{
-							switch (NewBuilding->ResourceType)
-							{
-							case EFortResourceType::Wood:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[13] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedWood
-								break;
-							case EFortResourceType::Stone:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[14] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedStone
-								break;
-							case EFortResourceType::Metal:
-								FortPlayerControllerAthena->MatchReport->MatchStats.Stats[15] += BuildableClassPlacementCost; // GameplayStat.Profile.Match.UsedMetal
-								break;
-							}
-						}
-					}*/
-
 					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, BuildableClassPlacementCost);
 
-					if (GGameMode != NULL)
-						GGameMode->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
+					if (AFortGameModeAthena* FortGameModeAthena = GWorld->GetGameModeAthena())
+						FortGameModeAthena->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
 
 					if (AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn)
 					{
@@ -370,7 +351,7 @@ bool FortPlayerController::FixUpCreateBuildingClassData(AFortPlayerController* P
 
 	TArray<TSubclassOf<ABuildingSMActor>> MatchingPlayerBuildableClasses;
 
-	GGameState->GetPlayerBuildableClasses(&MatchingPlayerBuildableClasses, &ClassFilter);
+	GWorld->GetGameState()->GetPlayerBuildableClasses(&MatchingPlayerBuildableClasses, &ClassFilter);
 
 	if (MatchingPlayerBuildableClasses.Num() <= 0)
 		return false;

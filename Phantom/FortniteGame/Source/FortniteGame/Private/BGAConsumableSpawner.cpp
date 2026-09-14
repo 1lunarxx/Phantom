@@ -4,7 +4,7 @@
 
 void ABGAConsumableSpawner::SetupAndAttemptToSpawnConsumables()
 {
-    FortLootPackage::PickLootDrops(&ConsumablesToSpawn, GGameState->WorldLevel, SpawnLootTierGroup);
+    FortLootPackage::PickLootDrops(&ConsumablesToSpawn, GWorld->GetGameState()->WorldLevel, SpawnLootTierGroup);
 
     for (FFortItemEntry& Consumable : ConsumablesToSpawn)
     {

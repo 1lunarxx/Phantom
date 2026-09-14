@@ -5,6 +5,8 @@
 
 void FortQuestManager::SendStatEventWithTags(UFortQuestManager* QuestManager, EFortQuestObjectiveStatEvent Type, UObject* TargetObject, FGameplayTagContainer* TargetTags, FGameplayTagContainer* SourceTags, FGameplayTagContainer* ContextTags, int Count)
 {
+	return;
+
 	UFortRegisteredPlayerInfo* FortRegisteredPlayerInfo = Cast<UFortRegisteredPlayerInfo>(QuestManager->Outer);
 
 	if (FortRegisteredPlayerInfo == NULL || TargetTags == NULL || FortRegisteredPlayerInfo->GetPlayerController() == NULL)
@@ -140,6 +142,6 @@ void FortQuestManager::Setup()
 	for (uintptr_t Addr : SendStatEventWithTags_NullSubs)
 		Utils::Rel32(Addr, SendStatEventWithTags);
 
-	//Utils::Hook(InSDKUtils::GetImageBase() + 0xD81700, SendStatEventWithTags);
+	Utils::Hook(InSDKUtils::GetImageBase() + 0xD81700, SendStatEventWithTags);
 	Utils::Hook(InSDKUtils::GetImageBase() + 0x136D2E0, SendCustomStatEvent, (void**)&Originals::SendCustomStatEvent);
 }
