@@ -3,10 +3,10 @@
 
 void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 {
-	UClass* AIDirectorClass = Utils::StaticLoadObject<UClass>(TEXT("/Game/Athena/Deimos/AIDirector/Deimos_AIDirector.Deimos_AIDirector_C"));
+	UClass* AIDirectorClass = AFortAIDirector::StaticClass();
 
-	if (AIDirectorClass == NULL)
-		AIDirectorClass = AFortAIDirector::StaticClass();
+	if (UFortGameData::Get()->AIDirectors.IsValidIndex(FortGameModeZone->OverrideAIDirectorIndex))
+		AIDirectorClass = UFortGameData::Get()->AIDirectors[FortGameModeZone->OverrideAIDirectorIndex].Get();
 
 	FortGameModeZone->AIDirector = GWorld->SpawnActor<AFortAIDirector>(FVector(), FRotator(), AIDirectorClass, FortGameModeZone);
 	FortGameModeZone->AIDirector->Activate();
@@ -33,9 +33,6 @@ APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* F
 
 		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
 		{
-			for (const FItemAndCount& StartingItem : FortGameModeZone->StartingItems)
-				WorldInventory->AddItem(StartingItem.Item, StartingItem.Count);
-
 			UAthenaPickaxeItemDefinition* AthenaPickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(TEXT("DefaultPickaxe"), ANY_PACKAGE);
 
 			if (AthenaPickaxeItemDefinition != NULL)
@@ -51,6 +48,7 @@ void FortGameModeZone::Setup()
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xC98E3B, CreateAIDirector);
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x134F889, FinishWorldInitialization);
 
+	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xC08 / 8, CreateAIDirector);
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0xA40 / 8, FinishWorldInitialization);
 	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0x610 / 8, SpawnDefaultPawnFor_Implementation);
 }
