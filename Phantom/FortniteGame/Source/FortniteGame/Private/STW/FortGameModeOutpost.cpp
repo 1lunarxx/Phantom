@@ -19,7 +19,18 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 	FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
 }
 
+void FortGameModeOutpost::HandleStartingNewPlayer(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer)
+{
+	Originals::HandleStartingNewPlayer(FortGameModeAthena, NewPlayer);
+
+	if (AFortPlayerStateOutpost* FortPlayerStateOutpost = Cast<AFortPlayerStateOutpost>(NewPlayer->PlayerState))
+	{
+		FortPlayerStateOutpost->SetIsWorldDataOwner(true);
+	}
+}
+
 void FortGameModeOutpost::Setup()
 {
 	Utils::Virtual(AFortGameModeOutpost::GetDefaultObj()->VTable, 0x660 / 8, InitGameState, (void**)&Originals::InitGameState);
+	Utils::Virtual(AFortGameModeOutpost::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer, (void**)&Originals::HandleStartingNewPlayer);
 }

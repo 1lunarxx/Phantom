@@ -8,10 +8,12 @@ class FortGameModeOutpost
 	{
 	public:
 		static inline void (*InitGameState)(AFortGameModeOutpost* FortGameModeOutpost);
+		static inline void (*HandleStartingNewPlayer)(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer);
 	};
 
 private:
 	static void InitGameState(AFortGameModeOutpost* FortGameModeOutpost);
+	static void HandleStartingNewPlayer(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer);
 public:
 	static void Setup();
 };

@@ -22684,6 +22684,11 @@ public:
 		static void (*ApplyCharacterCustomization)(AFortPlayerState*, AFortPlayerPawn*) = decltype(ApplyCharacterCustomization)(InSDKUtils::GetImageBase() + 0x133D8A0);
 		ApplyCharacterCustomization(this, FortPlayerPawn);
 	}
+
+	void SetIsWorldDataOwner(const bool bIsOwner)
+	{
+		bIsWorldDataOwner = bIsOwner;
+	}
 public:
 	static class UClass* StaticClass()
 	{

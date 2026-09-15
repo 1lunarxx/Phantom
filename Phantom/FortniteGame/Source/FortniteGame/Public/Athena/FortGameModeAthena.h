@@ -9,8 +9,6 @@ class FortGameModeAthena
 	public:
 		static inline void (*InitGameState)(AFortGameModeAthena* FortGameModeAthena);
 		static inline void (*HandleStartingNewPlayer)(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer);
-
-		static inline APawn* (*SpawnDefaultPawnFor_Implementation)(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot);
 	};
 
 private:
