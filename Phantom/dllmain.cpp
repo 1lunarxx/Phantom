@@ -101,9 +101,9 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     *GIsClient = false;
     *GIsServer = true;
 
-    // Zone_Outpost_Stonewood, Athena_Terrain, Zone_Onboarding_Forest_a, Zone_Outpost_Plankerton_AD, Zone_Outpost_TwinePeaks, Zone_Outpost_CannyValley
+    // Zone_Outpost_Stonewood, Athena_Terrain, Zone_Onboarding_Forest_a
 
-    GWorld->ServerTravel(L"Zone_Onboarding_Forest_a", false, false);
+    GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;
