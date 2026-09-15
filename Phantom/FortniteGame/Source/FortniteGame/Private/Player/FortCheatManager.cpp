@@ -254,6 +254,16 @@ void FortCheatManager::BuildFree(UFortCheatManager* Context, FFrame* Stack)
 		FortPlayerController->bBuildFree = true;
 }
 
+void FortCheatManager::CraftFree(UFortCheatManager* Context, FFrame* Stack)
+{
+	Stack->IncrementCode();
+
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+
+	if (FortPlayerController != NULL)
+		FortPlayerController->bCraftFree = true;
+}
+
 void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* Stack)
 {
 	int32 ExitCode;
@@ -408,6 +418,39 @@ void FortCheatManager::GivePickaxe(UFortCheatManager* Context, FFrame* Stack)
 	}
 
 	FortPlayerController->WorldInventory->AddItem(PickaxeItemDefinition, 1);
+}
+
+void FortCheatManager::GiveBluGlo(UFortCheatManager* Context, FFrame* Stack)
+{
+	int32 Amount;
+
+	Stack->StepCompiledIn(&Amount);
+	Stack->IncrementCode();
+
+	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+
+	if (FortPlayerController == NULL)
+		return;
+
+	UFortResourceItemDefinition* BluGloItemDefinition = Cast<UFortResourceItemDefinition>(UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous());
+
+	if (BluGloItemDefinition != NULL)
+		FortPlayerController->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);
+}
+
+void FortCheatManager::SetTeam(UFortCheatManager* Context, FFrame* Stack)
+{
+	int32 TeamIndex;
+
+	Stack->StepCompiledIn(&TeamIndex);
+	Stack->IncrementCode();
+
+	AFortPlayerControllerAthena* FortPlayerControllerAthena = Cast<AFortPlayerControllerAthena>(Context->Outer);
+
+	if (FortPlayerControllerAthena == NULL)
+		return;
+
+	FortPlayerControllerAthena->ServerSetTeam((EFortTeam)(TeamIndex));
 }
 
 void FortCheatManager::GiveResources(UFortCheatManager* Context, FFrame* Stack)
@@ -700,6 +743,7 @@ void FortCheatManager::Setup()
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.Badass"), Badass);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.BuildFree"), BuildFree);
+	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.CraftFree"), CraftFree);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ForceServerShutdown"), ForceServerShutdown);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveAllIngredients"), GiveAllIngredients);
@@ -715,11 +759,13 @@ void FortCheatManager::Setup()
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GoFast"), GoFast);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveMetal"), GiveMetal);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveStone"), GiveStone);
+	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveBluGlo"), GiveBluGlo);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.MassSuicide"), MassSuicide);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetHealthPercent"), SetHealthPercent);
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetShieldPercent"), SetShieldPercent);
+	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetTeam"), SetTeam);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.TeleportToLocation"), TeleportToLocation);
 

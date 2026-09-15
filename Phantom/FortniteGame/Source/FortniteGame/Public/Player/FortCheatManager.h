@@ -27,6 +27,7 @@ private:
 	static void BringDownWall(UFortCheatManager* Context, FFrame* Stack);
 
 	static void BuildFree(UFortCheatManager* Context, FFrame* Stack);
+	static void CraftFree(UFortCheatManager* Context, FFrame* Stack);
 	static void ForceServerShutdown(UFortCheatManager* Context, FFrame* Stack);
 
 	static void GiveAllIngredients(UFortCheatManager* Context, FFrame* Stack);
@@ -42,9 +43,11 @@ private:
 	static void GiveWood(UFortCheatManager* Context, FFrame* Stack);
 	static void GiveMetal(UFortCheatManager* Context, FFrame* Stack);
 	static void GiveStone(UFortCheatManager* Context, FFrame* Stack);
+	static void GiveBluGlo(UFortCheatManager* Context, FFrame* Stack);
 
 	static void MassSuicide(UFortCheatManager* Context, FFrame* Stack);
 
+	static void SetTeam(UFortCheatManager* Context, FFrame* Stack);
 	static void SetHealthPercent(UFortCheatManager* Context, FFrame* Stack);
 	static void SetShieldPercent(UFortCheatManager* Context, FFrame* Stack);
 
