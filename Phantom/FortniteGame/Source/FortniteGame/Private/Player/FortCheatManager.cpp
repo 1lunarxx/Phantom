@@ -432,7 +432,7 @@ void FortCheatManager::GiveBluGlo(UFortCheatManager* Context, FFrame* Stack)
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortResourceItemDefinition* BluGloItemDefinition = Cast<UFortResourceItemDefinition>(UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous());
+	UFortNeverPersistItemDefinition* BluGloItemDefinition = Cast<UFortNeverPersistItemDefinition>(UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous());
 
 	if (BluGloItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);
