@@ -9,12 +9,8 @@ class Utils
 public:
 	static void Hook(uintptr_t Address, void* Detour, void** Original = NULL)
 	{
-		MH_STATUS CreateHook_Status = MH_CreateHook((LPVOID)Address, Detour, (void**)Original);
-
-		if (CreateHook_Status != MH_STATUS::MH_OK)
-			printf("[PHANTOM] Failed to hook 0x%llX\n", (unsigned long long)Address);
-		else
-			MH_EnableHook((LPVOID)Address);
+		MH_CreateHook((LPVOID)Address, Detour, (void**)Original);
+        MH_EnableHook((LPVOID)Address);
 	}
 
     static void Virtual(void** VTable, uintptr_t Target, void* Detour, void** Original = NULL)
@@ -29,6 +25,13 @@ public:
 
         DWORD dwTemp;
         VirtualProtect(&VTable[(int)Target], sizeof(void*), dwProt, &dwTemp);
+    }
+
+    template<class... Objects>
+    static void Virtual(uintptr_t Target, void* Detour, void** Original = NULL)
+    {
+        for (UObject* Object : { (UObject*)Objects::GetDefaultObj()... })
+            Virtual(Object->VTable, Target, Detour, Original);
     }
 
     static void Virtual(UObject* Object, uintptr_t Target, void* Detour, void** Original = NULL)
@@ -56,6 +59,20 @@ public:
         }
     }
 
+    template <typename T = void*>
+    static void ExecHook(const TCHAR* Name, void* Detour, T* Original = NULL)
+    {
+        UFunction* Func = StaticFindObject<UFunction>(Name);
+
+        if (Func == NULL)
+            return;
+
+        if (Original)
+            *Original = reinterpret_cast<T>(Func->ExecFunction);
+
+        Func->ExecFunction = reinterpret_cast<UFunction::FNativeFuncPtr>(Detour);
+    }
+
     template <typename _Is>
     static void Patch(uintptr_t Target, _Is Byte)
     {
@@ -78,20 +95,6 @@ public:
     {
         static UObject* (*StaticLoadObject)(UClass*, UObject*, const wchar_t*, const wchar_t*, uint32, UObject*, bool, void*) = decltype(StaticLoadObject)(InSDKUtils::GetImageBase() + 0x19c9cf0);
         return (T*)StaticLoadObject(InClass, InOuter, Path, nullptr, 0, nullptr, false, nullptr);
-    }
-
-    template <typename T = void*>
-    static void Exec(const TCHAR* Name, void* Detour, T* Original = NULL)
-    {
-        UFunction* Func = StaticFindObject<UFunction>(Name);
-
-        if (Func == NULL)
-            return;
-
-        if (Original)
-            *Original = reinterpret_cast<T>(Func->ExecFunction);
-
-        Func->ExecFunction = reinterpret_cast<UFunction::FNativeFuncPtr>(Detour);
     }
 
     template<typename T>

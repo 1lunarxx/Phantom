@@ -723,54 +723,54 @@ void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* Context, FFrame*
 
 void FortCheatManager::Setup()
 {
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AddAllScores"), AddAllScores);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AddBuildingScore"), AddBuildingScore);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AddCombatScore"), AddCombatScore);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AddKillFeedMessage"), AddKillFeedMessage);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AddUtilityScore"), AddUtilityScore);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddAllScores"), AddAllScores);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddBuildingScore"), AddBuildingScore);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddCombatScore"), AddCombatScore);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddKillFeedMessage"), AddKillFeedMessage);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddUtilityScore"), AddUtilityScore);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AllowRespawn"), AllowRespawn);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AllowRespawn"), AllowRespawn);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ApplyGameplayModifier"), ApplyGameplayModifier);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ApplyWeaponAlteration"), ApplyWeaponAlteration);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ApplyGameplayModifier"), ApplyGameplayModifier);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ApplyWeaponAlteration"), ApplyWeaponAlteration);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AthenaEmote"), AthenaEmote);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AthenaEndlessGame"), AthenaEndlessGame);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AthenaForceVictory"), AthenaForceVictory);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.AthenaGiveScoreTo"), AthenaGiveScoreTo);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AthenaEmote"), AthenaEmote);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AthenaEndlessGame"), AthenaEndlessGame);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AthenaForceVictory"), AthenaForceVictory);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AthenaGiveScoreTo"), AthenaGiveScoreTo);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.BackpackSetSize"), BackpackSetSize);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.Badass"), Badass);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.BackpackSetSize"), BackpackSetSize);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.Badass"), Badass);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.BuildFree"), BuildFree);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.CraftFree"), CraftFree);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ForceServerShutdown"), ForceServerShutdown);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.BuildFree"), BuildFree);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.CraftFree"), CraftFree);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ForceServerShutdown"), ForceServerShutdown);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveAllIngredients"), GiveAllIngredients);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveConsumable"), GiveConsumable);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadget"), GiveGadget);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadgets"), GiveGadgets);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GivePickaxe"), GivePickaxe);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveResources"), GiveResources);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveSpecificItem"), GiveSpecificItem);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveTrap"), GiveTrap);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveWeapon"), GiveWeapon);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveWood"), GiveWood);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GoFast"), GoFast);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveMetal"), GiveMetal);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveStone"), GiveStone);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.GiveBluGlo"), GiveBluGlo);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveAllIngredients"), GiveAllIngredients);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveConsumable"), GiveConsumable);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadget"), GiveGadget);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveGadgets"), GiveGadgets);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GivePickaxe"), GivePickaxe);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveResources"), GiveResources);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveSpecificItem"), GiveSpecificItem);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveTrap"), GiveTrap);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveWeapon"), GiveWeapon);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveWood"), GiveWood);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GoFast"), GoFast);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveMetal"), GiveMetal);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveStone"), GiveStone);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.GiveBluGlo"), GiveBluGlo);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.MassSuicide"), MassSuicide);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.MassSuicide"), MassSuicide);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetHealthPercent"), SetHealthPercent);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetShieldPercent"), SetShieldPercent);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.SetTeam"), SetTeam);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.SetHealthPercent"), SetHealthPercent);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.SetShieldPercent"), SetShieldPercent);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.SetTeam"), SetTeam);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.TeleportToLocation"), TeleportToLocation);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.TeleportToLocation"), TeleportToLocation);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ToggleInfiniteAmmo"), ToggleInfiniteAmmo);
-	Utils::Exec(TEXT("/Script/FortniteGame.FortCheatManager.ToggleUnlimitedHealth"), ToggleUnlimitedHealth);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ToggleInfiniteAmmo"), ToggleInfiniteAmmo);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ToggleUnlimitedHealth"), ToggleUnlimitedHealth);
 
 	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x260 / 8, UCheatManager::GetDefaultObj()->VTable[0x260 / 8]); // Fly
 	Utils::Virtual(UFortCheatManager::GetDefaultObj()->VTable, 0x278 / 8, UCheatManager::GetDefaultObj()->VTable[0x278 / 8]); // God

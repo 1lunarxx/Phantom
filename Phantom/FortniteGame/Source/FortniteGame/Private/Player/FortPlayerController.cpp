@@ -465,5 +465,5 @@ void FortPlayerController::Setup()
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 
-	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);
 }

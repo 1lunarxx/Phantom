@@ -15313,6 +15313,14 @@ public:
 		static void(*CreateAIGoalManager)(AFortGameModeZone*) = decltype(CreateAIGoalManager)(InSDKUtils::GetImageBase() + 0xF12B10);
 		CreateAIGoalManager(this);
 	}
+
+	void InitGameState(AFortWorldManager* WorldManager)
+	{
+		static void(*InitGameState)(AFortGameModeZone*, AFortWorldManager*) = decltype(InitGameState)(InSDKUtils::GetImageBase() + 0xF21050);
+		InitGameState(this, WorldManager);
+	}
+
+	bool FindBestStartTransformFor(AController* NewPlayer, const AActor* StartSpot, FTransform* OutBestTransform);
 public:
 	static class UClass* StaticClass()
 	{
@@ -37336,7 +37344,12 @@ public:
 	void OnRep_MissionUIActors();
 
 	bool ShouldShowSecondaryMissionHeaders() const;
-
+public:
+	AFortMission* LoadMission(FFortMissionRecord* MissionRecord)
+	{
+		static AFortMission* (*LoadMission)(AFortMissionManager*, FFortMissionRecord*) = decltype(LoadMission)(InSDKUtils::GetImageBase() + 0x10F1760);
+		return LoadMission(this, MissionRecord);
+	}
 public:
 	static class UClass* StaticClass()
 	{

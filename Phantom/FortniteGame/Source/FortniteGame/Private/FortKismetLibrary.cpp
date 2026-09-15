@@ -79,7 +79,7 @@ bool FortKismetLibrary::PickLootDrops(UFortKismetLibrary* Context, FFrame* Stack
 
 void FortKismetLibrary::Setup()
 {
-    Utils::Exec(TEXT("/Script/FortniteGame.FortKismetLibrary.GetAIGoalManager"), GetAIGoalManager);
-    Utils::Exec(TEXT("/Script/FortniteGame.FortKismetLibrary.K2_SpawnPickupInWorld"), K2_SpawnPickupInWorld);
-    Utils::Exec(TEXT("/Script/FortniteGame.FortKismetLibrary.PickLootDrops"), PickLootDrops);
+    Utils::ExecHook(TEXT("/Script/FortniteGame.FortKismetLibrary.GetAIGoalManager"), GetAIGoalManager);
+    Utils::ExecHook(TEXT("/Script/FortniteGame.FortKismetLibrary.K2_SpawnPickupInWorld"), K2_SpawnPickupInWorld);
+    Utils::ExecHook(TEXT("/Script/FortniteGame.FortKismetLibrary.PickLootDrops"), PickLootDrops);
 }

@@ -43,7 +43,7 @@ void FortPlayerControllerGameplay::EndGhostMode(AFortPlayerControllerGameplay* C
 
 void FortPlayerControllerGameplay::Setup()
 {
-	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerControllerGameplay.EndGhostMode"), EndGhostMode);
+	Utils::ExecHook(TEXT("/Script/FortniteGame.FortPlayerControllerGameplay.EndGhostMode"), EndGhostMode);
 
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x132750F, GiveItemToInventoryOwner_StartGhostMode);
 }

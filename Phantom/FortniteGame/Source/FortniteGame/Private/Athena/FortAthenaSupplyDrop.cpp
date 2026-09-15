@@ -32,5 +32,5 @@ AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* Context, F
 
 void FortAthenaSupplyDrop::Setup()
 {
-    Utils::Exec(TEXT("/Script/FortniteGame.FortAthenaSupplyDrop.SpawnPickup"), SpawnPickup);
+    Utils::ExecHook(TEXT("/Script/FortniteGame.FortAthenaSupplyDrop.SpawnPickup"), SpawnPickup);
 }

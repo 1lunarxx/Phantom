@@ -30,5 +30,5 @@ AAthenaBarrierObjective* AthenaBarrierFlag::GetObjectiveActor(AAthenaBarrierFlag
 
 void AthenaBarrierFlag::Setup()
 {
-    Utils::Exec(TEXT("/Script/FortniteGame.AthenaBarrierFlag.GetObjectiveActor"), GetObjectiveActor);
+    Utils::ExecHook(TEXT("/Script/FortniteGame.AthenaBarrierFlag.GetObjectiveActor"), GetObjectiveActor);
 }
