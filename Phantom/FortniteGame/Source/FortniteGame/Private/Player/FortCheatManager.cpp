@@ -432,7 +432,7 @@ void FortCheatManager::GiveBluGlo(UFortCheatManager* Context, FFrame* Stack)
 	if (FortPlayerController == NULL)
 		return;
 
-	UFortNeverPersistItemDefinition* BluGloItemDefinition = Cast<UFortNeverPersistItemDefinition>(UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous());
+	UFortNeverPersistItemDefinition* BluGloItemDefinition = UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous();
 
 	if (BluGloItemDefinition != NULL)
 		FortPlayerController->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);
@@ -450,7 +450,7 @@ void FortCheatManager::SetTeam(UFortCheatManager* Context, FFrame* Stack)
 	if (FortPlayerControllerAthena == NULL)
 		return;
 
-	FortPlayerControllerAthena->ServerSetTeam((EFortTeam)(TeamIndex));
+	FortPlayerControllerAthena->ServerSetTeam((EFortTeam)TeamIndex);
 }
 
 void FortCheatManager::GiveResources(UFortCheatManager* Context, FFrame* Stack)
