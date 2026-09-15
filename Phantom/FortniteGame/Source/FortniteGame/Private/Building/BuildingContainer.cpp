@@ -2,6 +2,8 @@
 #include "FortniteGame/Public/Building/BuildingContainer.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
+#include "Core/Public/Math/UnrealMathUtility.h"
+
 void BuildingContainer::PostUpdate(ABuildingContainer* BuildingContainer, EFortBuildingPersistentState PersistentState, const void* ReservedRandomValues)
 {
 	Originals::PostUpdate(BuildingContainer, PersistentState, ReservedRandomValues);
@@ -12,8 +14,12 @@ void BuildingContainer::PostUpdate(ABuildingContainer* BuildingContainer, EFortB
 
 bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPlayerPawn* PlayerPawn, const EFortPickupSourceTypeFlag InSourceTypeFlag, const uint8 InSpawnSource)
 {
-	if (UFortGlobals::IsInAthena(GWorld))
+	FVector LootDropLocation = BuildingContainer->K2_GetActorLocation();
+
+	if (GSubGame == ESubGame::Athena)
 	{
+		LootDropLocation = LootDropLocation + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
+
 		if (BuildingContainer->SearchLootTierGroup == FName(L"Loot_Treasure"))
 			BuildingContainer->SearchLootTierGroup = FName(L"Loot_AthenaTreasure");
 
@@ -23,11 +29,6 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 
 	TArray<FFortItemEntry> OutLootDrops;
 	UFortLootPackage::PickLootDrops(&OutLootDrops, BuildingContainer->GetLootTier(), BuildingContainer->SearchLootTierGroup);
-
-	FVector LocationToSpawn = BuildingContainer->K2_GetActorLocation();
-
-	if (UFortGlobals::IsInAthena(GWorld))
-		LocationToSpawn = LocationToSpawn + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
 
 	for (FFortItemEntry& LootDrop : OutLootDrops)
 	{
@@ -39,10 +40,13 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 			LootDrop.LoadedAmmo = OutRow.ClipSize;
 		}
 
-		AFortPickup::SpawnPickup(LootDrop, LocationToSpawn, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
+		AFortPickup* FortPickup = AFortPickup::SpawnPickup(LootDrop, LootDropLocation, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
+
+		if (FortPickup != NULL && GSubGame == ESubGame::Campaign)
+			FortPickup->SetPickupTarget(PlayerPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0,0,1), 0.0f));
 	}
 
-	if (PlayerPawn != NULL)
+/*	if (PlayerPawn != NULL)
 	{
 		FVector BounceNormal = PlayerPawn->K2_GetActorLocation() - BuildingContainer->K2_GetActorLocation();
 		BounceNormal.Z = 0.0f;
@@ -51,7 +55,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 			BounceNormal.Normalize();
 
 		BuildingContainer->SearchBounceData.BounceNormal = BounceNormal;
-	}
+	}*/
 
 	BuildingContainer->SearchBounceData.SearchAnimationCount++;
 	BuildingContainer->BounceContainer();
@@ -59,7 +63,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	BuildingContainer->bAlreadySearched = true;
 	BuildingContainer->OnRep_bAlreadySearched();
 
-	if (BuildingContainer->bDestroyContainerOnSearch)
+	if (GSubGame == ESubGame::Campaign && BuildingContainer->bDestroyContainerOnSearch)
 		BuildingContainer->K2_DestroyActor();
 
 	return true;

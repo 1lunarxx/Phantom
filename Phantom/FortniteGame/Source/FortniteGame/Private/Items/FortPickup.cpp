@@ -6,6 +6,9 @@ AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocati
 	if (Count)
 		ItemEntry.Count = Count;
 
+	if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry.ItemDefinition))
+		ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(ItemEntry.Level);
+
 	FortPickupCreationData* CreationData = new FortPickupCreationData();
 
 	CreationData->World = GWorld;

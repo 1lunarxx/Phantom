@@ -23,18 +23,8 @@ UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int
 			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 		}
 
-		if (UFortGlobals::IsInSubGame(GWorld, ESubGame::Campaign))
-		{
+		if (GSubGame == ESubGame::Campaign)
 			FortPlayerController->TryAddToQuickBar(WorldItem);
-
-			if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemDefinition))
-			{
-				WorldItem->ItemEntry.Level = UFortLootLevel::GetItemLevel(&FortWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
-				WorldItem->ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(WorldItem->ItemEntry.Level);
-
-				SetItemRequiresUpdate(&WorldItem->ItemEntry);
-			}
-		}
 	}
 
 	return WorldItem;
@@ -58,18 +48,8 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 		}
 
-		if (UFortGlobals::IsInSubGame(GWorld, ESubGame::Campaign))
-		{
+		if (GSubGame == ESubGame::Campaign)
 			FortPlayerController->TryAddToQuickBar(WorldItem);
-
-			if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry->ItemDefinition))
-			{
-				WorldItem->ItemEntry.Level = UFortLootLevel::GetItemLevel(&FortWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
-				WorldItem->ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(WorldItem->ItemEntry.Level);
-
-				SetItemRequiresUpdate(&WorldItem->ItemEntry);
-			}
-		}
 	}
 
 	return WorldItem;

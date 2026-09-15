@@ -6,9 +6,9 @@
 
 UDataTable* UFortLootPackage::GetLootTierData()
 {
-	if (UFortGlobals::IsInAthena(GWorld))
+	if (AFortGameStateAthena* FortGameStateAthena = GWorld->GetGameStateAthena())
 	{
-		UFortPlaylistAthena* Playlist = GWorld->GetGameStateAthena()->CurrentPlaylistInfo.BasePlaylist;
+		UFortPlaylistAthena* Playlist = FortGameStateAthena->CurrentPlaylistInfo.BasePlaylist;
 
 		if (Playlist != NULL)
 		{
@@ -17,18 +17,16 @@ UDataTable* UFortLootPackage::GetLootTierData()
 			if (LootTierData != NULL)
 				return LootTierData;
 		}
-
-		return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client"));
 	}
 
-	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
+	return GSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
 }
 
 UDataTable* UFortLootPackage::GetLootPackageData()
 {
-	if (UFortGlobals::IsInAthena(GWorld))
+	if (AFortGameStateAthena* FortGameStateAthena = GWorld->GetGameStateAthena())
 	{
-		UFortPlaylistAthena* Playlist = GWorld->GetGameStateAthena()->CurrentPlaylistInfo.BasePlaylist;
+		UFortPlaylistAthena* Playlist = FortGameStateAthena->CurrentPlaylistInfo.BasePlaylist;
 
 		if (Playlist != NULL)
 		{
@@ -37,11 +35,9 @@ UDataTable* UFortLootPackage::GetLootPackageData()
 			if (LootPackageData != NULL)
 				return LootPackageData;
 		}
-
-		return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client"));
 	}
 
-	return Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
+	return GSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
 }
 
 void UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)

@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "FortniteGame/Public/STW/Items/FortSchematicItem.h"
+#include "FortniteGame/Public/Items/FortLootLevel.h"
+
+#include "Core/Public/Math/UnrealMathUtility.h"
 
 int32 FortSchematicItem::ServerCraftSchematic(UFortSchematicItem* FortSchematicItem, AFortPlayerController* Instigator, int32 PostCraftSlot, int32 CraftAmount, EFortItemTier RequestedTier)
 {
@@ -39,7 +42,10 @@ int32 FortSchematicItem::ServerCraftSchematic(UFortSchematicItem* FortSchematicI
 		if (ResultWorldItemDefinition->Tier != RequestedTier)
 			ResultWorldItemDefinition->Tier = RequestedTier;
 
-		Instigator->WorldInventory->AddItemStack(ResultWorldItemDefinition, CraftAmount);
+		AFortPickup* FortPickup = AFortPickup::SpawnPickup(FFortItemEntry(ResultWorldItemDefinition, CraftAmount, UFortLootLevel::GetItemLevel(&ResultWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel)), Instigator->MyFortPawn->K2_GetActorLocation(), CraftAmount, EFortPickupSourceTypeFlag::Other, 0);
+
+		if (FortPickup != NULL)
+			FortPickup->SetPickupTarget(Instigator->MyFortPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
 	}
 
 	return CraftAmount;

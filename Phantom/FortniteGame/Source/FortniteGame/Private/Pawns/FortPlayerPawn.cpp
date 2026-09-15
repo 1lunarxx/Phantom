@@ -9,7 +9,7 @@ void FortPlayerPawn::ServerHandlePickup(AFortPlayerPawn* FortPlayerPawn, AFortPi
 
 float FortPlayerPawn::GetDefaultHalfHeight(AFortPlayerPawn* FortPlayerPawn)
 {
-	if (UFortGlobals::IsInSubGame(GWorld, ESubGame::Campaign))
+	if (GSubGame == ESubGame::Campaign)
 		return 800.f;
 
 	return Originals::GetDefaultHalfHeight(FortPlayerPawn);

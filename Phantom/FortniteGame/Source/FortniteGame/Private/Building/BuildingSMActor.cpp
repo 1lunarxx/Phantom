@@ -2,6 +2,8 @@
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
+#include "Core/Public/Math/UnrealMathUtility.h"
+
 void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, AFortPlayerPawn* InstigatorPawn, float ActualDamageDealt, bool bJustHitWeakspot)
 {
 	if (InstigatorPawn != NULL)
@@ -60,7 +62,10 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 						for (FFortItemEntry& LootDrop : OutLootDrops)
 						{
-							AFortPickup::SpawnPickup(LootDrop, BuildingSMActor->K2_GetActorLocation(), LootDrop.Count, EFortPickupSourceTypeFlag::Destruction, 0);
+							AFortPickup* FortPickup = AFortPickup::SpawnPickup(LootDrop, BuildingSMActor->K2_GetActorLocation(), LootDrop.Count, EFortPickupSourceTypeFlag::Destruction, 0);
+
+							if (FortPickup != NULL)
+								FortPickup->SetPickupTarget(InstigatorPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
 						}
 					}
 				}

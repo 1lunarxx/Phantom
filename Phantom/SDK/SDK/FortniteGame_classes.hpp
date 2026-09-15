@@ -46910,6 +46910,7 @@ static_assert(offsetof(UFortMusicContext, OnMusicPackChanged) == 0x000028, "Memb
 static_assert(offsetof(UFortMusicContext, DesiredActiveMusicPack) == 0x000038, "Member 'UFortMusicContext::DesiredActiveMusicPack' has a wrong offset!");
 static_assert(offsetof(UFortMusicContext, LoadedPacks) == 0x000040, "Member 'UFortMusicContext::LoadedPacks' has a wrong offset!");
 
+#define GSubGame UFortKismetLibrary::GetSubGame(GWorld)
 // Class FortniteGame.FortKismetLibrary
 // 0x0000 (0x0028 - 0x0028)
 class UFortKismetLibrary final : public UBlueprintFunctionLibrary
