@@ -317,6 +317,47 @@ void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlaye
 	}
 }
 
+void FortPlayerController::TogglePersonalVehicle_Implementation(AFortPlayerController* FortPlayerController, bool bOn)
+{
+	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->MyFortPawn;
+
+	if (FortPlayerPawn == NULL)
+		return;
+
+	UFortAbilitySystemComponent* AbilitySystemComponent = FortPlayerPawn->AbilitySystemComponent;
+
+	if (AbilitySystemComponent == NULL)
+		return;
+
+	UFortPersonalVehicleItemDefinition* FortPersonalVehicleItemDefinition = Utils::StaticFindObject<UFortPersonalVehicleItemDefinition>(TEXT("VID_Hoverboard"), ANY_PACKAGE);
+
+	if (FortPersonalVehicleItemDefinition == NULL)
+		return;
+
+	UFortGameplayAbility* PersonalVehicleAbility = Cast<UFortGameplayAbility>(FortPersonalVehicleItemDefinition->PersonalVehicleAbility.Get()->DefaultObject);
+
+	if (PersonalVehicleAbility == NULL)
+		return;
+
+	if (FortPlayerPawn->IsUsingPersonalVehicle())
+	{
+		FGameplayAbilitySpec* AbilitySpec = AbilitySystemComponent->FindAbilitySpecFromClass(FortPersonalVehicleItemDefinition->PersonalVehicleAbility.Get());
+
+		if (AbilitySpec == NULL)
+			return;
+
+		AbilitySystemComponent->ServerEndAbility(AbilitySpec->Handle, AbilitySpec->ActivationInfo, FPredictionKey());
+	}
+	else
+	{
+		FGameplayAbilitySpec Spec;
+		Spec.ConstructAbilitySpec(PersonalVehicleAbility, 1, -1, NULL);
+
+		FGameplayAbilitySpecHandle Handle;
+		AbilitySystemComponent->GiveAbilityAndActivateOnce(&Handle, &Spec);
+	}
+}
+
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
 {
 	if (DestructionPawn == NULL)
@@ -420,6 +461,8 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1040 / 8, ServerCombineInventoryItems_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1190 / 8, TogglePersonalVehicle_Implementation);
+
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 
 	Utils::Exec(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);

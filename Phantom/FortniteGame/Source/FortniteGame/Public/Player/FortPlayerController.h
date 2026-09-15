@@ -20,6 +20,7 @@ private:
 	static void ServerRepairBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
 
 	static void ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid);
+	static void TogglePersonalVehicle_Implementation(AFortPlayerController* FortPlayerController, bool bOn);
 
 	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);

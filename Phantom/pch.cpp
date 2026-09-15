@@ -67,6 +67,19 @@ FVector FAircraftFlightInfo::GetFlightEnd()
 	return FlightStartLocation + Direction * (FlightSpeed * TimeTillFlightEnd);
 }
 
+FGameplayAbilitySpec* UAbilitySystemComponent::FindAbilitySpecFromClass(TSubclassOf<UGameplayAbility> InAbilityClass)
+{
+	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
+	{
+		if (Spec.Ability->Class == InAbilityClass)
+		{
+			return &Spec;
+		}
+	}
+
+	return nullptr;
+}
+
 void FFortItemEntry::SetLoadedAmmo(int InCount)
 {
 	if (InCount != LoadedAmmo)
