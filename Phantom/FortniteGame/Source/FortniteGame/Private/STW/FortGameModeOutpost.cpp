@@ -5,10 +5,10 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 {
 	Originals::InitGameState(FortGameModeOutpost);
 
+	UFortGameData* GameData = UFortGameData::Get();
+
 	if (AFortGameStateOutpost* FortGameStateOutpost = Cast<AFortGameStateOutpost>(FortGameModeOutpost->GameState))
 	{
-		UFortGameData* GameData = UFortGameData::Get();
-
 		if (FortGameStateOutpost->MissionManager == NULL)
 			FortGameStateOutpost->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeOutpost->MissionManagerClass.Get(), FortGameStateOutpost);
 
@@ -17,15 +17,20 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 	}
 
 	FortGameModeOutpost->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeOutpost);
+
+	if (FortGameModeOutpost->SharedMissionLists == NULL)
+		FortGameModeOutpost->SharedMissionLists = NewObject<UFortSharedMissionLists>(GameData->SharedMissionListsClass.Get());
 }
 
-void FortGameModeOutpost::HandleStartingNewPlayer(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer)
+void FortGameModeOutpost::HandleStartingNewPlayer(AFortGameModeOutpost* FortGameModeOutpost, APlayerController* NewPlayer)
 {
-	Originals::HandleStartingNewPlayer(FortGameModeAthena, NewPlayer);
+	Originals::HandleStartingNewPlayer(FortGameModeOutpost, NewPlayer);
 
 	if (AFortPlayerStateOutpost* FortPlayerStateOutpost = Cast<AFortPlayerStateOutpost>(NewPlayer->PlayerState))
 	{
 		FortPlayerStateOutpost->SetIsWorldDataOwner(true);
+
+
 	}
 }
 
