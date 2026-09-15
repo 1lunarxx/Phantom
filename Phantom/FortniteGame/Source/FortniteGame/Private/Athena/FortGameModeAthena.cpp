@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
-#include "FortniteGame/Public/Items/FortLootPackage.h"
 
 // Playlists full working: Playlist_Disco_32/Playlist_Disco_32_Alt, Playlist_DefaultSolo, Playlist_HighExplosives_Solo, Playlist_Playground, Playlist_WW_Solo, Playlist_50v50
 // Playlists half working: Playlist_Barrier/Playlist_Barrier_12

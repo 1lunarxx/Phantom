@@ -7,16 +7,7 @@ void FortPlayerPawn::ServerHandlePickup(AFortPlayerPawn* FortPlayerPawn, AFortPi
 		Pickup->SetPickupTarget(FortPlayerPawn, InFlyTime / FortPlayerPawn->PickupSpeedMultiplier, InStartDirection);
 }
 
-float FortPlayerPawn::GetDefaultHalfHeight(AFortPlayerPawn* FortPlayerPawn)
-{
-	if (GSubGame == ESubGame::Campaign)
-		return 800.f;
-
-	return Originals::GetDefaultHalfHeight(FortPlayerPawn);
-}
-
 void FortPlayerPawn::Setup()
 {
 	Utils::Virtual(AFortPlayerPawn::GetDefaultObj(), 0xD60 / 8, ServerHandlePickup);
-	Utils::Virtual(AFortPlayerPawn::GetDefaultObj(), 0x640 / 8, GetDefaultHalfHeight, (void**)&Originals::GetDefaultHalfHeight);
 }

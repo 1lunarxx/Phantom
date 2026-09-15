@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "FortniteGame/Public/STW/FortGameModeOutpost.h"
 
+float GetDefaultHalfHeight(AFortPlayerPawn* FortPlayerPawn)
+{
+	return 800.f;
+}
+
 void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpost)
 {
 	Originals::InitGameState(FortGameModeOutpost);
@@ -20,6 +25,8 @@ void FortGameModeOutpost::InitGameState(AFortGameModeOutpost* FortGameModeOutpos
 
 	if (FortGameModeOutpost->SharedMissionLists == NULL)
 		FortGameModeOutpost->SharedMissionLists = NewObject<UFortSharedMissionLists>(FortGameModeOutpost, GameData->SharedMissionListsClass.Get());
+
+	Utils::Virtual(AFortPlayerPawn::GetDefaultObj(), 0x640 / 8, GetDefaultHalfHeight);
 }
 
 void FortGameModeOutpost::HandleStartingNewPlayer(AFortGameModeOutpost* FortGameModeOutpost, APlayerController* NewPlayer)
