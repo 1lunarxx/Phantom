@@ -2,6 +2,155 @@
 #include "FortniteGame/Public/Items/FortInventory.h"
 #include "FortniteGame/Public/Items/FortLootLevel.h"
 
+UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
+{
+	if (ItemDefinition == NULL || Count <= 0)
+		return NULL;
+
+	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
+
+	if (WorldItem == NULL)
+		return NULL;
+
+	InitializeExistingItem(WorldItem);
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+	{
+		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
+
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+		}
+
+		if (UFortGlobals::IsInSubGame(GWorld, ESubGame::Campaign))
+		{
+			FortPlayerController->TryAddToQuickBar(WorldItem);
+
+			if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemDefinition))
+			{
+				WorldItem->ItemEntry.Level = UFortLootLevel::GetItemLevel(&FortWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
+				WorldItem->ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(WorldItem->ItemEntry.Level);
+
+				SetItemRequiresUpdate(&WorldItem->ItemEntry);
+			}
+		}
+	}
+
+	return WorldItem;
+}
+
+UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
+{
+	UFortWorldItem* WorldItem = UFortWorldItem::New(this, *ItemEntry);
+
+	if (WorldItem == NULL)
+		return NULL;
+
+	InitializeExistingItem(WorldItem);
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+	{
+		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
+
+		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+		{
+			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
+		}
+
+		if (UFortGlobals::IsInSubGame(GWorld, ESubGame::Campaign))
+		{
+			FortPlayerController->TryAddToQuickBar(WorldItem);
+
+			if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry->ItemDefinition))
+			{
+				WorldItem->ItemEntry.Level = UFortLootLevel::GetItemLevel(&FortWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
+				WorldItem->ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(WorldItem->ItemEntry.Level);
+
+				SetItemRequiresUpdate(&WorldItem->ItemEntry);
+			}
+		}
+	}
+
+	return WorldItem;
+}
+
+void AFortInventory::AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count)
+{
+	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemDefinition);
+
+	if (WorldItem != NULL)
+		UpdateItemEntry(&WorldItem->ItemEntry);
+	else
+		AddItem(ItemDefinition, Count);
+}
+
+void AFortInventory::RemoveItem(FGuid& ItemGuid)
+{
+	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
+
+	if (ItemEntry == NULL)
+		return;
+
+	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
+
+	if (WorldItem != NULL)
+	{
+		if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
+		{
+			if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
+			{
+				WorldItem->OnItemInstanceRemoved(FortInventoryOwnerInterface, ItemEntry->Count);
+			}
+		}
+
+		WorldItem->RemoveFromInventory();
+
+		OnRemoveItemStack(WorldItem, &ItemGuid);
+	}
+}
+
+void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
+{
+	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
+
+	if (ItemEntry == NULL)
+		return;
+
+	if (Count <= 0 || Count >= ItemEntry->Count)
+	{
+		RemoveItem(ItemGuid);
+	}
+	else
+	{
+		ItemEntry->Count -= Count;
+
+		UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
+
+		if (WorldItem != NULL)
+			WorldItem->ItemEntry.Count = ItemEntry->Count;
+
+		UpdateItemEntry(ItemEntry);
+	}
+}
+
+void AFortInventory::UpdateItemEntry(FFortItemEntry* ItemEntry, int32 Count)
+{
+	ItemEntry->Count += Count;
+	SetItemRequiresUpdate(ItemEntry);
+}
+
+void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
+{
+	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&NewItemEntry->ItemGuid);
+
+	if (ItemEntry == NULL)
+		return;
+
+	*ItemEntry = *NewItemEntry;
+	SetItemRequiresUpdate(ItemEntry);
+}
+
 void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
 {
 	if (ItemStackToRemove != NULL)
@@ -70,122 +219,9 @@ void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const 
 	}
 }
 
-UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
-{
-	if (Count <= 0)
-		return NULL;
-
-	FFortItemEntry ItemEntry = FFortItemEntry(ItemDefinition, Count, 0);
-	return AddItem(&ItemEntry);
-}
-
-UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
-{
-	UFortWorldItem* WorldItem = UFortWorldItem::New(this, *ItemEntry);
-
-	if (WorldItem == NULL)
-		return NULL;
-
-	InitializeExistingItem(WorldItem);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-	{
-		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-		{
-			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-		}
-
-		// i have to manual call since im scuffed
-
-		if (!UFortGlobals::IsInAthena(GWorld))
-		{
-			FortPlayerController->TryAddToQuickBar(WorldItem);
-		}
-	}
-
-	return WorldItem;
-}
-
-void AFortInventory::AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count)
-{
-	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemDefinition);
-
-	if (WorldItem == NULL)
-	{
-		AddItem(ItemDefinition, Count);
-	}
-	else
-	{
-		WorldItem->ItemEntry.Count += Count;
-		UpdateItemEntry(&WorldItem->ItemEntry);
-	}
-}
-
-void AFortInventory::RemoveItem(FGuid& ItemGuid)
-{
-	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
-
-	if (ItemEntry == NULL)
-		return;
-
-	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
-
-	if (WorldItem != NULL)
-	{
-		if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-		{
-			if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-			{
-				WorldItem->OnItemInstanceRemoved(FortInventoryOwnerInterface, ItemEntry->Count);
-			}
-		}
-
-		WorldItem->RemoveFromInventory();
-
-		OnRemoveItemStack(WorldItem, &ItemGuid);
-	}
-}
-
-void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
-{
-	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&ItemGuid);
-
-	if (ItemEntry == NULL)
-		return;
-
-	if (Count <= 0 || Count >= ItemEntry->Count)
-	{
-		RemoveItem(ItemGuid);
-	}
-	else
-	{
-		ItemEntry->Count -= Count;
-
-		UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
-
-		if (WorldItem != NULL)
-			WorldItem->ItemEntry.Count = ItemEntry->Count;
-
-		UpdateItemEntry(ItemEntry);
-	}
-}
-
-void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
-{
-	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&NewItemEntry->ItemGuid);
-
-	if (ItemEntry == NULL)
-		return;
-
-	*ItemEntry = *NewItemEntry;
-	SetItemRequiresUpdate(ItemEntry);
-}
-
 FFortItemEntry* AFortInventory::GetReplicatedItemEntry(FGuid* ItemGuid)
 {
-	if (!(ItemGuid->D | ItemGuid->A | ItemGuid->C | ItemGuid->B) || Inventory.ReplicatedEntries.Num() <= 0)
+	if (Inventory.ReplicatedEntries.Num() <= 0)
 		return NULL;
 
 	for (FFortItemEntry& ItemEntry : Inventory.ReplicatedEntries)

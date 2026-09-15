@@ -53,10 +53,10 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 					if (ResourceCount < Something)
 						ResourceCount = Something;
 
-					if (!BuildingSMActor->DestructionLootTierKey.IsNone())
+					if (!BuildingSMActor->DestructionLootTierGroup.IsNone())
 					{
 						TArray<FFortItemEntry> OutLootDrops;
-						UFortLootPackage::PickLootDrops(&OutLootDrops, -1, BuildingSMActor->DestructionLootTierKey);
+						UFortLootPackage::PickLootDrops(&OutLootDrops, -1, BuildingSMActor->DestructionLootTierGroup);
 
 						for (FFortItemEntry& LootDrop : OutLootDrops)
 						{

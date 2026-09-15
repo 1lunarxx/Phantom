@@ -80,6 +80,19 @@ void FFortItemEntry::SetLoadedAmmo(int InCount)
 	}
 }
 
+void FFortItemEntry::SetInInventoryOverflow(bool bOverflow)
+{
+	if (inventory_overflow_date != bOverflow)
+	{
+		inventory_overflow_date = bOverflow;
+
+		if (AFortInventory* FortInventory = ParentInventory.Get())
+			FortInventory->SetItemRequiresUpdate(this);
+
+		bIsDirty = 1;
+	}
+}
+
 void FGameplayMutatorObjectData::PostReplicatedAdd(struct FGameplayMutatorObjectDataArray* InArraySerializer)
 {
 	InArraySerializer->MarkItemDirty(*this);

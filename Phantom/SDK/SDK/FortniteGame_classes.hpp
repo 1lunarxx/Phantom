@@ -6408,10 +6408,14 @@ public:
 public:
 	UFortWorldItem* AddItem(UFortItemDefinition* ItemDefinition, int32 Count);
 	UFortWorldItem* AddItem(FFortItemEntry* ItemEntry);
+
 	void AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count);
+
 	void RemoveItem(FGuid& ItemGuid);
 	void RemoveItem(FGuid& ItemGuid, int32 Count);
+
 	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
+	void UpdateItemEntry(FFortItemEntry* ItemEntry, int32 Count);
 public:
 	static int GetInventoryUsed(const class IFortInventoryOwnerInterface* Owner, int InventoryType)
 	{
@@ -57174,7 +57178,7 @@ public:
 
 	void OnItemInstanceAdded(IFortInventoryOwnerInterface* InventoryOwner)
 	{
-		static void(*OnItemInstanceAdded)(UFortWorldItem*, IFortInventoryOwnerInterface*) = decltype(OnItemInstanceAdded)(InSDKUtils::GetImageBase() + 0x109C500);
+		void(*OnItemInstanceAdded)(UFortWorldItem*, IFortInventoryOwnerInterface*) = decltype(OnItemInstanceAdded)(VTable[0x450 / 8]);
 		OnItemInstanceAdded(this, InventoryOwner);
 	}
 

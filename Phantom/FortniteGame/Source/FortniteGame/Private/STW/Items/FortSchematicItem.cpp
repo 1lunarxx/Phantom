@@ -18,6 +18,9 @@ int32 FortSchematicItem::ServerCraftSchematic(UFortSchematicItem* FortSchematicI
 
 	for (const FFortItemQuantityPair& RecipeCost : Recipe.RecipeCosts)
 	{
+		if (Instigator->bCraftFree)
+			continue;
+
 		UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(UKismetSystemLibrary::GetObjectFromPrimaryAssetId(RecipeCost.ItemPrimaryAssetId));
 
 		if (FortIngredientItemDefinition == NULL)

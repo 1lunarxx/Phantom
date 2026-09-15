@@ -7482,6 +7482,13 @@ public:
 	TArray<float>                                 GenericAttributeValues;                            // 0x00C0(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPrivate)
 public:
 	void SetLoadedAmmo(int InCount);
+	void SetInInventoryOverflow(bool bOverflow);
+public:
+	void SetDurability(float InDurability)
+	{
+		static void (*SetDurability)(FFortItemEntry*, float) = decltype(SetDurability)(InSDKUtils::GetImageBase() + 0x10A1400);
+		SetDurability(this, InDurability);
+	}
 public:
 	FFortItemEntry() = default;
 
@@ -19035,6 +19042,12 @@ public:
 	float                                         MaxChargeDamageMultiplier;                         // 0x012C(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	float                                         EquipAnimRate;                                     // 0x0130(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
 	float                                         QuickBarSlotCooldownDuration;                      // 0x0134(0x0004)(Edit, BlueprintVisible, BlueprintReadOnly, ZeroConstructor, IsPlainOldData, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected)
+public:
+	int GetDurability(double WeaponLevel, EFortRarity Rarity)
+	{
+		static int (*GetDurability)(FFortBaseWeaponStats*, double, EFortRarity) = decltype(GetDurability)(InSDKUtils::GetImageBase() + 0x14424A0);
+		return GetDurability(this, WeaponLevel, Rarity);
+	}
 };
 static_assert(alignof(FFortBaseWeaponStats) == 0x000008, "Wrong alignment on FFortBaseWeaponStats");
 static_assert(sizeof(FFortBaseWeaponStats) == 0x000138, "Wrong size on FFortBaseWeaponStats");
