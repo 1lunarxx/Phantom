@@ -52,7 +52,9 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 		{
 			// TODO: find pooper MissionGenerator
 
-			UFortMissionGenerator* MissionGenerator = NewObject<UFortMissionGenerator>(FortGameModeZone, Utils::StaticLoadObject<UClass>(TEXT("/Game/World/MissionGens/MissionGen_TheOutpost_PvE_01.MissionGen_TheOutpost_PvE_01_C")));
+			// /Game/World/MissionGens/MissionGen_Onboarding_Fort.MissionGen_Onboarding_Fort_C, /Game/World/MissionGens/MissionGen_TheOutpost_PvE_01.MissionGen_TheOutpost_PvE_01_C
+
+			UFortMissionGenerator* MissionGenerator = NewObject<UFortMissionGenerator>(FortGameModeZone, Utils::StaticLoadObject<UClass>(TEXT("/Game/World/MissionGens/MissionGen_Onboarding_Fort.MissionGen_Onboarding_Fort_C")));
 
 			FFortMissionManagerRecord* MissionManagerRecord = &WorldManager->MissionManagerRecord;
 			FFortMissionRecord MissionRecord = FFortMissionRecord{};
@@ -64,8 +66,6 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 
 			if (FortGameStateZone->MissionManager == NULL)
 				FortGameStateZone->CreateMissionManager(MissionManagerRecord);
-
-			FortGameStateZone->MissionManager->LoadFromRecord(MissionManagerRecord);
 		}
 	}
 
