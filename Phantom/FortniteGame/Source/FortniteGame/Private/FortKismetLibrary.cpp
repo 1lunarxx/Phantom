@@ -9,12 +9,6 @@ AFortAIGoalManager* FortKismetLibrary::GetAIGoalManager(UFortKismetLibrary* Cont
     Stack->StepCompiledIn(&WorldContextObject);
     Stack->IncrementCode();
 
-    if (AActor* WorldContext = Cast<AActor>(WorldContextObject))
-    {
-        if (UWorld* World = WorldContext->GetWorld())
-            return *Result = Cast<AFortGameModeZone>(World->AuthorityGameMode)->AIGoalManager;
-    }
-
     return *Result = GWorld->GetGameMode()->AIGoalManager;
 }
 

@@ -45,29 +45,38 @@ void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameModeZone, AFortWorldManager* WorldManager)
 {
 	if (WorldManager != NULL)
+	{
 		WorldManager->FinishWorldInitialization();
 
-	FortGameModeZone->FinishWorldInitialization(WorldManager);
+		if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
+		{
+			// TODO: find pooper MissionGenerator
 
+			UFortMissionGenerator* MissionGenerator = NewObject<UFortMissionGenerator>(FortGameModeZone, Utils::StaticLoadObject<UClass>(TEXT("/Game/World/MissionGens/MissionGen_TheOutpost_PvE_01.MissionGen_TheOutpost_PvE_01_C")));
+
+			FFortMissionManagerRecord* MissionManagerRecord = &WorldManager->MissionManagerRecord;
+			FFortMissionRecord MissionRecord = FFortMissionRecord{};
+
+			MissionRecord.MissionEntry.MissionGenerator = MissionGenerator;
+			MissionRecord.MissionEntry.MissionInfo = MissionGenerator->PrimaryMissionInfo.LoadSynchronous();
+
+			MissionManagerRecord->MissionRecords.Add(MissionRecord);
+
+			if (FortGameStateZone->MissionManager == NULL)
+				FortGameStateZone->CreateMissionManager(MissionManagerRecord);
+
+			FortGameStateZone->MissionManager->LoadFromRecord(MissionManagerRecord);
+		}
+	}
+
+	FortGameModeZone->FinishWorldInitialization(WorldManager);
+	
 	SetConsoleTitleA("Phantom | Ready");
 }
 
 void FortGameModeZone::InitGameState(AFortGameModeZone* FortGameModeZone)
 {
 	Originals::InitGameState(FortGameModeZone);
-
-	UFortGameData* GameData = UFortGameData::Get();
-
-	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
-	{
-		if (FortGameStateZone->MissionManager == NULL)
-			FortGameStateZone->MissionManager = GWorld->SpawnActor<AFortMissionManager>(FVector(), FRotator(), FortGameModeZone->MissionManagerClass.Get(), FortGameStateZone);
-
-		FortGameStateZone->MissionManager->BluGloManager = GWorld->SpawnActor<AFortBluGloManager>(FVector(), FRotator(), GameData->BluGloManagerClass.Get(), FortGameStateZone->MissionManager);
-
-		FortGameStateZone->OnRep_StormShield();
-		FortGameStateZone->OnRep_MissionManager();
-	}
 
 	if (FortGameModeZone->AIGoalManager == NULL)
 		FortGameModeZone->CreateAIGoalManager();
@@ -78,25 +87,6 @@ void FortGameModeZone::InitGameState(AFortGameModeZone* FortGameModeZone)
 void FortGameModeZone::HandleStartingNewPlayer(AFortGameModeZone* FortGameModeZone, APlayerController* NewPlayer)
 {
 	Originals::HandleStartingNewPlayer(FortGameModeZone, NewPlayer);
-
-	if (AFortPlayerControllerZone* FortPlayerController = Cast<AFortPlayerControllerZone>(NewPlayer))
-	{
-		AFortMission* FortMission = GWorld->SpawnActor<AFortMission>(FVector(), FRotator(), Utils::StaticLoadObject<UClass>(TEXT("/Game/Missions/Primary/OB_FarmsteadFort/Mission_FarmsteadFort.Mission_FarmsteadFort_C")));
-
-		if (FortMission != NULL)
-		{
-			FortMission->MissionInfo = Utils::StaticLoadObject<UFortMissionInfo>(TEXT("/Game/Missions/Primary/OB_FarmsteadFort/OB_FarmsteadFort.OB_FarmsteadFort"));
-			FortMission->OnRep_MissionInfo();
-
-			if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
-			{
-				FortGameStateZone->MissionManager->Missions.Add(FortMission);
-				FortGameStateZone->MissionManager->OnRep_Missions();
-			}
-
-			UFortMissionLibrary::LoadMission(GWorld, FortMission->MissionInfo);
-		}
-	}
 }
 
 APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* FortGameModeZone, AController* NewPlayer, AActor* StartSpot)
@@ -130,10 +120,10 @@ void FortGameModeZone::Setup()
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0xC98E3B, CreateAIDirector);
 	Utils::Rel32(InSDKUtils::GetImageBase() + 0x134F889, FinishWorldInitialization);
 
+	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer, (void**)&Originals::HandleStartingNewPlayer);
+
 	Utils::Virtual<AFortGameModeZone, AFortGameModeOutpost>(0xC08 / 8, CreateAIDirector);
 	Utils::Virtual<AFortGameModeZone, AFortGameModeOutpost>(0xA40 / 8, FinishWorldInitialization);
 	Utils::Virtual<AFortGameModeZone, AFortGameModeOutpost>(0x610 / 8, SpawnDefaultPawnFor_Implementation);
 	Utils::Virtual<AFortGameModeZone, AFortGameModeOutpost>(0x660 / 8, InitGameState, (void**)&Originals::InitGameState);
-
-	Utils::Virtual(AFortGameModeZone::GetDefaultObj()->VTable, 0x640 / 8, HandleStartingNewPlayer, (void**)&Originals::HandleStartingNewPlayer);
 }

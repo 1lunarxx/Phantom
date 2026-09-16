@@ -169,6 +169,7 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\CheatManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIDirector.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteAI\Public\FortAIGoalManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Building\AthenaBarrierFlag.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaSupplyDrop.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaVehicle.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\NetDriver.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\World.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIDirector.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIGoalManager.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierFlag.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierObjective.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBigBaseWall.cpp" />

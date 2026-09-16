@@ -17636,7 +17636,12 @@ public:
 	EFortGameplayState GetGameplayState() const;
 	bool GetPlayerSpawningBlocked_Temporarily() const;
 	int32 GetWorldDaysElapsed() const;
-
+public:
+	void CreateMissionManager(FFortMissionManagerRecord* ManagerRecord)
+	{
+		static void (*CreateMissionManager)(AFortGameState*, FFortMissionManagerRecord*) = decltype(CreateMissionManager)(InSDKUtils::GetImageBase() + 0xF613B0);
+		CreateMissionManager(this, ManagerRecord);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -37349,6 +37354,12 @@ public:
 	{
 		static AFortMission* (*LoadMission)(AFortMissionManager*, FFortMissionRecord*) = decltype(LoadMission)(InSDKUtils::GetImageBase() + 0x10F1760);
 		return LoadMission(this, MissionRecord);
+	}
+
+	void LoadFromRecord(FFortMissionManagerRecord* NewRecord)
+	{
+		static void (*LoadFromRecord)(AFortMissionManager*, FFortMissionManagerRecord*) = decltype(LoadFromRecord)(InSDKUtils::GetImageBase() + 0x10F14D0);
+		LoadFromRecord(this, NewRecord);
 	}
 public:
 	static class UClass* StaticClass()
