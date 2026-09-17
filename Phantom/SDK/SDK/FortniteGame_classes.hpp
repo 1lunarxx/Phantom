@@ -37347,16 +37347,10 @@ public:
 
 	bool ShouldShowSecondaryMissionHeaders() const;
 public:
-	AFortMission* LoadMission(FFortMissionRecord* MissionRecord)
+	void HandleMissionEvent(FFortMissionEvent MissionEvent)
 	{
-		static AFortMission* (*LoadMission)(AFortMissionManager*, FFortMissionRecord*) = decltype(LoadMission)(InSDKUtils::GetImageBase() + 0x10F1760);
-		return LoadMission(this, MissionRecord);
-	}
-
-	void LoadFromRecord(FFortMissionManagerRecord* NewRecord)
-	{
-		static void (*LoadFromRecord)(AFortMissionManager*, FFortMissionManagerRecord*) = decltype(LoadFromRecord)(InSDKUtils::GetImageBase() + 0x10F14D0);
-		LoadFromRecord(this, NewRecord);
+		static void (*HandleMissionEvent)(AFortMissionManager*, FFortMissionEvent) = decltype(HandleMissionEvent)(InSDKUtils::GetImageBase() + 0x10C8080);
+		HandleMissionEvent(this, MissionEvent);
 	}
 public:
 	static AFortMissionManager* GetCurrent(const UObject* WorldContextObject)
@@ -55269,7 +55263,8 @@ static_assert(offsetof(UFortTagUIDataLookupTable, TagUIDataList) == 0x000030, "M
 class UFortTaggedActorsManager final : public UObject
 {
 public:
-	uint8                                         Pad_28[0x3A8];                                     // 0x0028(0x03A8)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	TMultiMap<FGameplayTag, TWeakObjectPtr<AActor>> ActorTagsMap;									 // 0x0028(0x0050)
+	uint8                                         Pad_78[0x358];                                     // 0x0078(0x0358)(Fixing Struct Size After Last Property [ Dumper-7 ])
 
 public:
 	static class UClass* StaticClass()

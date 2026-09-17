@@ -34,6 +34,9 @@ namespace UC
 	class TSet;
 
 	template<typename KeyElementType, typename ValueElementType>
+	class TMultiMap;
+
+	template<typename KeyElementType, typename ValueElementType>
 	class TMap;
 
 	template<typename KeyElementType, typename ValueElementType>
@@ -870,6 +873,60 @@ namespace UC
 		template<typename KeyType, typename ValueType> friend Iterators::TMapIterator<KeyType, ValueType> end  (const TMap& Map);
 	};
 
+	template<typename KeyElementType, typename ValueElementType>
+	class TMultiMap
+	{
+	public:
+		using ElementType = TPair<KeyElementType, ValueElementType>;
+
+	private:
+		TSet<ElementType> Elements;
+
+	private:
+		inline void VerifyIndex(int32 Index) const { if (!IsValidIndex(Index)) throw std::out_of_range("Index was out of range!"); }
+
+	public:
+		inline int32 NumAllocated() const { return Elements.NumAllocated(); }
+
+		inline int32 Num() const { return Elements.Num(); }
+		inline int32 Max() const { return Elements.Max(); }
+
+		inline bool IsValidIndex(int32 Index) const { return Elements.IsValidIndex(Index); }
+
+		inline bool IsValid() const { return Elements.IsValid(); }
+
+	public:
+		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }
+
+	public:
+		inline ValueElementType* Find(const KeyElementType& Key)
+		{
+			for (auto It = begin(*this); It != end(*this); ++It)
+			{
+				if (It->Key() == Key)
+					return &It->Value();
+			}
+
+			return nullptr;
+		}
+
+		inline int32 Add(const KeyElementType& Key, const ValueElementType& Value)
+		{
+			return Elements.Add(ElementType(Key, Value));
+		}
+
+	public:
+		inline       ElementType& operator[](int32 Index) { return Elements[Index]; }
+		inline const ElementType& operator[](int32 Index) const { return Elements[Index]; }
+
+		inline bool operator==(const TMultiMap& Other) const { return Elements == Other.Elements; }
+		inline bool operator!=(const TMultiMap& Other) const { return Elements != Other.Elements; }
+
+	public:
+		template<typename T0, typename T1> friend Iterators::TContainerIterator<TMultiMap<T0, T1>> begin(const TMultiMap<T0, T1>& Map);
+		template<typename T0, typename T1> friend Iterators::TContainerIterator<TMultiMap<T0, T1>> end(const TMultiMap<T0, T1>& Map);
+	};
+
 	namespace Iterators
 	{
 		class FRelativeBitReference
@@ -1050,6 +1107,9 @@ namespace UC
 
 	template<typename T0, typename T1> inline Iterators::TMapIterator<T0, T1> begin(const TMap<T0, T1>& Map) { return Iterators::TMapIterator<T0, T1>(Map, Map.GetAllocationFlags(), 0); }
 	template<typename T0, typename T1> inline Iterators::TMapIterator<T0, T1> end  (const TMap<T0, T1>& Map) { return Iterators::TMapIterator<T0, T1>(Map, Map.GetAllocationFlags(), Map.NumAllocated()); }
+
+	template<typename T0, typename T1> inline Iterators::TContainerIterator<TMultiMap<T0, T1>> begin(const TMultiMap<T0, T1>& Map) { return Iterators::TContainerIterator<TMultiMap<T0, T1>>(Map, Map.GetAllocationFlags(), 0); }
+	template<typename T0, typename T1> inline Iterators::TContainerIterator<TMultiMap<T0, T1>> end(const TMultiMap<T0, T1>& Map) { return Iterators::TContainerIterator<TMultiMap<T0, T1>>(Map, Map.GetAllocationFlags(), Map.NumAllocated()); }
 
 	static_assert(sizeof(TArray<int32>) == 0x10, "TArray has a wrong size!");
 	static_assert(sizeof(TSet<int32>) == 0x50, "TSet has a wrong size!");

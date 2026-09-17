@@ -3,7 +3,12 @@
 
 AFortAIGoalManager* FortAIGoalManager::GetCurrent(UWorld* World)
 {
-	return GWorld->GetGameMode()->AIGoalManager;
+	if (AFortGameModeZone* FortGameModeZone = Cast<AFortGameModeZone>(World->AuthorityGameMode))
+	{
+		return FortGameModeZone->AIGoalManager;
+	}
+
+	return NULL;
 }
 
 void FortAIGoalManager::Setup()

@@ -48,6 +48,7 @@
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 
 #include "FortniteGame/Public/STW/FortGameModeOutpost.h"
+#include "FortniteGame/Public/STW/FortTaggedActorsManager.h"
 #include "FortniteGame/Public/STW/Items/FortSchematicItem.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
@@ -105,6 +106,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortGameSessionDedicated::Setup();
     FServiceConfigMcp::Setup();
     FortGameStateAthena::Setup();
+    FortTaggedActorsManager::Setup();
 
     *GIsClient = false;
     *GIsServer = true;

@@ -3,10 +3,10 @@
 
 AFortAIDirector* FortAIDirector::GetCurrent(UWorld* World)
 {
-	AFortGameModeZone* FortGameModeZone = Cast<AFortGameModeZone>(World->AuthorityGameMode);
-
-	if (FortGameModeZone != NULL)
+	if (AFortGameModeZone* FortGameModeZone = Cast<AFortGameModeZone>(World->AuthorityGameMode))
+	{
 		return FortGameModeZone->AIDirector;
+	}
 
 	return NULL;
 }

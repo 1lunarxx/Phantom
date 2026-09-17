@@ -204,6 +204,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerControllerZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Quests\FortQuestManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\STW\FortGameModeOutpost.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\STW\FortTaggedActorsManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\STW\Items\FortSchematicItem.h" />
     <ClInclude Include="MinHook.h" />
     <ClInclude Include="Utils.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\Items\FortSchematicItem.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSessionDedicated.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameStateAthena.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortTaggedActorsManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
