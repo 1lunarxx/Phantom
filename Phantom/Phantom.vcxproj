@@ -177,6 +177,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaSupplyDrop.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaVehicle.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameModeAthena.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameStateAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPlayerControllerAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Modifiers\FortAthenaMutator_Barrier.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootLevel.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\Items\FortSchematicItem.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSessionDedicated.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameStateAthena.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

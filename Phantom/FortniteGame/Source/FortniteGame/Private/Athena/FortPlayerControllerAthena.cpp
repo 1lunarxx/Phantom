@@ -45,12 +45,12 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 	if (FortPlayerStateAthena == NULL || InTags == NULL)
 		return;
 
-	AFortGameStateAthena* FortGameStateAthena = GWorld->GetGameStateAthena();
+	AFortGameStateAthena* FortGameStateAthena = FortPlayerControllerAthena->GetWorld()->GetGameStateAthena();
 
 	if (FortGameStateAthena == NULL)
 		return;
 
-	AFortGameModeAthena* FortGameModeAthena = GWorld->GetGameModeAthena();
+	AFortGameModeAthena* FortGameModeAthena = FortPlayerControllerAthena->GetWorld()->GetGameModeAthena();
 
 	if (FortGameModeAthena == NULL)
 		return;
@@ -102,7 +102,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 	FortPlayerPawnAthena->InitializeDeathInfoOnPawnDeath(InTags, EventInstigator, DBNOFinisher);
 
-	if (FortPlayerControllerAthena->Role == ENetRole::ROLE_Authority)
+/*	if (FortPlayerControllerAthena->Role == ENetRole::ROLE_Authority)
 	{
 		// there should be a if statement here but im to lazy to figure it out
 
@@ -118,7 +118,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 
 			FortPlayerControllerAthena->SpectateOnDeath();
 		}
-	}
+	}*/
 
 	if (!IsRespawningAllowed)
 	{
@@ -144,7 +144,7 @@ void FortPlayerControllerAthena::OnPawnDied(AFortPlayerControllerAthena* FortPla
 						if (FortGameStateAthena->TeamsLeft <= 1)
 							FortGameModeAthena->StartEndGamePhaseTeam((int)FortPlayerStateAthenaEventInstigator->TeamIndex, FortPlayerStateAthenaEventInstigator, 1, FortPlayerControllerAthenaEventInstigator->Pawn, NULL, FortPlayerStateAthena->DeathInfo.DeathCause);
 
-					/*	UFortAnalytics::FireEvent_PlayerDeath(FortPlayerControllerAthena, 0, NULL, FortPlayerStateAthenaEventInstigator->GetPlayerName(), NULL, 0, 0.f, NULL);	*/
+						/*	UFortAnalytics::FireEvent_PlayerDeath(FortPlayerControllerAthena, 0, NULL, FortPlayerStateAthenaEventInstigator->GetPlayerName(), NULL, 0, 0.f, NULL);	*/
 					}
 				}
 			}

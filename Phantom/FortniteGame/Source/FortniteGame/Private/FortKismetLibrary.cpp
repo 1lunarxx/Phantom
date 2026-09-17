@@ -55,20 +55,7 @@ bool FortKismetLibrary::PickLootDrops(UFortKismetLibrary* Context, FFrame* Stack
 
     Stack->IncrementCode();
 
-    UFortLootPackage::PickLootDrops(&OutLootToDrop, ForcedLootTier, TierGroupName);
-
-    for (FFortItemEntry& LootDrop : OutLootToDrop)
-    {
-        if (UFortWeaponRangedItemDefinition* WeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(LootDrop.ItemDefinition))
-        {
-            FFortRangedWeaponStats OutRow;
-            UFortKismetLibrary::GetRangedWeaponStatsRow(WeaponRangedItemDefinition->WeaponStatHandle, &OutRow);
-
-            LootDrop.LoadedAmmo = OutRow.ClipSize;
-        }
-    }
-
-    return *Result = OutLootToDrop.Num() > 0;
+    return *Result = UFortLootPackage::PickLootDrops(&OutLootToDrop, ForcedLootTier, TierGroupName);
 }
 
 void FortKismetLibrary::Setup()

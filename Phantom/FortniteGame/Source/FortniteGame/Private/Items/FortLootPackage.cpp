@@ -40,26 +40,26 @@ UDataTable* UFortLootPackage::GetLootPackageData()
 	return CurrentSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
 }
 
-void UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)
+bool UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)
 {
 	if (OutLootToDrop == NULL)
-		return;
+		return false;
 
 	UDataTable* LootTierData = GetLootTierData();
 	UDataTable* LootPackageData = GetLootPackageData();
 
 	if (LootTierData == NULL || LootPackageData == NULL)
-		return;
+		return false;
 
 	FFortLootTierData* FortLootTierData = FindLootTierDataRow(LootTierData, TierGroupName, TEXT("UFortLootPackage::PickLootDrops"), true);
 
 	if (FortLootTierData == NULL)
-		return;
+		return false;
 
 	FName LootPackage = FortLootTierData->LootPackage;
 
 	if (LootPackage.IsNone())
-		return;
+		return false;
 
 	int32 NumLootPackageDrops = (int32)FortLootTierData->NumLootPackageDrops;
 
@@ -75,18 +75,31 @@ void UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int 
 	}
 
 	if (NumLootPackageDrops <= 0)
-		return;
+		return false;
 
 	TMap<int32, int32> NumLootPackageDropsPerCategory;
 
 	if (!UFortLootTier::GetNumLootPackageDropsPerCategory(FortLootTierData, NumLootPackageDrops, &NumLootPackageDropsPerCategory))
-		return;
+		return false;
 
 	for (const auto& [LootPackageCategory, NumDrops] : NumLootPackageDropsPerCategory)
 	{
 		for (int32 i = 0; i < NumDrops; i++)
 			PickLootDropsFromLootPackage(OutLootToDrop, LootPackage, ForcedLootTier, LootPackageCategory, GWorld->GetGameState()->WorldLevel);
 	}
+
+	for (FFortItemEntry& LootDrop : *OutLootToDrop)
+	{
+		if (UFortWeaponRangedItemDefinition* WeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(LootDrop.ItemDefinition))
+		{
+			FFortRangedWeaponStats OutRow{};
+			UFortKismetLibrary::GetRangedWeaponStatsRow(WeaponRangedItemDefinition->WeaponStatHandle, &OutRow);
+
+			LootDrop.LoadedAmmo = OutRow.ClipSize;
+		}
+	}
+
+	return true;
 }
 
 void UFortLootPackage::PickLootDropsFromLootPackage(TArray<FFortItemEntry>* OutLootToDrop, FName LootPackage, int32 ForcedLootTier, int32 LootPackageCategory, int32 WorldLevel)

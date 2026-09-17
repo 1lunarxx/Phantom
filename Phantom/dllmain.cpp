@@ -29,6 +29,7 @@
 #include "FortniteGame/Public/Athena/FortAthenaSupplyDrop.h"
 #include "FortniteGame/Public/Athena/FortAthenaVehicle.h"
 #include "FortniteGame/Public/Athena/BGAConsumableSpawner.h"
+#include "FortniteGame/Public/Athena/FortGameStateAthena.h"
 
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
@@ -38,6 +39,7 @@
 #include "FortniteGame/Public/Items/FortPickup.h"
 #include "FortniteGame/Public/Items/FortWorldItem.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
+
 #include "FortniteGame/Public/Pawns/FortPlayerPawn.h"
 
 #include "FortniteGame/Public/Player/FortPlayerControllerGameplay.h"
@@ -102,13 +104,12 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortAIGoalManager::Setup();
     FortGameSessionDedicated::Setup();
     FServiceConfigMcp::Setup();
-
-    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // CanUpdateGamePhaseStep
+    FortGameStateAthena::Setup();
 
     *GIsClient = false;
     *GIsServer = true;
 
-    GWorld->ServerTravel(L"Athena_Terrain", false, false);
+    GWorld->ServerTravel(L"Zone_Onboarding_Forest_a", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;

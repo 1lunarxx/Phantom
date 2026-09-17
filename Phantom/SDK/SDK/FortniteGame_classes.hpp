@@ -37359,6 +37359,12 @@ public:
 		LoadFromRecord(this, NewRecord);
 	}
 public:
+	static AFortMissionManager* GetCurrent(const UObject* WorldContextObject)
+	{
+		static AFortMissionManager* (*GetCurrent)(const UObject*) = decltype(GetCurrent)(InSDKUtils::GetImageBase() + 0x10E8E00);
+		return GetCurrent(WorldContextObject);
+	}
+public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"FortMissionManager">();
@@ -56727,10 +56733,10 @@ public:
 public:
 	void OnRep_InitialGlobalWind();
 public:
-	void FinishWorldInitialization()
+	static AFortWorldManager* GetCurrent(const UObject* WorldContextObject)
 	{
-		static void(*FinishWorldInitialization)(AFortWorldManager*) = decltype(FinishWorldInitialization)(InSDKUtils::GetImageBase() + 0x1014D20);
-		FinishWorldInitialization(this);
+		static AFortWorldManager* (*GetCurrent)(const UObject*) = decltype(GetCurrent)(InSDKUtils::GetImageBase() + 0x1003180);
+		return GetCurrent(WorldContextObject);
 	}
 public:
 	static class UClass* StaticClass()

@@ -180,6 +180,9 @@
     <ClInclude Include="Engine\Source\Runtime\Core\Public\UObject\UnrealNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortGameStateAthena.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -342,6 +345,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\Online\OnlineSubsystemMcp\Source\Private\ServiceConfigMcp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameStateAthena.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
