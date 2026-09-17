@@ -5,7 +5,7 @@
 class FortAIGoalManager
 {
 private:
-	static AFortAIGoalManager* GetCurrent(UWorld* World);
+	static AFortAIGoalManager* GetCurrent(UObject* WorldContextObject);
 public:
 	static void Setup();
 };

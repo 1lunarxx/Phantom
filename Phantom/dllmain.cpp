@@ -111,7 +111,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     *GIsClient = false;
     *GIsServer = true;
 
-    GWorld->ServerTravel(L"Zone_Onboarding_Forest_a", false, false);
+    GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;

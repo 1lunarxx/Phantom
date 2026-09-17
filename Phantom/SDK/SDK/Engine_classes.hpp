@@ -979,6 +979,13 @@ static_assert(offsetof(UParticleModuleLocation, StartLocation) == 0x000030, "Mem
 static_assert(offsetof(UParticleModuleLocation, DistributeOverNPoints) == 0x000080, "Member 'UParticleModuleLocation::DistributeOverNPoints' has a wrong offset!");
 static_assert(offsetof(UParticleModuleLocation, DistributeThreshold) == 0x000084, "Member 'UParticleModuleLocation::DistributeThreshold' has a wrong offset!");
 
+enum EGetWorldErrorMode : int32
+{
+     ReturnNull = 0x0,
+     LogAndReturnNull = 0x1,
+     Assert = 0x2,
+};
+
 // Class Engine.ReplicationConnectionDriver
 // 0x0000 (0x0028 - 0x0028)
 class UReplicationConnectionDriver : public UObject
@@ -1242,6 +1249,12 @@ public:
 	{
 		static float(*GetMaxTickRate)(UEngine*, float, bool) = decltype(GetMaxTickRate)(InSDKUtils::GetImageBase() + 0x2A55840);
 		return GetMaxTickRate(this, DeltaTime, bAllowFrameRateSmoothing);
+	}
+
+	class UWorld* GetWorldFromContextObject(UObject* Object, EGetWorldErrorMode ErrorMode)
+	{
+		static UWorld* (*GetWorldFromContextObject)(UEngine*, UObject*, EGetWorldErrorMode) = decltype(GetWorldFromContextObject)(InSDKUtils::GetImageBase() + 0x2A56460);
+		return GetWorldFromContextObject(this, Object, ErrorMode);
 	}
 public:
 	bool CreateNamedNetDriver(class UWorld* InWorld, FName NetDriverName, FName NetDriverDefinition)
