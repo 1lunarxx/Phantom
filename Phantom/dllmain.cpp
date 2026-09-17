@@ -28,7 +28,6 @@
 #include "FortniteGame/Public/Athena/FortPlayerControllerAthena.h"
 #include "FortniteGame/Public/Athena/FortAthenaSupplyDrop.h"
 #include "FortniteGame/Public/Athena/FortAthenaVehicle.h"
-#include "FortniteGame/Public/Athena/BGAConsumableSpawner.h"
 #include "FortniteGame/Public/Athena/FortGameStateAthena.h"
 
 #include "FortniteGame/Public/Building/BuildingActor.h"
@@ -99,7 +98,6 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortCheatManager::Setup();
     Character::Setup();
     CheatManager::Setup();
-    BGAConsumableSpawner::Setup();
     FortAthenaVehicle::Setup();
     FortGameModeOutpost::Setup();
     FortSchematicItem::Setup();

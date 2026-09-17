@@ -2,22 +2,34 @@
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
-void BuildingActor::OnDeathServer(ABuildingActor* BuildingActor, double Damage, const FGameplayTagContainer* DamageTags, FVector* Momentum, const FHitResult* HitInfo, AController* InstigatedBy, AActor* DamageCauser, FGameplayEffectContextHandle* EffectContext)
+// pretty sure ABGAConsumableSpawner is stored in buildingactor.cpp
+
+void ABGAConsumableSpawner::SetupAndAttemptToSpawnConsumables()
 {
-	Originals::OnDeathServer(BuildingActor, Damage, DamageTags, Momentum, HitInfo, InstigatedBy, DamageCauser, EffectContext);
+    UFortLootPackage::PickLootDrops(&ConsumablesToSpawn, GWorld->GetGameState()->WorldLevel, SpawnLootTierGroup);
 
-	if (AAthenaBarrierObjective* BarrierObjective = Cast<AAthenaBarrierObjective>(BuildingActor))
-	{
-		// TODO: not be lazy and find something like GetMutatorByClass in this season
+    for (FFortItemEntry& Consumable : ConsumablesToSpawn)
+    {
+        UBGAConsumableWrapperItemDefinition* BGAConsumableWrapperItemDefinition = Cast<UBGAConsumableWrapperItemDefinition>(Consumable.ItemDefinition);
 
-/*		AFortAthenaMutator_Barrier* BarrierMutator = Cast<AFortAthenaMutator_Barrier>(GGameState->GetMutatorByClass(GGameState, AFortAthenaMutator_Barrier::StaticClass()));
+        if (BGAConsumableWrapperItemDefinition == NULL)
+            continue;
 
-		if (BarrierMutator != NULL)
-			BarrierMutator->OnObjectiveDestroyed(BarrierObjective);*/
-	}
+        GWorld->SpawnActor(BGAConsumableWrapperItemDefinition->ConsumableClass.Get(), UFortKismetLibrary::FindStaticGroundLocationAt(GWorld, K2_GetActorLocation(), this, -1000, 2500), K2_GetActorRotation(), FActorSpawnParameters(1));
+
+        break;
+    }
+}
+
+void BuildingActor::BeginPlay(ABGAConsumableSpawner* BGAConsumableSpawner)
+{
+    Originals::BeginPlay(BGAConsumableSpawner);
+
+    if (BGAConsumableSpawner->ConsumablesToSpawn.Num() <= 0)
+        BGAConsumableSpawner->SetupAndAttemptToSpawnConsumables();
 }
 
 void BuildingActor::Setup()
 {
-	Utils::Hook(InSDKUtils::GetImageBase() + 0x149E410, OnDeathServer, (void**)&Originals::OnDeathServer);
+    Utils::Virtual(ABGAConsumableSpawner::GetDefaultObj()->VTable, 0x2F8 / 8, BeginPlay, (void**)&Originals::BeginPlay);
 }

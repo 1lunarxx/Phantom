@@ -8912,7 +8912,12 @@ public:
 	bool IsStaggered() const;
 	bool IsWeaponHolstered() const;
 	bool WasDBNOOnDeath() const;
-
+public:
+	bool TeleportTo(FVector DestLocation, FRotator DestRotation, bool bIsATest, bool bNoCheck)
+	{
+		static bool(*TeleportTo)(AFortPawn*, FVector, FRotator, bool, bool) = decltype(TeleportTo)(InSDKUtils::GetImageBase() + 0x129E890);
+		return TeleportTo(this, DestLocation, DestRotation, bIsATest, bNoCheck);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -14206,7 +14211,20 @@ public:
 		return CanAffordToPlaceBuildableClass(this, ClassToBuildData);
 	}
 
-	bool UpdateQuest(FName BackendName, int32 AchievedCount);
+	bool UpdateQuest(FName BackendName, int32 AchievedCount)
+	{
+		for (FFortUpdatedObjectiveStat& UpdatedObjectiveStat : UpdatedObjectiveStats)
+		{
+			if (UpdatedObjectiveStat.BackendName == BackendName)
+			{
+				UpdatedObjectiveStat.StatValue = AchievedCount;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	bool ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap);
 
 	__int64 PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
@@ -34515,7 +34533,8 @@ public:
 	void ListWeapons() const;
 public:
 	void AddScoreStat(unsigned int ScoreStat, unsigned int Amount);
-
+	void TeleportPawnTo(APawn* Pawn, AController* Controller, FVector TeleportTargetLocation, FRotator TeleportTargetRot, bool bIsATest, bool bNoCheck);
+public:
 	AFortPlayerController* GetOuterAFortPlayerController()
 	{
 		return reinterpret_cast<AFortPlayerController*>(Outer);

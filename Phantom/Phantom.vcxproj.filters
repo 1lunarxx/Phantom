@@ -150,9 +150,6 @@
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\CheatManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\BGAConsumableSpawner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortAthenaVehicle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -327,9 +324,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\CheatManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\BGAConsumableSpawner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp">

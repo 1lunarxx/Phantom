@@ -2,6 +2,14 @@
 #include "FortniteGame/Public/Player/FortCheatManager.h"
 #include "Core/Public/GenericPlatform/GenericPlatformMisc.h"
 
+void UFortCheatManager::TeleportPawnTo(APawn* Pawn, AController* Controller, FVector TeleportTargetLocation, FRotator TeleportTargetRot, bool bIsATest, bool bNoCheck)
+{
+	AFortPawn* FortPawn = Cast<AFortPawn>(Pawn);
+
+	if (FortPawn != NULL)
+		FortPawn->TeleportTo(TeleportTargetLocation, TeleportTargetRot, bIsATest, bNoCheck);
+}
+
 void UFortCheatManager::AddScoreStat(unsigned int ScoreStat, unsigned int Amount)
 {
 	if (AFortPlayerController* const MyFPC = GetOuterAFortPlayerController())

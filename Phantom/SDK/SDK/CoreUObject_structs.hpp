@@ -342,6 +342,21 @@ static_assert(alignof(FPrimaryAssetType) == 0x000008, "Wrong alignment on FPrima
 static_assert(sizeof(FPrimaryAssetType) == 0x000008, "Wrong size on FPrimaryAssetType");
 static_assert(offsetof(FPrimaryAssetType, Name) == 0x000000, "Member 'FPrimaryAssetType::Name' has a wrong offset!");
 
+// ScriptStruct CoreUObject.Rotator
+// 0x000C (0x000C - 0x0000)
+struct FRotator final
+{
+public:
+	float                                         Pitch;                                             // 0x0000(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	float                                         Yaw;                                               // 0x0004(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	float                                         Roll;                                              // 0x0008(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+};
+static_assert(alignof(FRotator) == 0x000004, "Wrong alignment on FRotator");
+static_assert(sizeof(FRotator) == 0x00000C, "Wrong size on FRotator");
+static_assert(offsetof(FRotator, Pitch) == 0x000000, "Member 'FRotator::Pitch' has a wrong offset!");
+static_assert(offsetof(FRotator, Yaw) == 0x000004, "Member 'FRotator::Yaw' has a wrong offset!");
+static_assert(offsetof(FRotator, Roll) == 0x000008, "Member 'FRotator::Roll' has a wrong offset!");
+
 // ScriptStruct CoreUObject.Quat
 // 0x0010 (0x0010 - 0x0000)
 struct alignas(0x10) FQuat final
@@ -352,7 +367,11 @@ public:
 	float                                         Z;                                                 // 0x0008(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	float                                         W;                                                 // 0x000C(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 public:
-	struct FRotator Rotator();
+	FRotator Rotator()
+	{
+		static FRotator(*Rotator)(FQuat*) = decltype(Rotator)(InSDKUtils::GetImageBase() + 0x1793430);
+		return Rotator(this);
+	}
 };
 static_assert(alignof(FQuat) == 0x000010, "Wrong alignment on FQuat");
 static_assert(sizeof(FQuat) == 0x000010, "Wrong size on FQuat");
@@ -759,21 +778,6 @@ static_assert(alignof(FVector2D) == 0x000004, "Wrong alignment on FVector2D");
 static_assert(sizeof(FVector2D) == 0x000008, "Wrong size on FVector2D");
 static_assert(offsetof(FVector2D, X) == 0x000000, "Member 'FVector2D::X' has a wrong offset!");
 static_assert(offsetof(FVector2D, Y) == 0x000004, "Member 'FVector2D::Y' has a wrong offset!");
-
-// ScriptStruct CoreUObject.Rotator
-// 0x000C (0x000C - 0x0000)
-struct FRotator final
-{
-public:
-	float                                         Pitch;                                             // 0x0000(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	float                                         Yaw;                                               // 0x0004(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	float                                         Roll;                                              // 0x0008(0x0004)(Edit, BlueprintVisible, ZeroConstructor, SaveGame, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-};
-static_assert(alignof(FRotator) == 0x000004, "Wrong alignment on FRotator");
-static_assert(sizeof(FRotator) == 0x00000C, "Wrong size on FRotator");
-static_assert(offsetof(FRotator, Pitch) == 0x000000, "Member 'FRotator::Pitch' has a wrong offset!");
-static_assert(offsetof(FRotator, Yaw) == 0x000004, "Member 'FRotator::Yaw' has a wrong offset!");
-static_assert(offsetof(FRotator, Roll) == 0x000008, "Member 'FRotator::Roll' has a wrong offset!");
 
 // ScriptStruct CoreUObject.FrameNumber
 // 0x0004 (0x0004 - 0x0000)

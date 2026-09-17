@@ -69,10 +69,17 @@ void FortPlayerController::ServerCheat_Implementation(AFortPlayerController* For
 
 void FortPlayerController::ServerTeleportToReticle_Implementation(AFortPlayerController* FortPlayerController, FVector* TeleportLocation)
 {
-	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
+	AFortPlayerPawn* PlayerPawn = FortPlayerController->GetPlayerPawn();
 
-	if (FortPlayerPawn != NULL)
-		FortPlayerPawn->K2_TeleportTo(*TeleportLocation, FRotator());
+	if (PlayerPawn != NULL)
+	{
+		UFortCheatManager* CheatManager = Cast<UFortCheatManager>(FortPlayerController->CheatManager);
+
+		if (CheatManager != NULL)
+		{
+			CheatManager->TeleportPawnTo(PlayerPawn, FortPlayerController, *TeleportLocation, FRotator(), 0, 1);
+		}
+	}
 }
 
 void FortPlayerController::ServerPlayEmoteItem_Implementation(AFortPlayerController* FortPlayerController, UFortMontageItemDefinitionBase* EmoteAsset)
@@ -155,7 +162,7 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 				FActorSpawnParameters SpawnParams = FActorSpawnParameters();
 				SpawnParams.SpawnCollisionHandlingOverride = 1;
 
-				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(GWorld->SpawnActor(BuildingClassData.BuildingClass, BuildLoc, BuildRot, SpawnParams));
+				ABuildingSMActor* NewBuilding = Cast<ABuildingSMActor>(FortPlayerController->GetWorld()->SpawnActor(BuildingClassData.BuildingClass, BuildLoc, BuildRot, SpawnParams));
 
 				if (NewBuilding != NULL)
 				{
@@ -169,8 +176,10 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 
 					UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Create", BuildingSMActor, BuildableClassPlacementCost);
 
-					if (AFortGameModeAthena* FortGameModeAthena = GWorld->GetGameModeAthena())
-						FortGameModeAthena->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
+					if (AFortGameMode* GameMode = FortPlayerController->GetWorld()->GetGameMode())
+					{
+						GameMode->ScoreBuildingConstruction(FortPlayerController, NewBuilding);
+					}
 
 					if (AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn)
 					{
@@ -202,7 +211,9 @@ void FortPlayerController::ServerBeginEditingBuildingActor_Implementation(AFortP
 		{
 			BuildingActorToEdit->SetEditingPlayer(PlayerState);
 
-			UFortEditToolItemDefinition* EditToolItem = UFortGameData::Get()->EditToolItem.LoadSynchronous();
+			UFortGameData* GameData = UFortGameData::Get();
+
+			UFortEditToolItemDefinition* EditToolItem = GameData->EditToolItem.LoadSynchronous();
 			UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
 			if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))
@@ -225,8 +236,10 @@ void FortPlayerController::ServerEditBuildingActor_Implementation(AFortPlayerCon
 
 		UFortAnalytics::FireEvent_BuildingAction(FortPlayerController, L"Edit", BuildingActorToEdit, 0);
 
-		if (AFortGameMode* GameMode = GWorld->GetGameMode())
+		if (AFortGameMode* GameMode = FortPlayerController->GetWorld()->GetGameMode())
+		{
 			GameMode->ScoreBuildingEdit(FortPlayerController, BuildingActorToEdit);
+		}
 	}
 }
 
@@ -236,7 +249,9 @@ void FortPlayerController::ServerEndEditingBuildingActor_Implementation(AFortPla
 	{
 		BuildingActorToEdit->SetEditingPlayer(NULL);
 
-		UFortEditToolItemDefinition* EditToolItem = UFortGameData::Get()->EditToolItem.LoadSynchronous();
+		UFortGameData* GameData = UFortGameData::Get();
+
+		UFortEditToolItemDefinition* EditToolItem = GameData->EditToolItem.LoadSynchronous();
 		UFortWorldItem* WorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(EditToolItem);
 
 		if (EditToolItem != NULL && WorldItem != NULL && EditToolItem->ServerExecute(WorldItem, FortPlayerController))

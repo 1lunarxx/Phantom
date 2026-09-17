@@ -24,9 +24,10 @@ void ABuildingItemCollectorActor::FillOutRandomLoot()
 
 void BuildingItemCollectorActor::FinishItemSelectionSetup(ABuildingItemCollectorActor* BuildingItemCollectorActor)
 {
-    BuildingItemCollectorActor->FillOutRandomLoot();
-
     Originals::FinishItemSelectionSetup(BuildingItemCollectorActor);
+
+    if (BuildingItemCollectorActor->OverrideOutputItems.Num() <= 0)
+        BuildingItemCollectorActor->FillOutRandomLoot();
 }
 
 void BuildingItemCollectorActor::OnReachedDepositGoal(ABuildingItemCollectorActor* BuildingItemCollectorActor, AFortPlayerController* CurrentControllingPlayer, UFortWorldItemDefinition* CurrentActiveInputItem)

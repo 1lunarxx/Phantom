@@ -9,20 +9,6 @@ FName::FName(FString String)
 	*this = UKismetStringLibrary::Conv_StringToName(String);
 }
 
-bool AFortPlayerController::UpdateQuest(FName BackendName, int32 AchievedCount)
-{
-	for (FFortUpdatedObjectiveStat& UpdatedObjectiveStat : UpdatedObjectiveStats)
-	{
-		if (UpdatedObjectiveStat.BackendName == BackendName)
-		{
-			UpdatedObjectiveStat.StatValue = AchievedCount;
-			return true;
-		}
-	}
-
-	return false;
-}
-
 bool AFortPlayerController::ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap)
 {
 	if (!FortQuestItemDefinition->bAthenaUpdateObjectiveOncePerMatch)
@@ -44,12 +30,6 @@ bool AFortPlayerController::ObjectiveOncePerMatch(UFortQuestItemDefinition* Fort
 	return false;
 }
 
-FRotator FQuat::Rotator()
-{
-	static FRotator(*Rotator)(FQuat*) = decltype(Rotator)(InSDKUtils::GetImageBase() + 0x1793430);
-	return Rotator(this);
-}
-
 FVector FAircraftFlightInfo::GetFlightEnd()
 {
 	FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FlightStartRotation);
@@ -65,19 +45,6 @@ FVector FAircraftFlightInfo::GetFlightEnd()
 	}
 
 	return FlightStartLocation + Direction * (FlightSpeed * TimeTillFlightEnd);
-}
-
-FGameplayAbilitySpec* UAbilitySystemComponent::FindAbilitySpecFromClass(TSubclassOf<UGameplayAbility> InAbilityClass)
-{
-	for (FGameplayAbilitySpec& Spec : ActivatableAbilities.Items)
-	{
-		if (Spec.Ability->Class == InAbilityClass)
-		{
-			return &Spec;
-		}
-	}
-
-	return nullptr;
 }
 
 void FFortItemEntry::SetLoadedAmmo(int InCount)
@@ -112,6 +79,8 @@ void FGameplayMutatorObjectData::PostReplicatedAdd(struct FGameplayMutatorObject
 	InArraySerializer->ObjectDataList.Add(*this);
 }
 
+// replication stuff for stw
+
 FNetViewer::FNetViewer(UNetConnection* InConnection, float DeltaSeconds) :
 	Connection(InConnection),
 	InViewer(InConnection->PlayerController ? InConnection->PlayerController : InConnection->OwningActor),
@@ -136,10 +105,14 @@ FNetViewer::FNetViewer(UNetConnection* InConnection, float DeltaSeconds) :
 }
 
 FWeakObjectPtr::FWeakObjectPtr(UObject* Object)
+	: ObjectIndex(0), ObjectSerialNumber(0)
 {
+	if (Object == NULL)
+		return;
+
 	ObjectIndex = Object->Index;
 
-	FUObjectItem* ObjectItem = UObject::GObjects->GetItemByIndex(Object->Index);
+	FUObjectItem* ObjectItem = UObject::GObjects->GetItemByIndex(ObjectIndex);
 
 	if (ObjectItem != NULL)
 		ObjectSerialNumber = ObjectItem->SerialNumber;

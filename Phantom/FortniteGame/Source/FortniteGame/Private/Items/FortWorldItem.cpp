@@ -15,5 +15,5 @@ void FortWorldItem::SetDurability(UFortWorldItem* FortWorldItem, float InDurabil
 void FortWorldItem::Setup()
 {
 	Utils::Virtual(UFortWorldItem::GetDefaultObj(), 0x4A0 / 8, SetLoadedAmmo);
-	//Utils::Virtual(UFortWorldItem::GetDefaultObj(), 0x478 / 8, SetDurability);
+	Utils::Virtual(UFortWorldItem::GetDefaultObj(), 0x478 / 8, SetDurability);
 }

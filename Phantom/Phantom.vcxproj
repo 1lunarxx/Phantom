@@ -181,7 +181,6 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPlayerControllerAthena.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\FortPoiVolume.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\Modifiers\FortAthenaMutator_Barrier.h" />
-    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\BGAConsumableSpawner.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingItemCollectorActor.h" />
@@ -256,7 +255,6 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaSupplyDrop.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerControllerGameplay.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortCheatManager.cpp" />
-    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\BGAConsumableSpawner.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortAthenaVehicle.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortGameModeOutpost.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootLevel.cpp" />

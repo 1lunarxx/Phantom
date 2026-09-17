@@ -501,7 +501,11 @@ public:
 	int32                                         ObjectIndex;                                       // 0x0000(0x0004)(NOT AUTO-GENERATED PROPERTY)
 	int32                                         ObjectSerialNumber;                                // 0x0004(0x0004)(NOT AUTO-GENERATED PROPERTY)
 public:
-	FWeakObjectPtr() = default;
+	FWeakObjectPtr()
+		: ObjectIndex(0), ObjectSerialNumber(0)
+	{
+	}
+
 	FWeakObjectPtr(UObject* Object);
 public:
 	class UObject* Get() const;
