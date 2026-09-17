@@ -61,7 +61,7 @@ void FortGameModeAthena::HandleStartingNewPlayer(AFortGameModeAthena* FortGameMo
 
 APawn* FortGameModeAthena::SpawnDefaultPawnFor_Implementation(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot)
 {
-	APawn* DefaultPawn = FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);;
+	APawn* DefaultPawn = FortGameModeAthena->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
 
 	if (AFortPlayerControllerAthena* FortPlayerController = Cast<AFortPlayerControllerAthena>(NewPlayer))
 	{
