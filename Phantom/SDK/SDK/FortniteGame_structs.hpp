@@ -23742,6 +23742,12 @@ public:
 	TWeakObjectPtr<class UPrimitiveComponent>     InteractComponent;                                 // 0x001C(0x0008)(ExportObject, ZeroConstructor, InstancedReference, IsPlainOldData, NoDestructor, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	TWeakObjectPtr<class UObject>                 OptionalObjectData;                                // 0x0024(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	struct FVector                                InteractPoint;                                     // 0x002C(0x000C)(IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+public:
+	AFortPlayerController* GetPlayerController()
+	{
+		static AFortPlayerController* (*GetPlayerController)(FInteractionType*) = decltype(GetPlayerController)(InSDKUtils::GetImageBase() + 0xFA6A40);
+		return GetPlayerController(this);
+	}
 };
 static_assert(alignof(FInteractionType) == 0x000004, "Wrong alignment on FInteractionType");
 static_assert(sizeof(FInteractionType) == 0x000038, "Wrong size on FInteractionType");

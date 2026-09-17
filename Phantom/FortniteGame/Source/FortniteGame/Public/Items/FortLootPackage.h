@@ -5,7 +5,7 @@
 class UFortLootPackage
 {
 public:
-    static FFortLootTierData* FindLootTierDataRow(UDataTable* DataTable, FName RowName, const TCHAR* ContextString, bool bWarnIfRowMissing)
+    static FFortLootTierData* FindLootTierDataRow(UDataTable* DataTable, FName RowName, const TCHAR* ContextString, bool bWarnIfRowMissing, int ForcedLootTier)
     {
         if (RowName.IsNone())
             return NULL;
@@ -13,11 +13,21 @@ public:
         float TotalWeight = 0.0f;
 
         TArray<FFortLootTierData*> FortLootTierDataArray;
-        for (const auto& [RowName_Map, RowValue_Map] : DataTable->RowMap)
-        {
-            FFortLootTierData* FortLootTierData = reinterpret_cast<FFortLootTierData*>(RowValue_Map);
 
-            if (FortLootTierData == NULL || FortLootTierData->TierGroup != RowName || FortLootTierData->Weight <= 0.0f)
+        for (const auto& [RowName_, RowValue] : DataTable->RowMap)
+        {
+            FFortLootTierData* FortLootTierData = (FFortLootTierData*)RowValue;
+
+            if (FortLootTierData == NULL)
+                continue;
+
+            if (FortLootTierData->TierGroup != RowName)
+                continue;
+
+            if (FortLootTierData->Weight <= 0.0f)
+                continue;
+
+            if (ForcedLootTier != -1 && FortLootTierData->LootTier != ForcedLootTier)
                 continue;
 
             FortLootTierDataArray.Add(FortLootTierData);

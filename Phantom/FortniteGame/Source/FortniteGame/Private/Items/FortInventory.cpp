@@ -46,7 +46,7 @@ void AFortInventory::AddItemStack(UFortItemDefinition* ItemDefinition, int32 Cou
 {
 	if (UFortWorldItem* ExistingItem = FindExistingItemForDefinition(ItemDefinition))
 	{
-		ExistingItem->ItemEntry.SetCount(Count);
+		ExistingItem->ItemEntry.SetCount(ExistingItem->ItemEntry.Count + Count);
 	}
 	else
 	{

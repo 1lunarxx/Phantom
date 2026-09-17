@@ -51,7 +51,7 @@ bool UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int 
 	if (LootTierData == NULL || LootPackageData == NULL)
 		return false;
 
-	FFortLootTierData* FortLootTierData = FindLootTierDataRow(LootTierData, TierGroupName, TEXT("UFortLootPackage::PickLootDrops"), true);
+	FFortLootTierData* FortLootTierData = FindLootTierDataRow(LootTierData, TierGroupName, TEXT("UFortLootPackage::PickLootDrops"), true, ForcedLootTier);
 
 	if (FortLootTierData == NULL)
 		return false;

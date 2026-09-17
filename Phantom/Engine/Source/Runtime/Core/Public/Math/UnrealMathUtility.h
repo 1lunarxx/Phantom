@@ -10,6 +10,11 @@ struct FMath : public FGenericPlatformMath
 		return InMin + (InMax - InMin) * FRand();
 	}
 
+	static FORCEINLINE int32 RandRange(int32 InMin, int32 InMax)
+	{
+		return InMin + Rand() % (InMax - InMin + 1);
+	}
+
 	/** Clamps X to be between Min and Max, inclusive */
 	template< class T >
 	static FORCEINLINE T Clamp(const T X, const T Min, const T Max)

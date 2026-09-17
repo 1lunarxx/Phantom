@@ -28,7 +28,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	}
 
 	TArray<FFortItemEntry> OutLootDrops;
-	UFortLootPackage::PickLootDrops(&OutLootDrops, BuildingContainer->GetLootTier(), BuildingContainer->SearchLootTierGroup);
+	UFortLootPackage::PickLootDrops(&OutLootDrops, -1, BuildingContainer->SearchLootTierGroup);
 
 	for (FFortItemEntry& LootDrop : OutLootDrops)
 	{

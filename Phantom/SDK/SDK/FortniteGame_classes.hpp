@@ -1811,7 +1811,7 @@ public:
 	int32 GetFabricationValue(bool bUseDisintegrationOverride) const;
 	float GetMaxDurability(int32 ItemLevel) const;
 public:
-	bool ServerExecute(UFortItem* Item, AFortPlayerController* Instigator)
+	bool ServerExecute(UFortItem* Item, class AFortPlayerController* Instigator)
 	{
 		bool(*ServerExecute)(UFortWorldItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(VTable[0x418 / 8]);
 		return ServerExecute(this, Item, Instigator);
@@ -19163,7 +19163,8 @@ public:
 
 	class UFortWorldItemDefinition* GetCurrentActiveItem() const;
 	bool GetOverrideRarity(EFortRarity* Rarity) const;
-
+public:
+	void FillOutRandomLoot();
 public:
 	static class UClass* StaticClass()
 	{
@@ -22933,7 +22934,7 @@ public:
 	void OnBlueprintPaperPulseUpdate(float InCurveVal);
 	void OnRep_DefaultMetadata(class UBuildingEditModeMetadata* OldMetadata);
 public:
-	void PlayWeaponFireFX_Internal(bool bSecondaryFire)
+	void PlayWeaponFireFX(bool bSecondaryFire)
 	{
 		static void (*PlayWeaponFireFX)(AFortWeap_BuildingTool*, bool) = decltype(PlayWeaponFireFX)(InSDKUtils::GetImageBase() + 0x14591B0);
 		PlayWeaponFireFX(this, bSecondaryFire);

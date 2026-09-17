@@ -183,7 +183,7 @@ void FortPlayerController::ServerCreateBuildingActor_Implementation(AFortPlayerC
 							AFortWeap_BuildingTool* BuildingTool = Cast<AFortWeap_BuildingTool>(MyFortPawn->CurrentWeapon);
 
 							if (BuildingTool != NULL)
-								BuildingTool->PlayWeaponFireFX_Internal(false);
+								BuildingTool->PlayWeaponFireFX(false);
 						}
 					}
 				}

@@ -34,6 +34,7 @@
 #include "FortniteGame/Public/Building/BuildingActor.h"
 #include "FortniteGame/Public/Building/BuildingSMActor.h"
 #include "FortniteGame/Public/Building/BuildingContainer.h"
+#include "FortniteGame/Public/Building/BuildingItemCollectorActor.h"
 
 #include "FortniteGame/Public/Items/FortInventoryOwnerInterface.h"
 #include "FortniteGame/Public/Items/FortPickup.h"
@@ -107,6 +108,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FServiceConfigMcp::Setup();
     FortGameStateAthena::Setup();
     FortTaggedActorsManager::Setup();
+    BuildingItemCollectorActor::Setup();
 
     *GIsClient = false;
     *GIsServer = true;

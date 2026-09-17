@@ -184,6 +184,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Athena\BGAConsumableSpawner.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingItemCollectorActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingSMActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameModeZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBarrierObjective.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBigBaseWall.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerPawnAthena.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingItemCollectorActor.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameState.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameModeAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventory.cpp" />
