@@ -10,6 +10,20 @@ struct FMath : public FGenericPlatformMath
 		return InMin + (InMax - InMin) * FRand();
 	}
 
+	/** Clamps X to be between Min and Max, inclusive */
+	template< class T >
+	static FORCEINLINE T Clamp(const T X, const T Min, const T Max)
+	{
+		return X < Min ? Min : X < Max ? X : Max;
+	}
+
+	/** Performs a linear interpolation between two values, Alpha ranges from 0-1 */
+	template< class T, class U >
+	static FORCEINLINE T Lerp(const T& A, const T& B, const U& Alpha)
+	{
+		return (T)(A + Alpha * (B - A));
+	}
+
 	static FORCEINLINE void VRandCone(FVector* Result, FVector* Dir, double ConeHalfAngleRad)
 	{
 		static void(*VRandCone)(FVector*, FVector*, double) = decltype(VRandCone)(InSDKUtils::GetImageBase() + 0x1797B80);

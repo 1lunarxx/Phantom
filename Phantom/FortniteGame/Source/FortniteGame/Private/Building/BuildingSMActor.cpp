@@ -90,19 +90,19 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 					if (ResourceItemDefinition != NULL)
 					{
-						UFortWorldItem* ExistingWorldItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(ResourceItemDefinition);
-
-						if (ExistingWorldItem != NULL)
+						if (UFortWorldItem* ExistingItem = FortPlayerController->WorldInventory->FindExistingItemForDefinition(ResourceItemDefinition))
 						{
-							ExistingWorldItem->ItemEntry.Count += ResourceCount;
+							FFortItemEntry* ItemEntry = ExistingItem->GetItemEntry();
 
-							if (ExistingWorldItem->ItemEntry.Count >= ResourceItemDefinition->MaxStackSize)
+							ExistingItem->ItemEntry.SetCount(ItemEntry->Count + ResourceCount);
+
+							if (ItemEntry->Count >= ResourceItemDefinition->MaxStackSize)
 							{
-								AFortPickup::SpawnPickup(ExistingWorldItem->ItemEntry, InstigatorPawn->K2_GetActorLocation(), ExistingWorldItem->ItemEntry.Count - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
-								ExistingWorldItem->ItemEntry.Count = ResourceItemDefinition->MaxStackSize;
-							}
+								AFortPickup* FortPickup = AFortPickup::SpawnPickup(*ItemEntry, InstigatorPawn->K2_GetActorLocation(), ItemEntry->Count - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
 
-							FortPlayerController->WorldInventory->UpdateItemEntry(&ExistingWorldItem->ItemEntry);
+								if (FortPickup != NULL)
+									ItemEntry->SetCount(ResourceItemDefinition->MaxStackSize);
+							}
 						}
 						else
 						{

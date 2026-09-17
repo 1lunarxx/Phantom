@@ -14,7 +14,7 @@
 #include <string>
 #include <functional>
 #include <type_traits>
-
+#include "Core/Public/UObject/UnrealNames.h"
 #include "../PropertyFixup.hpp"
 #include "../UnrealContainers.hpp"
 
@@ -178,8 +178,10 @@ ClassType* GetDefaultObjImpl()
 struct FUObjectItem final
 {
 public:
-	class UObject*                                Object;                                            // 0x0000(0x0008)(NOT AUTO-GENERATED PROPERTY)
-	uint8                                         Pad_8[0x10];                                       // 0x0008(0x0010)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	class UObject* Object;
+	int32 Flags;
+	int32 ClusterRootIndex;
+	int32 SerialNumber;
 };
 static_assert(alignof(FUObjectItem) == 0x000008, "Wrong alignment on FUObjectItem");
 static_assert(sizeof(FUObjectItem) == 0x000018, "Wrong size on FUObjectItem");
@@ -227,6 +229,20 @@ public:
 		if (!ChunkPtr) return nullptr;
 		
 		return ChunkPtr[InChunkIdx].Object;
+	}
+
+	inline class FUObjectItem* GetItemByIndex(const int32 Index) const
+	{
+		const int32 ChunkIndex = Index / ElementsPerChunk;
+		const int32 InChunkIdx = Index % ElementsPerChunk;
+
+		if (ChunkIndex >= NumChunks || Index >= NumElements)
+			return nullptr;
+
+		FUObjectItem* ChunkPtr = GetDecrytedObjPtr()[ChunkIndex];
+		if (!ChunkPtr) return nullptr;
+
+		return &ChunkPtr[InChunkIdx];
 	}
 };
 static_assert(alignof(TUObjectArray) == 0x000008, "Wrong alignment on TUObjectArray");
@@ -308,8 +324,19 @@ public:
 	int32                                         Number;                                            // 0x0004(0x0004)(NOT AUTO-GENERATED PROPERTY)
 
 public:
-	FName() = default;
 	FName(FString String);
+
+	FORCEINLINE FName()
+		: ComparisonIndex(0),
+		Number(0)
+	{
+	}
+
+	FORCEINLINE FName(::EName N)
+		: ComparisonIndex(static_cast<int32>(N)),
+		Number(0)
+	{
+	}
 
 	static void InitInternal()
 	{
@@ -473,7 +500,9 @@ class FWeakObjectPtr
 public:
 	int32                                         ObjectIndex;                                       // 0x0000(0x0004)(NOT AUTO-GENERATED PROPERTY)
 	int32                                         ObjectSerialNumber;                                // 0x0004(0x0004)(NOT AUTO-GENERATED PROPERTY)
-
+public:
+	FWeakObjectPtr() = default;
+	FWeakObjectPtr(UObject* Object);
 public:
 	class UObject* Get() const;
 	class UObject* operator->() const;
@@ -491,6 +520,12 @@ template<typename UEType>
 class TWeakObjectPtr : public FWeakObjectPtr
 {
 public:
+	TWeakObjectPtr() = default;
+
+	TWeakObjectPtr(UEType* Object) : FWeakObjectPtr(static_cast<UObject*>(Object))
+	{
+	}
+
 	UEType* Get() const
 	{
 		return static_cast<UEType*>(FWeakObjectPtr::Get());

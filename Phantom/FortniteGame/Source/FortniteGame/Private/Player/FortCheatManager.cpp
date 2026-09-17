@@ -4,6 +4,10 @@
 
 void UFortCheatManager::AddScoreStat(unsigned int ScoreStat, unsigned int Amount)
 {
+	if (AFortPlayerController* const MyFPC = GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::AddAllScores(UFortCheatManager* Context, FFrame* Stack)
@@ -12,11 +16,6 @@ void FortCheatManager::AddAllScores(UFortCheatManager* Context, FFrame* Stack)
 
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
-
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
 
 	Context->AddScoreStat(1u, Amount);
 	Context->AddScoreStat(9u, Amount);
@@ -30,11 +29,6 @@ void FortCheatManager::AddBuildingScore(UFortCheatManager* Context, FFrame* Stac
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
 	Context->AddScoreStat(9, Amount);
 }
 
@@ -45,22 +39,12 @@ void FortCheatManager::AddCombatScore(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
 	Context->AddScoreStat(1u, Amount);
 }
 
 void FortCheatManager::AddKillFeedMessage(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
-
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
 }
 
 void FortCheatManager::AddUtilityScore(UFortCheatManager* Context, FFrame* Stack)
@@ -70,22 +54,7 @@ void FortCheatManager::AddUtilityScore(UFortCheatManager* Context, FFrame* Stack
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
 	Context->AddScoreStat(0x18u, Amount);
-}
-
-void FortCheatManager::AllowRespawn(UFortCheatManager* Context, FFrame* Stack)
-{
-	Stack->IncrementCode();
-
-	UFortPlaylistAthena* FortPlaylistAthena = GWorld->GetGameStateAthena()->GetCurrentPlaylistData();
-
-	if (FortPlaylistAthena != NULL)
-		FortPlaylistAthena->RespawnType = EAthenaRespawnType::InfiniteRespawn;
 }
 
 void FortCheatManager::ApplyGameplayModifier(UFortCheatManager* Context, FFrame* Stack)
@@ -95,10 +64,10 @@ void FortCheatManager::ApplyGameplayModifier(UFortCheatManager* Context, FFrame*
 	Stack->StepCompiledIn(&ModifierName);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* Context, FFrame* Stack)
@@ -108,13 +77,11 @@ void FortCheatManager::ApplyWeaponAlteration(UFortCheatManager* Context, FFrame*
 	Stack->StepCompiledIn(&AlterationName);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
-
-// this should be something with UFortAssetManager::GetItemTypeData but i cba to do that
 
 void FortCheatManager::AthenaEmote(UFortCheatManager* Context, FFrame* Stack)
 {
@@ -123,27 +90,17 @@ void FortCheatManager::AthenaEmote(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&EmoteName);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UAthenaDanceItemDefinition* DanceItemDefinition = Utils::StaticFindObject<UAthenaDanceItemDefinition>(EmoteName.CStr(), ANY_PACKAGE);
-
-	if (DanceItemDefinition == NULL)
-		return;
-
-	FortPlayerController->ServerPlayEmoteItem(DanceItemDefinition);
+	Context->PlayAthenaEmoteOnScriptedPawn(EmoteName);
 }
 
 void FortCheatManager::AthenaEndlessGame(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::AthenaForceVictory(UFortCheatManager* Context, FFrame* Stack)
@@ -153,17 +110,16 @@ void FortCheatManager::AthenaForceVictory(UFortCheatManager* Context, FFrame* St
 	Stack->StepCompiledIn(&bVictory);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	AFortPlayerStateAthena* FortPlayerState = Cast<AFortPlayerStateAthena>(FortPlayerController->PlayerState);
-
-	if (FortPlayerState == NULL)
-		return;
-
-	GWorld->GetGameModeAthena()->StartEndGamePhaseTeam((int)FortPlayerState->TeamIndex, FortPlayerState, 1, FortPlayerController->Pawn, NULL, EDeathCause::WonMatch);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		if (AFortPlayerStateAthena* PlayerStateAthena = Cast<AFortPlayerStateAthena>(MyFPC->GetPlayerState()))
+		{
+			if (AFortGameModeAthena* GM = MyFPC->GetWorld()->GetGameModeAthena())
+			{
+				GM->StartEndGamePhaseTeam((int)PlayerStateAthena->TeamIndex, PlayerStateAthena, 1, MyFPC->Pawn, NULL, EDeathCause::WonMatch);
+			}
+		}
+	}
 }
 
 void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* Context, FFrame* Stack)
@@ -175,35 +131,10 @@ void FortCheatManager::AthenaGiveScoreTo(UFortCheatManager* Context, FFrame* Sta
 	Stack->StepCompiledIn(&Score);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
-
-/*	UFortPlaylistAthena* CurrentPlaylistData = GGameState->GetCurrentPlaylistData();
-
-	if (CurrentPlaylistData != NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		if (PlayerStateIdx < GGameState->PlayerArray.Num())
-		{
-			bool bValidIndex = false;
-
-			if (PlayerStateIdx < GGameState->PlayerArray.Num())
-				bValidIndex = PlayerStateIdx >= 0;
-
-			if (!bValidIndex)
-				return;
-
-			AFortPlayerStateAthena* FortPlayerStateAthena = Cast<AFortPlayerStateAthena>(FortPlayerController->PlayerState);
-
-			if (FortPlayerStateAthena != NULL)
-			{
-				if (CurrentPlaylistData->ScoringData.ScoreDataList.Num() > 0)
-				{
-				}
-			}
-		}
-	}*/
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::BackpackSetSize(UFortCheatManager* Context, FFrame* Stack)
@@ -213,55 +144,50 @@ void FortCheatManager::BackpackSetSize(UFortCheatManager* Context, FFrame* Stack
 	Stack->StepCompiledIn(&Size);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->OverriddenBackpackSize = Size;
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->OverriddenBackpackSize = Size;
+	}
 }
 
 void FortCheatManager::Badass(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	Context->SetShieldPercent(1000);
-	Context->SetHealthPercent(1000);
-
-	FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::BringDownWall(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::BuildFree(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->bBuildFree = true;
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->bBuildFree = (bool)!MyFPC->bBuildFree;
+	}
 }
 
 void FortCheatManager::CraftFree(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->bCraftFree = true;
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->bCraftFree = (bool)!MyFPC->bCraftFree;
+	}
 }
 
 void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* Stack)
@@ -271,22 +197,13 @@ void FortCheatManager::ForceServerShutdown(UFortCheatManager* Context, FFrame* S
 	Stack->StepCompiledIn(&ExitCode);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	if (FortPlayerController->Role == ENetRole::ROLE_Authority)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		UWorld* World = FortPlayerController->GetWorld();
-
-		if (World != NULL)
+		if (MyFPC->Role == ENetRole::ROLE_Authority)
 		{
-			AFortGameModeAthena* GameMode = World->GetGameModeAthena();
-
-			if (GameMode != NULL)
+			if (AFortGameModeAthena* GM = MyFPC->GetWorld()->GetGameModeAthena())
 			{
-				AGameSession* GameSession = GameMode->GameSession;
+				AGameSession* GameSession = GM->GameSession;
 
 				if (AFortGameSessionDedicated* GameSessionDedicated = Cast<AFortGameSessionDedicated>(GameSession))
 					GameSessionDedicated->ShutdownDedicatedServer(ExitCode);
@@ -302,19 +219,19 @@ void FortCheatManager::GiveAllIngredients(UFortCheatManager* Context, FFrame* St
 	Stack->StepCompiledIn(&NumIngredients);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	TArray<UObject*> Ingredients = UFortKismetLibrary::JonLHack_GetAllObjectsOfClassFromPath(L"/Game/Items/Ingredients", UFortIngredientItemDefinition::StaticClass());
-
-	for (UObject* Ingredient : Ingredients)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(Ingredient);
+		TArray<UObject*> Ingredients = UFortKismetLibrary::JonLHack_GetAllObjectsOfClassFromPath(L"/Game/Items/Ingredients", UFortIngredientItemDefinition::StaticClass());
 
-		if (FortIngredientItemDefinition != NULL)
-			FortPlayerController->WorldInventory->AddItemStack(FortIngredientItemDefinition, NumIngredients);
+		for (UObject* Ingredient : Ingredients)
+		{
+			UFortIngredientItemDefinition* FortIngredientItemDefinition = Cast<UFortIngredientItemDefinition>(Ingredient);
+
+			if (FortIngredientItemDefinition != NULL)
+			{
+				MyFPC->WorldInventory->AddItemStack(FortIngredientItemDefinition, NumIngredients);
+			}
+		}
 	}
 }
 
@@ -329,20 +246,18 @@ void FortCheatManager::GiveConsumable(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Count);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortItemDefinition* FortItemDefinition = Utils::StaticFindObject<UFortItemDefinition>(ConsumableName.CStr(), ANY_PACKAGE);
-
-	if (FortItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find ItemDefinition from the request ConsumableName!", FName(), 0.f);
-		return;
-	}
+		UFortItemDefinition* FortItemDefinition = Utils::StaticFindObject<UFortItemDefinition>(ConsumableName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(FortItemDefinition, Count);
+		if (FortItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find ItemDefinition from the request ConsumableName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortItemDefinition, Count);
+	}
 }
 
 void FortCheatManager::GiveGadget(UFortCheatManager* Context, FFrame* Stack)
@@ -354,20 +269,18 @@ void FortCheatManager::GiveGadget(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&ItemLevel);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortGadgetItemDefinition* FortGadgetItemDefinition = Utils::StaticFindObject<UFortGadgetItemDefinition>(GadgetName.CStr(), ANY_PACKAGE);
-
-	if (FortGadgetItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find FortGadgetItemDefinition from the request GadgetName!", FName(), 0.f);
-		return;
-	}
+		UFortGadgetItemDefinition* FortGadgetItemDefinition = Utils::StaticFindObject<UFortGadgetItemDefinition>(GadgetName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(FortGadgetItemDefinition, 1);
+		if (FortGadgetItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find FortGadgetItemDefinition from the request GadgetName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortGadgetItemDefinition, 1);
+	}
 }
 
 void FortCheatManager::GiveGadgets(UFortCheatManager* Context, FFrame* Stack)
@@ -381,20 +294,18 @@ void FortCheatManager::GiveGadgets(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&ItemLevel);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortGadgetItemDefinition* FortGadgetItemDefinition = Utils::StaticFindObject<UFortGadgetItemDefinition>(GadgetName.CStr(), ANY_PACKAGE);
-
-	if (FortGadgetItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find FortGadgetItemDefinition from the request GadgetName!", FName(), 0.f);
-		return;
-	}
+		UFortGadgetItemDefinition* FortGadgetItemDefinition = Utils::StaticFindObject<UFortGadgetItemDefinition>(GadgetName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(FortGadgetItemDefinition, Quantity);
+		if (FortGadgetItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find FortGadgetItemDefinition from the request GadgetName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortGadgetItemDefinition, Quantity);
+	}
 }
 
 void FortCheatManager::GivePickaxe(UFortCheatManager* Context, FFrame* Stack)
@@ -404,20 +315,18 @@ void FortCheatManager::GivePickaxe(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&PickName);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UAthenaPickaxeItemDefinition* PickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(PickName.CStr(), ANY_PACKAGE);
-
-	if (PickaxeItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find PickaxeItemDefinition from the request PickName!", FName(), 0.f);
-		return;
-	}
+		UAthenaPickaxeItemDefinition* PickaxeItemDefinition = Utils::StaticFindObject<UAthenaPickaxeItemDefinition>(PickName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(PickaxeItemDefinition, 1);
+		if (PickaxeItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find PickaxeItemDefinition from the request PickName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(PickaxeItemDefinition, 1);
+	}
 }
 
 void FortCheatManager::GiveBluGlo(UFortCheatManager* Context, FFrame* Stack)
@@ -427,15 +336,13 @@ void FortCheatManager::GiveBluGlo(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		UFortNeverPersistItemDefinition* BluGloItemDefinition = UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous();
 
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortNeverPersistItemDefinition* BluGloItemDefinition = UFortGameData::Get()->BluGloItemDefinition.LoadSynchronous();
-
-	if (BluGloItemDefinition != NULL)
-		FortPlayerController->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);
+		if (BluGloItemDefinition != NULL)
+			MyFPC->WorldInventory->AddItemStack(BluGloItemDefinition, Amount);
+	}
 }
 
 void FortCheatManager::SetTeam(UFortCheatManager* Context, FFrame* Stack)
@@ -476,20 +383,18 @@ void FortCheatManager::GiveSpecificItem(UFortCheatManager* Context, FFrame* Stac
 	Stack->StepCompiledIn(&ItemLevel);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortItemDefinition* FortItemDefinition = Utils::StaticFindObject<UFortItemDefinition>(ItemPath.CStr());
-
-	if (FortItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find FortItemDefinition from the request ItemPath!", FName(), 0.f);
-		return;
-	}
+		UFortItemDefinition* FortItemDefinition = Utils::StaticFindObject<UFortItemDefinition>(ItemPath.CStr());
 
-	FortPlayerController->WorldInventory->AddItem(FortItemDefinition, ItemAmount);
+		if (FortItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find FortItemDefinition from the request ItemPath!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortItemDefinition, ItemAmount);
+	}
 }
 
 void FortCheatManager::GiveTrap(UFortCheatManager* Context, FFrame* Stack)
@@ -503,20 +408,18 @@ void FortCheatManager::GiveTrap(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&NumTrapsToGive);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortTrapItemDefinition* FortTrapItemDefinition = Utils::StaticFindObject<UFortTrapItemDefinition>(TrapName.CStr(), ANY_PACKAGE);
-
-	if (FortTrapItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find FortTrapItemDefinition from the request TrapName!", FName(), 0.f);
-		return;
-	}
+		UFortTrapItemDefinition* FortTrapItemDefinition = Utils::StaticFindObject<UFortTrapItemDefinition>(TrapName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(FortTrapItemDefinition, NumTrapsToGive);
+		if (FortTrapItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find FortTrapItemDefinition from the request TrapName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortTrapItemDefinition, NumTrapsToGive);
+	}
 }
 
 void FortCheatManager::GiveWeapon(UFortCheatManager* Context, FFrame* Stack)
@@ -530,20 +433,18 @@ void FortCheatManager::GiveWeapon(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Count);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortWeaponItemDefinition* FortWeaponItemDefinition = Utils::StaticFindObject<UFortWeaponItemDefinition>(WeaponName.CStr(), ANY_PACKAGE);
-
-	if (FortWeaponItemDefinition == NULL)
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		FortPlayerController->ClientMessage(L"Couldn't find weapon from the request WeaponName!", FName(), 0.f);
-		return;
-	}
+		UFortWeaponItemDefinition* FortWeaponItemDefinition = Utils::StaticFindObject<UFortWeaponItemDefinition>(WeaponName.CStr(), ANY_PACKAGE);
 
-	FortPlayerController->WorldInventory->AddItem(FortWeaponItemDefinition, Count);
+		if (FortWeaponItemDefinition == NULL)
+		{
+			MyFPC->ClientMessage(L"Couldn't find weapon from the request WeaponName!", FName(), 0.f);
+			return;
+		}
+
+		MyFPC->WorldInventory->AddItem(FortWeaponItemDefinition, Count);
+	}
 }
 
 void FortCheatManager::GoFast(UFortCheatManager* Context, FFrame* Stack)
@@ -553,10 +454,10 @@ void FortCheatManager::GoFast(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&NewSpeed);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ClientMessage(L"Cheat Command not implemented!", FName(), 0.f);
+	}
 }
 
 void FortCheatManager::GiveWood(UFortCheatManager* Context, FFrame* Stack)
@@ -566,15 +467,15 @@ void FortCheatManager::GiveWood(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		UFortResourceItemDefinition* WoodItemDefinition = UFortGameData::Get()->WoodItemDefinition.LoadSynchronous();
 
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortResourceItemDefinition* WoodItemDefinition = UFortGameData::Get()->WoodItemDefinition.LoadSynchronous();
-
-	if (WoodItemDefinition != NULL)
-		FortPlayerController->WorldInventory->AddItemStack(WoodItemDefinition, Amount);
+		if (WoodItemDefinition != NULL)
+		{
+			MyFPC->WorldInventory->AddItemStack(WoodItemDefinition, Amount);
+		}
+	}
 }
 
 void FortCheatManager::GiveMetal(UFortCheatManager* Context, FFrame* Stack)
@@ -584,15 +485,15 @@ void FortCheatManager::GiveMetal(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		UFortResourceItemDefinition* MetalItemDefinition = UFortGameData::Get()->MetalItemDefinition.LoadSynchronous();
 
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortResourceItemDefinition* MetalItemDefinition = UFortGameData::Get()->MetalItemDefinition.LoadSynchronous();
-
-	if (MetalItemDefinition != NULL)
-		FortPlayerController->WorldInventory->AddItemStack(MetalItemDefinition, Amount);
+		if (MetalItemDefinition != NULL)
+		{
+			MyFPC->WorldInventory->AddItemStack(MetalItemDefinition, Amount);
+		}
+	}
 }
 
 void FortCheatManager::GiveStone(UFortCheatManager* Context, FFrame* Stack)
@@ -602,15 +503,15 @@ void FortCheatManager::GiveStone(UFortCheatManager* Context, FFrame* Stack)
 	Stack->StepCompiledIn(&Amount);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		UFortResourceItemDefinition* StoneItemDefinition = UFortGameData::Get()->StoneItemDefinition.LoadSynchronous();
 
-	if (FortPlayerController == NULL)
-		return;
-
-	UFortResourceItemDefinition* StoneItemDefinition = UFortGameData::Get()->StoneItemDefinition.LoadSynchronous();
-
-	if (StoneItemDefinition != NULL)
-		FortPlayerController->WorldInventory->AddItemStack(StoneItemDefinition, Amount);
+		if (StoneItemDefinition != NULL)
+		{
+			MyFPC->WorldInventory->AddItemStack(StoneItemDefinition, Amount);
+		}
+	}
 }
 
 void FortCheatManager::MassSuicide(UFortCheatManager* Context, FFrame* Stack)
@@ -630,17 +531,15 @@ void FortCheatManager::SetHealthPercent(UFortCheatManager* Context, FFrame* Stac
 	Stack->StepCompiledIn(&Percent);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	if (AFortPlayerPawn* PlayerPawn = FortPlayerController->GetPlayerPawn())
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		if (Percent > PlayerPawn->GetMaxHealth())
-			return;
+		if (AFortPlayerPawn* PlayerPawn = MyFPC->GetPlayerPawn())
+		{
+			if (Percent > PlayerPawn->GetMaxHealth())
+				return;
 
-		PlayerPawn->SetHealth(Percent);
+			PlayerPawn->SetHealth(Percent);
+		}
 	}
 }
 
@@ -651,17 +550,15 @@ void FortCheatManager::SetShieldPercent(UFortCheatManager* Context, FFrame* Stac
 	Stack->StepCompiledIn(&Percent);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController == NULL)
-		return;
-
-	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
 	{
-		if (Percent > FortPlayerPawn->GetMaxShield())
-			return;
+		if (AFortPlayerPawn* PlayerPawn = MyFPC->GetPlayerPawn())
+		{
+			if (Percent > PlayerPawn->GetMaxShield())
+				return;
 
-		FortPlayerPawn->SetShield(Percent);
+			PlayerPawn->SetShield(Percent);
+		}
 	}
 }
 
@@ -676,49 +573,43 @@ void FortCheatManager::TeleportToLocation(UFortCheatManager* Context, FFrame* St
 	Stack->StepCompiledIn(&Z);
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
-
-	if (FortPlayerController != NULL)
-		FortPlayerController->ServerTeleportToReticle(FVector(X, Y, Z));
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->ServerTeleportToReticle(FVector(X, Y, Z));
+	}
 }
 
 void FortCheatManager::ToggleInfiniteAmmo(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		MyFPC->bInfiniteAmmo = (bool)!MyFPC->bInfiniteAmmo;
 
-	if (FortPlayerController == NULL)
-		return;
+		FString Message;
+		FString::PrintfImpl(&Message, MyFPC->bInfiniteAmmo ? L"Infinite ammo is true" : L"Infinite ammo is false");
 
-	FortPlayerController->bInfiniteAmmo = (bool)!FortPlayerController->bInfiniteAmmo;
-
-	FString Message;
-	FString::PrintfImpl(&Message, FortPlayerController->bInfiniteAmmo ? L"Infinite ammo is true" : L"Infinite ammo is false");
-
-	FortPlayerController->ClientMessage(Message, FName(), 0.f);
+		MyFPC->ClientMessage(Message, FName(), 0.f);
+	}
 }
 
 void FortCheatManager::ToggleUnlimitedHealth(UFortCheatManager* Context, FFrame* Stack)
 {
 	Stack->IncrementCode();
 
-	AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(Context->Outer);
+	if (AFortPlayerController* const MyFPC = Context->GetOuterAFortPlayerController())
+	{
+		if (AFortPlayerPawn* PlayerPawn = MyFPC->GetPlayerPawn())
+		{
+			PlayerPawn->bIsInvulnerable = !PlayerPawn->bIsInvulnerable;
 
-	if (FortPlayerController == NULL)
-		return;
+			FString Message;
+			FString::PrintfImpl(&Message, PlayerPawn->bIsInvulnerable ? L"Unlimited health is true" : L"Unlimited health is false");
 
-	AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
-
-	if (FortPlayerPawn == NULL)
-		return;
-
-	FortPlayerPawn->bIsInvulnerable = !FortPlayerPawn->bIsInvulnerable;
-
-	FString Message;
-	FString::PrintfImpl(&Message, FortPlayerPawn->bIsInvulnerable ? L"Unlimited health is true" : L"Unlimited health is false");
-
-	FortPlayerController->ClientMessage(Message, FName(), 0.f);
+			MyFPC->ClientMessage(Message, FName(), 0.f);
+		}
+	}
 }
 
 void FortCheatManager::Setup()
@@ -728,8 +619,6 @@ void FortCheatManager::Setup()
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddCombatScore"), AddCombatScore);
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddKillFeedMessage"), AddKillFeedMessage);
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AddUtilityScore"), AddUtilityScore);
-
-	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.AllowRespawn"), AllowRespawn);
 
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ApplyGameplayModifier"), ApplyGameplayModifier);
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortCheatManager.ApplyWeaponAlteration"), ApplyWeaponAlteration);

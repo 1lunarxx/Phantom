@@ -1,13 +1,19 @@
 #include "pch.h"
 #include "FortniteGame/Public/Items/FortPickup.h"
+#include "FortniteGame/Public/Items/FortLootLevel.h"
 
 AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation, bool bToss, AFortPlayerPawn* PlayerPawn, ABuildingContainer* Container)
 {
 	if (Count)
 		ItemEntry.Count = Count;
 
-	if (UFortWorldItemDefinition* FortWorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry.ItemDefinition))
-		ItemEntry.Durability = FortWorldItemDefinition->GetMaxDurability(ItemEntry.Level);
+	if (UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry.ItemDefinition))
+	{
+		if (ItemEntry.Level <= 0)
+			ItemEntry.Level = UFortLootLevel::GetItemLevel(&WorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
+
+		ItemEntry.Durability = WorldItemDefinition->GetMaxDurability(ItemEntry.Level);
+	}
 
 	FortPickupCreationData* CreationData = new FortPickupCreationData();
 
@@ -25,7 +31,7 @@ AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocati
 
 	if (Pickup != NULL)
 	{
-		Pickup->PawnWhoDroppedPickup = PlayerPawn;
+		Pickup->SetPawnWhoDroppedPickup(PlayerPawn);
 		Pickup->TossPickup(InLocation, Pickup->PawnWhoDroppedPickup, -1, bToss, PickupSourceTypeFlag);
 	}
 
@@ -58,8 +64,7 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 
 				if (ExistingWorldItem != NULL && FortItemDefinition->IsStackable())
 				{
-					ExistingWorldItem->ItemEntry.Count += PickupItemEntry->Count;
-					WorldInventory->UpdateItemEntry(&ExistingWorldItem->ItemEntry);
+					ExistingWorldItem->ItemEntry.SetCount(ExistingWorldItem->ItemEntry.Count + PickupItemEntry->Count);
 				}
 				else
 				{
@@ -79,8 +84,7 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 
 					if (ExistingWorldItem != NULL && FortItemDefinition->IsStackable())
 					{
-						ExistingWorldItem->ItemEntry.Count += Count;
-						WorldInventory->UpdateItemEntry(&ExistingWorldItem->ItemEntry);
+						ExistingWorldItem->ItemEntry.SetCount(ExistingWorldItem->ItemEntry.Count + Count);
 					}
 					else
 					{

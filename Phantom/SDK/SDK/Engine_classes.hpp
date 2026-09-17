@@ -1238,6 +1238,12 @@ public:
 public:
 	static class UEngine* GetEngine();
 public:
+	float GetMaxTickRate(float DeltaTime, bool bAllowFrameRateSmoothing = false)
+	{
+		static float(*GetMaxTickRate)(UEngine*, float, bool) = decltype(GetMaxTickRate)(InSDKUtils::GetImageBase() + 0x2A55840);
+		return GetMaxTickRate(this, DeltaTime, bAllowFrameRateSmoothing);
+	}
+public:
 	bool CreateNamedNetDriver(class UWorld* InWorld, FName NetDriverName, FName NetDriverDefinition)
 	{
 		static bool (*CreateNamedNetDriver)(UEngine*, class UWorld*, FName, FName) = decltype(CreateNamedNetDriver)(InSDKUtils::GetImageBase() + 0x2A49020);
@@ -2594,6 +2600,40 @@ public:
 		return GetWorldSettings(this);
 	}
 public:
+	bool IsActorInitialized()
+	{
+		return *(bool*)(__int64(this) + 0x83);
+	}
+
+	bool IsRelevancyOwnerFor(const AActor* ReplicatedActor, const AActor* ActorOwner, const AActor* ConnectionActor) const
+	{
+		return (ActorOwner == this);
+	}
+
+	class ULevel* GetLevel()
+	{
+		static ULevel* (*GetLevel)(AActor*) = decltype(GetLevel)(InSDKUtils::GetImageBase() + 0x24606C0);
+		return GetLevel(this);
+	}
+
+	bool IsNetRelevantFor(AActor* RealViewer, AActor* ViewTarget, FVector SrcLocation)
+	{
+		bool(*IsNetRelevantFor)(AActor*, AActor*, AActor*, FVector) = decltype(IsNetRelevantFor)(VTable[0x428 / 8]);
+		return IsNetRelevantFor(this, RealViewer, ViewTarget, SrcLocation);
+	}
+
+	void CallPreReplication(class UNetDriver* NetDriver)
+	{
+		static void(*CallPreReplication)(AActor*, UNetDriver*) = decltype(CallPreReplication)(InSDKUtils::GetImageBase() + 0x2452630);
+		CallPreReplication(this, NetDriver);
+	}
+
+	bool IsNetStartupActor()
+	{
+		static bool(*IsNetStartupActor)(AActor*) = decltype(IsNetStartupActor)(InSDKUtils::GetImageBase() + 0x2464890);
+		return IsNetStartupActor(this);
+	}
+public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"Actor">();
@@ -3086,11 +3126,26 @@ public:
 	bool WasInputKeyJustPressed(const struct FKey& Key) const;
 	bool WasInputKeyJustReleased(const struct FKey& Key) const;
 public:
+	APlayerState* GetPlayerState() { return PlayerState; }
+
 	FString* ConsoleCommand(FString* result, const FString* Cmd, bool bWriteToLog)
 	{
 		static FString* (*ConsoleCommand)(APlayerController*, FString*, const FString*, bool) = decltype(ConsoleCommand)(InSDKUtils::GetImageBase() + 0x28E0840);
 		return ConsoleCommand(this, result, Cmd, bWriteToLog);
 	}
+
+	void GetPlayerViewPoint(FVector* Location, FRotator* Rotation)
+	{
+		static void(*GetPlayerViewPoint)(APlayerController*, FVector*, FRotator*) = decltype(GetPlayerViewPoint)(InSDKUtils::GetImageBase() + 0x28EBF30);
+		GetPlayerViewPoint(this, Location, Rotation);
+	}
+
+	void SendClientAdjustment()
+	{
+		static void(*SendClientAdjustment)(APlayerController*) = decltype(SendClientAdjustment)(InSDKUtils::GetImageBase() + 0x28F64F0);
+		SendClientAdjustment(this);
+	}
+
 public:
 	static class UClass* StaticClass()
 	{
@@ -3930,29 +3985,72 @@ public:
 static_assert(alignof(UOnlineBlueprintCallProxyBase) == 0x000008, "Wrong alignment on UOnlineBlueprintCallProxyBase");
 static_assert(sizeof(UOnlineBlueprintCallProxyBase) == 0x000028, "Wrong size on UOnlineBlueprintCallProxyBase");
 
+// 
+// State of a connection.
+//
+enum EConnectionState
+{
+	USOCK_Invalid = 0, // Connection is invalid, possibly uninitialized.
+	USOCK_Closed = 1, // Connection permanently closed.
+	USOCK_Pending = 2, // Connection is awaiting connection.
+	USOCK_Open = 3, // Connection is open.
+	USOCK_Closing = 4, // Connection is closing and waiting for all reliable data to be acked. No new data will be sent.
+};
+
+enum class EChannelCreateFlags : uint32
+{
+	None = 1,
+	OpenedLocally = 2
+};
+
 // Class Engine.NetConnection
 // 0x18E0 (0x1928 - 0x0048)
 class UNetConnection : public UPlayer
 {
 public:
 	TArray<class UChildConnection*>               Children;                                          // 0x0048(0x0010)(ZeroConstructor, Transient, NativeAccessSpecifierPublic)
-	class UNetDriver*                             Driver;                                            // 0x0058(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UNetDriver* Driver;                                            // 0x0058(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	TSubclassOf<class UPackageMap>                PackageMapClass;                                   // 0x0060(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, UObjectWrapper, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class UPackageMap*                            PackageMap;                                        // 0x0068(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UPackageMap* PackageMap;                                        // 0x0068(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	TArray<class UChannel*>                       OpenChannels;                                      // 0x0070(0x0010)(ZeroConstructor, NativeAccessSpecifierPublic)
 	TArray<class AActor*>                         SentTemporaries;                                   // 0x0080(0x0010)(ZeroConstructor, NativeAccessSpecifierPublic)
-	class AActor*                                 ViewTarget;                                        // 0x0090(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class AActor*                                 OwningActor;                                       // 0x0098(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class AActor* ViewTarget;                                        // 0x0090(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class AActor* OwningActor;                                       // 0x0098(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	int32                                         MaxPacket;                                         // 0x00A0(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         InternalAck : 1;                                   // 0x00A4(0x0001)(BitIndex: 0x00, PropSize: 0x0001 (NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
-	uint8                                         Pad_A5[0xAB];                                      // 0x00A5(0x00AB)(Fixing Size After Last Property [ Dumper-7 ])
+	uint8                                         Pad_A5[0x7F];                                      // 0x00A5(0x007F)(Fixing Size After Last Property [ Dumper-7 ])
+	int32                                         State;                                             // 0x0124(0x0004)(NativeAccessSpecifierPublic)
+	uint8                                         Pad_128[0x28];                                     // 0x0128(0x0028)(Fixing Size After Last Property [ Dumper-7 ])
 	struct FUniqueNetIdRepl                       PlayerID;                                          // 0x0150(0x0028)(HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_178[0x68];                                     // 0x0178(0x0068)(Fixing Size After Last Property [ Dumper-7 ])
 	double                                        LastReceiveTime;                                   // 0x01E0(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_1E8[0x15D8];                                   // 0x01E8(0x15D8)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<class UChannel*>                       ChannelsToTick;                                    // 0x17C0(0x0010)(ZeroConstructor, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_17D0[0x158];                                   // 0x17D0(0x0158)(Fixing Struct Size After Last Property [ Dumper-7 ])
+public:
+	class UActorChannel* FindActorChannelRef(const TWeakObjectPtr<AActor>& Actor);
 
+	FName GetClientWorldPackageName()
+	{
+		return *(FName*)(__int64(this) + 0x1858);
+	}
+
+	bool IsNetReady(bool Saturate)
+	{
+		bool(*IsNetReady)(UNetConnection*, bool) = decltype(IsNetReady)(VTable[0x298 / 8]);
+		return IsNetReady(this, Saturate);
+	}
+
+	UChannel* CreateChannelByName(const FName& ChName, EChannelCreateFlags CreateFlags, int32 ChIndex = -1)
+	{
+		static UChannel* (*CreateChannelByName)(UNetConnection*, const FName&, EChannelCreateFlags, int32) = decltype(CreateChannelByName)(InSDKUtils::GetImageBase() + 0x27BA5C0);
+		return CreateChannelByName(this, ChName, CreateFlags, ChIndex);
+	}
+	
+	TSet<struct FNetworkGUID>& GetDestroyedStartupOrDormantActorGUIDs()
+	{
+		return *(TSet<FNetworkGUID>*)((__int64)this + 0x1678);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -3978,6 +4076,171 @@ static_assert(offsetof(UNetConnection, PlayerID) == 0x000150, "Member 'UNetConne
 static_assert(offsetof(UNetConnection, LastReceiveTime) == 0x0001E0, "Member 'UNetConnection::LastReceiveTime' has a wrong offset!");
 static_assert(offsetof(UNetConnection, ChannelsToTick) == 0x0017C0, "Member 'UNetConnection::ChannelsToTick' has a wrong offset!");
 
+template <typename T>
+class TSharedPtr
+{
+private:
+	T* Object;
+	void* SharedReferenceCount;
+
+public:
+	T* Get() const
+	{
+		return Object;
+	}
+
+	T* operator->() const
+	{
+		return Object;
+	}
+
+	operator bool() const
+	{
+		return Object != nullptr;
+	}
+};
+
+/**
+ * Struct to store an actor pointer and any internal metadata for that actor used
+ * internally by a UNetDriver.
+ */
+struct FNetworkObjectInfo
+{
+	/** Pointer to the replicated actor. */
+	class AActor* Actor;
+
+	/** WeakPtr to actor. This is cached here to prevent constantly constructing one when needed for (things like) keys in TMaps/TSets */
+	TWeakObjectPtr<class AActor> WeakActor;
+
+	/** Next time to consider replicating the actor. Based on FPlatformTime::Seconds(). */
+	double NextUpdateTime;
+
+	/** Last absolute time in seconds since actor actually sent something during replication */
+	double LastNetReplicateTime;
+
+	/** Optimal delta between replication updates based on how frequently actor properties are actually changing */
+	float OptimalNetUpdateDelta;
+
+	/** Last time this actor was updated for replication via NextUpdateTime
+	* @warning: internal net driver time, not related to WorldSettings.TimeSeconds */
+	float LastNetUpdateTime;
+
+	/** Is this object still pending a full net update due to clients that weren't able to replicate the actor at the time of LastNetUpdateTime */
+	uint32 bPendingNetUpdate : 1;
+
+	/** Force this object to be considered relevant for at least one update */
+	uint32 bForceRelevantNextUpdate : 1;
+
+	/** List of connections that this actor is dormant on */
+	TSet<TWeakObjectPtr<class UNetConnection>> DormantConnections;
+
+	/** A list of connections that this actor has recently been dormant on, but the actor doesn't have a channel open yet.
+	*  These need to be differentiated from actors that the client doesn't know about, but there's no explicit list for just those actors.
+	*  (this list will be very transient, with connections being moved off the DormantConnections list, onto this list, and then off once the actor has a channel again)
+	*/
+	TSet<TWeakObjectPtr<class UNetConnection>> RecentlyDormantConnections;
+};
+
+/**
+ * Stores the list of replicated actors for a given UNetDriver.
+ */
+class FNetworkObjectList
+{
+public:
+	typedef TSet<TSharedPtr<FNetworkObjectInfo>> FNetworkObjectSet;
+
+public:
+	FNetworkObjectSet AllNetworkObjects;
+	FNetworkObjectSet ActiveNetworkObjects;
+	FNetworkObjectSet ObjectsDormantOnAllConnections;
+
+	TMap<TWeakObjectPtr<class UNetConnection>, int32> NumDormantObjectsPerConnection;
+
+public:
+	FNetworkObjectSet GetActiveNetworkObjects() { return ActiveNetworkObjects; }
+};
+
+/**
+ * Implements a globally unique identifier for network related use.
+ */
+class FNetworkGUID
+{
+public:
+	union
+	{
+		uint64 ObjectId;
+	};
+
+	bool operator==(const FNetworkGUID& Other) const
+	{
+		return ObjectId == Other.ObjectId;
+	}
+
+	bool operator!=(const FNetworkGUID& Other) const
+	{
+		return ObjectId != Other.ObjectId;
+	}
+};
+
+enum class EChannelCloseReason : uint8
+{
+	Destroyed,
+	Dormancy,
+	LevelUnloaded,
+	Relevancy,
+	TearOff,
+	Migrated,
+	/* reserved */
+	MAX = 15		// this value is used for serialization, modifying it may require a network version change
+};
+
+struct FActorDestructionInfo
+{
+public:
+	TWeakObjectPtr<ULevel> Level;
+	TWeakObjectPtr<UObject> ObjOuter;
+	FVector DestroyedPosition;
+	FNetworkGUID NetGUID;
+	FString PathName;
+	FName StreamingLevelName;
+	EChannelCloseReason Reason;
+
+	/** When true the destruction info data will be sent even if the viewers are not close to the actor */
+	bool bIgnoreDistanceCulling;
+};
+
+//
+// Priority sortable list.
+//
+struct FActorPriority
+{
+	int32						Priority;	// Update priority, higher = more important.
+
+	FNetworkObjectInfo* ActorInfo;	// Actor info.
+	class UActorChannel* Channel;	// Actor channel.
+
+	FActorDestructionInfo* DestructionInfo;	// Destroy an actor
+public:
+	FActorPriority() = default;
+
+	FActorPriority(UNetConnection* Connection, UActorChannel* InChannel, FNetworkObjectInfo* InActorInfo, const TArray<FNetViewer>& ConnectionViewers, const bool bLowNetBandwidth)
+	{
+		Priority = 0;
+		ActorInfo = InActorInfo;
+		Channel = InChannel;
+		DestructionInfo = NULL;
+	}
+
+	FActorPriority(UNetConnection* Connection, FActorDestructionInfo* InDestructionInfo, const TArray<FNetViewer>& ConnectionViewers)
+	{
+		Priority = 0;
+		ActorInfo = NULL;
+		Channel = NULL;
+		DestructionInfo = InDestructionInfo;
+	}
+};
+
+
 // Class Engine.NetDriver
 // 0x06F8 (0x0720 - 0x0028)
 class UNetDriver : public UObject
@@ -4001,18 +4264,18 @@ public:
 	float                                         TimeoutMultiplierForUnoptimizedBuilds;             // 0x007C(0x0004)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	bool                                          bNoTimeouts;                                       // 0x0080(0x0001)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_81[0x7];                                       // 0x0081(0x0007)(Fixing Size After Last Property [ Dumper-7 ])
-	class UNetConnection*                         ServerConnection;                                  // 0x0088(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UNetConnection* ServerConnection;                                  // 0x0088(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	TArray<class UNetConnection*>                 ClientConnections;                                 // 0x0090(0x0010)(ZeroConstructor, NativeAccessSpecifierPublic)
 	uint8                                         Pad_A0[0x60];                                      // 0x00A0(0x0060)(Fixing Size After Last Property [ Dumper-7 ])
 	int32                                         RecentlyDisconnectedTrackingTime;                  // 0x0100(0x0004)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_104[0x3C];                                     // 0x0104(0x003C)(Fixing Size After Last Property [ Dumper-7 ])
-	class UWorld*                                 World;                                             // 0x0140(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class UPackage*                               WorldPackage;                                      // 0x0148(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UWorld* World;                                             // 0x0140(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UPackage* WorldPackage;                                      // 0x0148(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_150[0x20];                                     // 0x0150(0x0020)(Fixing Size After Last Property [ Dumper-7 ])
-	class UClass*                                 NetConnectionClass;                                // 0x0170(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class UClass*                                 ReplicationDriverClass;                            // 0x0178(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class UProperty*                              RoleProperty;                                      // 0x0180(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	class UProperty*                              RemoteRoleProperty;                                // 0x0188(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UClass* NetConnectionClass;                                // 0x0170(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UClass* ReplicationDriverClass;                            // 0x0178(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UProperty* RoleProperty;                                      // 0x0180(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	class UProperty* RemoteRoleProperty;                                // 0x0188(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	class FName                                   NetDriverName;                                     // 0x0190(0x0008)(ZeroConstructor, Config, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_198[0x40];                                     // 0x0198(0x0040)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<struct FChannelDefinition>             ChannelDefinitions;                                // 0x01D8(0x0010)(ZeroConstructor, Config, NativeAccessSpecifierPublic)
@@ -4020,8 +4283,10 @@ public:
 	TArray<class UChannel*>                       ActorChannelPool;                                  // 0x0238(0x0010)(ZeroConstructor, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_248[0x8];                                      // 0x0248(0x0008)(Fixing Size After Last Property [ Dumper-7 ])
 	float                                         Time;                                              // 0x0250(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_254[0x4A4];                                    // 0x0254(0x04A4)(Fixing Size After Last Property [ Dumper-7 ])
-	class UReplicationDriver*                     ReplicationDriver;                                 // 0x06F8(0x0008)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
+	uint8                                         Pad_254[0x1FC];                                    // 0x0254(0x01FC)
+	uint32                                        ReplicationFrame;                                  // 0x0450(0x0004)
+	uint8                                         Pad_454[0x2A4];                                    // 0x0454(0x02A4)
+	class UReplicationDriver* ReplicationDriver;                                 // 0x06F8(0x0008)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_700[0x20];                                     // 0x0700(0x0020)(Fixing Struct Size After Last Property [ Dumper-7 ])
 public:
 	void SetWorld(UWorld* InWorld)
@@ -4035,6 +4300,35 @@ public:
 		static bool (*InitListen)(UNetDriver*, UWorld*, FURL, bool, FString) = decltype(InitListen)(InSDKUtils::GetImageBase() + 0x44B020);
 		return InitListen(this, InNotify, LocalURL, bReuseAddressAndPort, Error);
 	}
+
+	TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>& GetDestroyedStartupOrDormantActors()
+	{
+		return *(TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>*)((__int64)this + 0x360);
+	}
+
+	void ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectInfo*>& OutConsiderList, const float ServerTickTime);
+
+	int32 ServerReplicateActors_PrioritizeActors(UNetConnection* Connection, const TArray<FNetViewer>& ConnectionViewers, const TArray<FNetworkObjectInfo*>& ConsiderList, const bool bCPUSaturated, FActorPriority*& OutPriorityList, FActorPriority**& OutPriorityActors);
+	int32 ServerReplicateActors_ProcessPrioritizedActors(UNetConnection* Connection, const TArray<FNetViewer>& ConnectionViewers, FActorPriority** PriorityActors, const int32 FinalSortedCount, int32& OutUpdated);
+	int32 ServerReplicateActors_PrepConnections(float DeltaSeconds);
+	int32 ServerReplicateActors(float DeltaSeconds);
+public:
+	float GetElapsedTime()
+	{
+		return *(float*)(__int64(this) + 0x250);
+	}
+
+	FNetworkObjectList* GetNetworkObjectList()
+	{
+		return *(FNetworkObjectList**)(__int64(this) + 0x700);
+	}
+
+	bool IsDormInitialStartupActor(AActor* Actor)
+	{
+		return Actor && Actor->IsNetStartupActor() && (Actor->NetDormancy == ENetDormancy::DORM_Initial);
+	}
+
+	bool IsLevelInitializedForActor(AActor* InActor, UNetConnection* InConnection) const;
 public:
 	static class UClass* StaticClass()
 	{
@@ -6987,6 +7281,12 @@ public:
 
 	void HandleTimelineScrubbed();
 public:
+	class AWorldSettings* GetWorldSettings(bool bCheckStreamingPersistent = false, bool bChecked = true)
+	{
+		static AWorldSettings* (*GetWorldSettings)(UWorld*, bool, bool) = decltype(GetWorldSettings)(InSDKUtils::GetImageBase() + 0x2AB0990);
+		return GetWorldSettings(this, bCheckStreamingPersistent, bChecked);
+	}
+public:
 	bool ServerTravel(const FString FURL, bool bAbsolute, bool bShouldSkipGameNotify)
 	{
 		static bool (*ServerTravel)(UWorld*, const FString, bool, bool) = decltype(ServerTravel)(InSDKUtils::GetImageBase() + 0x2ABCAA0);
@@ -8582,7 +8882,11 @@ class UChannel : public UObject
 public:
 	class UNetConnection*                         Connection;                                        // 0x0028(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_30[0x40];                                      // 0x0030(0x0040)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	bool IsNetReady(bool Saturate)
+	{
+		return Connection->IsNetReady(Saturate);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -10760,21 +11064,43 @@ static_assert(offsetof(UParticleModuleSize_Seeded, RandomSeedInfo) == 0x000080, 
 class UActorChannel final : public UChannel
 {
 public:
-	class AActor*                                 Actor;                                             // 0x0070(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_78[0xE0];                                      // 0x0078(0x00E0)(Fixing Size After Last Property [ Dumper-7 ])
-	TArray<class UObject*>                        CreateSubObjects;                                  // 0x0158(0x0010)(ZeroConstructor, NativeAccessSpecifierPublic)
-	uint8                                         Pad_168[0xD8];                                     // 0x0168(0x00D8)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	class AActor* Actor;                                             // 0x0070(0x0008)
+	uint8                                         Pad_78[0x8];                                       // 0x0078(0x0008)
+	double                                        RelevantTime;                                     // 0x0080(0x0008)
+	double                                        LastUpdateTime;                                   // 0x0088(0x0008)
+	uint8                                         Pad_90[0xC8];                                     // 0x0090(0x00C8)
+	TArray<class UObject*>                        CreateSubObjects;                                  // 0x0158(0x0010)
+	uint8                                         Pad_168[0xD8];                                    // 0x0168(0x00D8)
+public:
+	int32 Close()
+	{
+		int32(*Close)(UActorChannel*) = decltype(Close)(InSDKUtils::GetImageBase() + 0x26149B0);
+		return Close(this);
+	}
 
+	void SetChannelActor(AActor* Actor)
+	{
+		static void(*SetChannelActor)(UActorChannel*, AActor*) = decltype(SetChannelActor)(InSDKUtils::GetImageBase() + 0x2630880);
+		SetChannelActor(this, Actor);
+	}
+
+	int64 ReplicateActor()
+	{
+		int64(*ReplicateActor)(UActorChannel*) = decltype(ReplicateActor)(InSDKUtils::GetImageBase() + 0x262BEE0);
+		return ReplicateActor(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{
 		return StaticClassImpl<"ActorChannel">();
 	}
+
 	static class UActorChannel* GetDefaultObj()
 	{
 		return GetDefaultObjImpl<UActorChannel>();
 	}
 };
+
 static_assert(alignof(UActorChannel) == 0x000008, "Wrong alignment on UActorChannel");
 static_assert(sizeof(UActorChannel) == 0x000240, "Wrong size on UActorChannel");
 static_assert(offsetof(UActorChannel, Actor) == 0x000070, "Member 'UActorChannel::Actor' has a wrong offset!");
@@ -14834,7 +15160,11 @@ public:
 	TArray<class UAssetUserData*>                 AssetUserData;                                     // 0x0248(0x0010)(ExportObject, ZeroConstructor, ContainsInstancedReference, Protected, NativeAccessSpecifierProtected)
 	uint8                                         Pad_258[0x10];                                     // 0x0258(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<struct FReplicatedStaticActorDestructionInfo> DestroyedReplicatedStaticActors;                   // 0x0268(0x0010)(ZeroConstructor, NativeAccessSpecifierPrivate)
-
+public:
+	bool IsAssociatingLevel()
+	{
+		return (*(uint8*)((uintptr_t)this + 0x1ED) & 0x20) != 0;
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -24063,6 +24393,12 @@ static_assert(sizeof(USimulatedClientNetConnection) == 0x001928, "Wrong size on 
 // 0x0000 (0x0028 - 0x0028)
 class INetworkPredictionInterface final : public IInterface
 {
+public:
+	void SendClientAdjustment()
+	{
+		void(*SendClientAdjustment)(INetworkPredictionInterface*) = decltype(SendClientAdjustment)(VTable[0x28 / 8]);
+		SendClientAdjustment(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{

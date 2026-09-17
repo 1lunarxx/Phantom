@@ -250,5 +250,3 @@ FORCEINLINE AFortGameModeZone* UWorld::GetGameMode()
 {
     return Cast<AFortGameModeZone>(AuthorityGameMode);
 }
-
-#define ANY_PACKAGE (UObject*)-1

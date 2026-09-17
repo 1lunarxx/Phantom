@@ -155,14 +155,17 @@
   <ItemGroup>
     <ClInclude Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Public\AbilitySystemComponent.h" />
     <ClInclude Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Public\McpProfileGroup.h" />
+    <ClInclude Include="Engine\Restricted\NotForLicensees\Plugins\Online\OnlineSubsystemMcp\Source\Public\ServiceConfigMcp.h" />
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\Templates\Casts.h" />
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\Object.h" />
+    <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\ObjectMacros.h" />
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\Stack.h" />
     <ClInclude Include="Engine\Source\Runtime\CoreUObject\Public\UObject\UObjectGlobals.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMath.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMisc.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Math\UnrealMathUtility.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Misc\OutputDevice.h" />
+    <ClInclude Include="Engine\Source\Runtime\Core\Public\UObject\UnrealNames.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Character.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortPickup.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortWorldItem.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSessionDedicated.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Pawns\FortPlayerPawn.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortCheatManager.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Player\FortPlayerController.h" />
@@ -209,6 +213,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Engine\Plugins\Runtime\GameplayAbilities\Source\GameplayAbilities\Private\AbilitySystemComponent_Abilities.cpp" />
     <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\OnlineGameplayFramework\Source\McpProfileSys\Private\McpProfileGroup.cpp" />
+    <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\Online\OnlineSubsystemMcp\Source\Private\ServiceConfigMcp.cpp" />
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp" />
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\ScriptCore.cpp" />
     <ClCompile Include="Engine\Source\Runtime\EngineSettingsModule\Private\EngineSettingsModule.cpp" />
@@ -252,6 +257,7 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortGameModeOutpost.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortLootLevel.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\Items\FortSchematicItem.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSessionDedicated.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -266,6 +272,9 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="minhook.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Engine\Source\Runtime\Core\Public\UObject\UnrealNames.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

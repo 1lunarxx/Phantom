@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Engine/Restricted/NotForLicensees/Plugins/OnlineGameplayFramework/Source/McpProfileSys/Public/McpProfileGroup.h"
+#include "Engine/Restricted/NotForLicensees/Plugins/Online/OnlineSubsystemMcp/Source/Public/ServiceConfigMcp.h"
 #include "Engine/NetDriver.h"
 #include "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h"
 
@@ -16,6 +17,8 @@
 #include "FortniteGame/Public/FortKismetLibrary.h"
 
 #include "FortniteGame/Public/Online/FortGameSession.h"
+#include "FortniteGame/Public/Online/FortGameSessionDedicated.h"
+
 #include "FortniteGame/Public/Quests/FortQuestManager.h"
 
 #include "FortniteGame/Public/Athena/FortGameModeAthena.h"
@@ -46,6 +49,7 @@
 #include "FortniteGame/Public/STW/Items/FortSchematicItem.h"
 
 #include "FortniteAI/Public/FortAIDirector.h"
+#include "FortniteAI/Public/FortAIGoalManager.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -95,13 +99,14 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortAthenaVehicle::Setup();
     FortGameModeOutpost::Setup();
     FortSchematicItem::Setup();
+    FortAIGoalManager::Setup();
+    FortGameSessionDedicated::Setup();
+    FServiceConfigMcp::Setup();
 
-    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // GamePhaseStep
+    Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0xC96B25 + 1, 0x85); // CanUpdateGamePhaseStep
 
     *GIsClient = false;
     *GIsServer = true;
-
-    // Zone_Outpost_Stonewood, Athena_Terrain, Zone_Onboarding_Forest_a
 
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
     GWorld->OwningGameInstance->RemoveLocalPlayer();

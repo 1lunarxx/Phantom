@@ -7,7 +7,7 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 	{
 		ReplicationDriver->ServerReplicateActors();
 
-		if (GSubGame == ESubGame::Campaign)
+		if (CurrentSubGame == ESubGame::Campaign)
 		{
 			static TMap<FObjectKey, EClassRepNodeMapping> ClassReplicationNodePolicies = *(TMap<FObjectKey, EClassRepNodeMapping>*)((uintptr_t)ReplicationDriver + 0x560);
 

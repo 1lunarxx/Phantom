@@ -16,6 +16,7 @@ private:
 	static void HandleStartingNewPlayer(AFortGameModeAthena* FortGameModeAthena, APlayerController* NewPlayer);
 
 	static APawn* SpawnDefaultPawnFor_Implementation(AFortGameModeAthena* FortGameModeAthena, AController* NewPlayer, AActor* StartSpot);
+	static TSubclassOf<AGameSession>* GetGameSessionClass(AFortGameModeAthena* GameMode, TSubclassOf<AGameSession>* Result);
 public:
 	static void Setup();
 };

@@ -229,6 +229,36 @@ namespace UC
 		};
 	}
 
+	template<typename T>
+	inline void Sort(T* Data, int32 Count)
+	{
+		for (int32 i = 1; i < Count; i++)
+		{
+			T Value = Data[i];
+			int32 j = i - 1;
+
+			while (j >= 0 && Value->Priority < Data[j]->Priority)
+			{
+				Data[j + 1] = Data[j];
+				j--;
+			}
+
+			Data[j + 1] = Value;
+		}
+	}
+
+	template<typename ObjectType>
+	class TUniquePtr
+	{
+	public:
+		ObjectType* Ptr;
+	public:
+		inline ObjectType& operator*() const
+		{
+			return *Ptr;
+		}
+	};
+
 	template <typename KeyType, typename ValueType>
 	class TPair
 	{
@@ -316,6 +346,17 @@ namespace UC
 	public:
 		ArrayElementType* GetData() { return Data; }
 
+		inline void Reserve(int32 Number)
+		{
+			if (Number > MaxElements)
+			{
+				Data = (ArrayElementType*)FMemory::Realloc(Data, Number * sizeof(ArrayElementType), 0);
+				MaxElements = Number;
+			}
+		}
+
+		void Reset() { NumElements = 0; }
+
 		void ResizeGrow(int32 OldNum)
 		{
 			Data = (ArrayElementType*)FMemory::Realloc(Data, (OldNum + 1) * sizeof(ArrayElementType), 0);
@@ -388,6 +429,23 @@ namespace UC
 			}
 
 			return false;
+		}
+
+		inline bool RemoveAt(int32 Index, int32 Count = 1)
+		{
+			if (Count <= 0 || !IsValidIndex(Index) || Index + Count > NumElements)
+				return false;
+
+			const int32 NumToMove = NumElements - Index - Count;
+
+			for (int32 i = 0; i < NumToMove; i++)
+			{
+				Data[Index + i] = Data[Index + Count + i];
+			}
+
+			NumElements -= Count;
+
+			return true;
 		}
 
 		inline void Clear()
@@ -617,6 +675,29 @@ namespace UC
 
 			return Index;
 		}
+
+		inline bool Remove(int32 Index)
+		{
+			if (!IsValidIndex(Index))
+				return false;
+
+			auto& Element = Data.GetUnsafe(Index);
+
+			reinterpret_cast<SparseArrayElementType*>(&Element.ElementData)->~SparseArrayElementType();
+
+			Element.PrevFreeIndex = -1;
+			Element.NextFreeIndex = FirstFreeIndex;
+
+			if (FirstFreeIndex != -1)
+				Data.GetUnsafe(FirstFreeIndex).PrevFreeIndex = Index;
+
+			FirstFreeIndex = Index;
+			NumFreeIndices++;
+
+			AllocationFlags.Set(Index, false);
+
+			return true;
+		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return AllocationFlags; }
 
@@ -660,7 +741,6 @@ namespace UC
 	public:
 		TSet& operator=(TSet&&) = default;
 		TSet& operator=(const TSet&) = default;
-
 	private:
 		inline void VerifyIndex(int32 Index) const { if (!IsValidIndex(Index)) throw std::out_of_range("Index was out of range!"); }
 
@@ -680,6 +760,11 @@ namespace UC
 
 			return Elements.Add(Element);
 		}
+
+		inline bool Remove(int32 Index)
+		{
+			return Elements.Remove(Index);
+		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }
 
@@ -690,6 +775,16 @@ namespace UC
 		inline bool operator==(const TSet<SetElementType>& Other) const { return Elements == Other.Elements; }
 		inline bool operator!=(const TSet<SetElementType>& Other) const { return Elements != Other.Elements; }
 
+	public:
+		inline Iterators::TSetIterator<SetElementType> CreateIterator()
+		{
+			return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
+		}
+
+		inline Iterators::TSetIterator<SetElementType> CreateConstIterator() const
+		{
+			return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
+		}
 	public:
 		template<typename T> friend Iterators::TSetIterator<T> begin(const TSet& Set);
 		template<typename T> friend Iterators::TSetIterator<T> end  (const TSet& Set);
@@ -731,6 +826,16 @@ namespace UC
 			return end(*this);	
 		}
 
+		inline ValueElementType& FindOrAdd(const KeyElementType& Key)
+		{
+			if (ValueElementType* Found = Find(Key))
+				return *Found;
+
+			const int32 Index = Add(Key, ValueElementType());
+
+			return Elements[Index].Value();
+		}
+
 		inline ValueElementType* Find(const KeyElementType& Key)
 		{
 			for (auto It = begin(*this); It != end(*this); ++It)
@@ -740,6 +845,12 @@ namespace UC
 			}
 
 			return nullptr;
+		}
+
+		inline ValueElementType& FindChecked(const KeyElementType& Key)
+		{
+			ValueElementType* Value = Find(Key);
+			return *Value;
 		}
 
 		inline int32 Add(const KeyElementType& Key, const ValueElementType& Value)
@@ -815,7 +926,7 @@ namespace UC
 			inline bool operator!=(const FSetBitIterator& Rhs) const { return CurrentBitIndex != Rhs.CurrentBitIndex || &Array != &Rhs.Array; }
 
 		public:
-			inline int32 GetIndex() { return CurrentBitIndex; }
+			inline int32 GetIndex() const { return CurrentBitIndex; }
 
 			void FindFirstSetBit()
 			{
@@ -893,12 +1004,23 @@ namespace UC
 				: IteratedContainer(const_cast<ContainerType&>(Container)), BitIterator(BitArray, StartIndex)
 			{
 			}
+		public:
+			inline void RemoveCurrent()
+			{
+				const int32 Index = GetIndex();
 
+				if (IteratedContainer.IsValidIndex(Index))
+					IteratedContainer.Remove(Index);
+			}
 		public:
 			inline int32 GetIndex() { return BitIterator.GetIndex(); }
 
-			inline int32 IsValid() { return IteratedContainer.IsValidIndex(GetIndex()); }
-
+			inline int32 IsValid() const { return IteratedContainer.IsValidIndex(BitIterator.GetIndex()); }
+		public:
+			inline explicit operator bool() const
+			{
+				return IsValid();
+			}
 		public:
 			inline TContainerIterator& operator++() { ++BitIterator; return *this; }
 			inline TContainerIterator& operator--() { --BitIterator; return *this; }

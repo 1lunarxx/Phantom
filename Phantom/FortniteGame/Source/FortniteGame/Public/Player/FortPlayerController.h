@@ -5,7 +5,7 @@
 class FortPlayerController
 {
 private:
-	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid);
+	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid);
 	static void ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash);
 	static void ServerCheat_Implementation(AFortPlayerController* FortPlayerController, FString& Msg);
 	static void ServerTeleportToReticle_Implementation(AFortPlayerController* FortPlayerController, FVector* TeleportLocation);

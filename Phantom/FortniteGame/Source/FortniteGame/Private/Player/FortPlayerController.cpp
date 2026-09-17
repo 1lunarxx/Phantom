@@ -2,22 +2,21 @@
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
-void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid& ItemGuid)
+void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid)
 {
-	if (AFortPlayerPawn* MyFortPawn = FortPlayerController->MyFortPawn)
+	IFortInventoryInterface* InventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
+
+	if (InventoryInterface == NULL)
+		return;
+
+	UFortWorldItem* WorldItem = InventoryInterface->GetItem(ItemGuid);
+
+	if (WorldItem != NULL)
 	{
-		IFortInventoryInterface* InventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
+		UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(WorldItem->GetItemDefinition());
 
-		if (InventoryInterface != NULL)
-		{
-			UFortWorldItem* WorldItem = InventoryInterface->GetItem(&ItemGuid);
-
-			if (WorldItem != NULL)
-			{
-				if (UFortWeaponItemDefinition* WeaponItemDefinition = Cast<UFortWeaponItemDefinition>(WorldItem->ItemEntry.ItemDefinition))
-					WeaponItemDefinition->ServerExecute(WorldItem, FortPlayerController);
-			}
-		}
+		if (WorldItemDefinition != NULL)
+			WorldItemDefinition->ServerExecute(WorldItem, FortPlayerController);
 	}
 }
 
@@ -80,8 +79,8 @@ void FortPlayerController::ServerPlayEmoteItem_Implementation(AFortPlayerControl
 {
 	if (EmoteAsset != NULL)
 	{
-		FFortAssets::GetAsset(&EmoteAsset->Animation, true); // whats the point of this?
-		ServerPlayEmoteItem_Internal(FortPlayerController, EmoteAsset); // not sure the name of this
+		FFortAssets::GetAsset(&EmoteAsset->Animation, true);
+		ServerPlayEmoteItem_Internal(FortPlayerController, EmoteAsset);
 	}
 }
 
@@ -97,40 +96,37 @@ void FortPlayerController::ServerPlayEmoteItem_Internal(AFortPlayerController* F
 		{
 			if (EmoteAsset != NULL)
 			{
-				/*if (FortPlayerController->CanPerformNativeAction(SomeTag))*/
-				{
-					UFortGameData* GameData = UFortGameData::Get();
+				UFortGameData* GameData = UFortGameData::Get();
 
-					if (GameData == NULL)
+				if (GameData == NULL)
+					return;
+
+				TSoftClassPtr<UClass>* AssetSubclassOf = &GameData->EmoteGameplayAbility;
+
+				if (EmoteAsset->IsA(UAthenaSprayItemDefinition::StaticClass()))
+				{
+					AssetSubclassOf = &GameData->SprayGameplayAbility;
+				}
+				else if (UAthenaToyItemDefinition* ToyItemDefinition = Cast<UAthenaToyItemDefinition>(EmoteAsset))
+				{
+					AssetSubclassOf = &ToyItemDefinition->ToySpawnAbility;
+				}
+
+				TSubclassOf<UFortGameplayAbility> GameplayAbility;
+				FFortAssets::GetSubclassOf(&GameplayAbility, AssetSubclassOf, true);
+
+				if (GameplayAbility != NULL)
+				{
+					UFortGameplayAbility* FortGameplayAbility = Cast<UFortGameplayAbility>(GameplayAbility->DefaultObject);
+
+					if (FortGameplayAbility == NULL)
 						return;
 
-					TSoftClassPtr<UClass>* AssetSubclassOf = &GameData->EmoteGameplayAbility;
+					FGameplayAbilitySpec Spec;
+					Spec.ConstructAbilitySpec(GameplayAbility->DefaultObject, 1, -1, EmoteAsset);
 
-					if (EmoteAsset->IsA(UAthenaSprayItemDefinition::StaticClass()))
-					{
-						AssetSubclassOf = &GameData->SprayGameplayAbility;
-					}
-					else if (UAthenaToyItemDefinition* ToyItemDefinition = Cast<UAthenaToyItemDefinition>(EmoteAsset))
-					{
-						AssetSubclassOf = &ToyItemDefinition->ToySpawnAbility;
-					}
-
-					TSubclassOf<UFortGameplayAbility> GameplayAbility;
-					FFortAssets::GetSubclassOf(&GameplayAbility, AssetSubclassOf, true);
-
-					if (GameplayAbility != NULL)
-					{
-						UFortGameplayAbility* FortGameplayAbility = Cast<UFortGameplayAbility>(GameplayAbility->DefaultObject);
-
-						if (FortGameplayAbility == NULL)
-							return;
-
-						FGameplayAbilitySpec Spec;
-						Spec.ConstructAbilitySpec(GameplayAbility->DefaultObject, 1, -1, EmoteAsset);
-
-						FGameplayAbilitySpecHandle Handle;
-						ASC->GiveAbilityAndActivateOnce(&Handle, &Spec);
-					}
+					FGameplayAbilitySpecHandle Handle;
+					ASC->GiveAbilityAndActivateOnce(&Handle, &Spec);
 				}
 			}
 		}
@@ -276,15 +272,19 @@ void FortPlayerController::ServerRepairBuildingActor_Implementation(AFortPlayerC
 		return;
 	}
 
-	int32 ResourcesSpent = FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
+	int32 RepairCost = FortPlayerController->PayBuildingRepairCost(BuildingActorToRepair);
 
-	BuildingActorToRepair->RepairBuilding(FortPlayerController, ResourcesSpent);
+	BuildingActorToRepair->RepairBuilding(FortPlayerController, RepairCost);
 
-	if (AFortGameMode* GameMode = GWorld->GetGameMode())
+	if (AFortGameMode* GameMode = FortPlayerController->GetWorld()->GetGameMode())
+	{
 		GameMode->ScoreBuildingRepair(FortPlayerController, BuildingActorToRepair);
+	}
 
 	if (AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn())
+	{
 		UFortAIFunctionLibrary::MakeNoiseEventAtLocation(FortPlayerPawn, 0, BuildingActorToRepair->K2_GetActorLocation());
+	}
 }
 
 void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid)

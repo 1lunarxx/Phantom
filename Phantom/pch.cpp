@@ -111,3 +111,60 @@ void FGameplayMutatorObjectData::PostReplicatedAdd(struct FGameplayMutatorObject
 	InArraySerializer->MarkItemDirty(*this);
 	InArraySerializer->ObjectDataList.Add(*this);
 }
+
+FNetViewer::FNetViewer(UNetConnection* InConnection, float DeltaSeconds) :
+	Connection(InConnection),
+	InViewer(InConnection->PlayerController ? InConnection->PlayerController : InConnection->OwningActor),
+	ViewTarget(InConnection->ViewTarget),
+	ViewLocation(FVector()),
+	ViewDir(FVector())
+{
+	if (InConnection->OwningActor == NULL)
+		return;
+
+	APlayerController* ViewingController = InConnection->PlayerController;
+
+	if (ViewTarget != NULL)
+		ViewLocation = ViewTarget->K2_GetActorLocation();
+
+	if (ViewingController != NULL)
+	{
+		FRotator ViewRotation = ViewingController->GetControlRotation();
+		ViewingController->GetPlayerViewPoint(&ViewLocation, &ViewRotation);
+		ViewDir = UKismetMathLibrary::Conv_RotatorToVector(ViewRotation);
+	}
+}
+
+FWeakObjectPtr::FWeakObjectPtr(UObject* Object)
+{
+	ObjectIndex = Object->Index;
+
+	FUObjectItem* ObjectItem = UObject::GObjects->GetItemByIndex(Object->Index);
+
+	if (ObjectItem != NULL)
+		ObjectSerialNumber = ObjectItem->SerialNumber;
+}
+
+bool UNetDriver::IsLevelInitializedForActor(AActor* InActor, UNetConnection* InConnection) const
+{
+	if (InActor == NULL || InConnection == NULL || World != InActor->GetWorld())
+		return false;
+
+	const bool bCorrectWorld = WorldPackage != NULL && (InConnection->GetClientWorldPackageName().ToString() == WorldPackage->GetName());
+
+	const bool bIsConnectionPC = (InActor == InConnection->PlayerController);
+	return bCorrectWorld || bIsConnectionPC;
+}
+
+UActorChannel* UNetConnection::FindActorChannelRef(const TWeakObjectPtr<AActor>& Actor)
+{
+	TMap<TWeakObjectPtr<AActor>, UActorChannel*>& ActorChannels = *(TMap<TWeakObjectPtr<AActor>, UActorChannel*>*)((__int64)this + 0x1620);
+
+	for (auto& ActorChannel : ActorChannels)
+	{
+		if (ActorChannel.Key() == Actor)
+			return ActorChannel.Value();
+	}
+
+	return NULL;
+}

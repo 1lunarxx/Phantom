@@ -19,7 +19,7 @@ UDataTable* UFortLootPackage::GetLootTierData()
 		}
 	}
 
-	return GSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
+	return CurrentSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootTierData_Client.AthenaLootTierData_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootTierData_Client.LootTierData_Client"));
 }
 
 UDataTable* UFortLootPackage::GetLootPackageData()
@@ -37,7 +37,7 @@ UDataTable* UFortLootPackage::GetLootPackageData()
 		}
 	}
 
-	return GSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
+	return CurrentSubGame == ESubGame::Athena ? Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/AthenaLootPackages_Client.AthenaLootPackages_Client")) : Utils::StaticLoadObject<UDataTable>(TEXT("/Game/Items/DataTables/LootPackages_Client.LootPackages_Client"));
 }
 
 void UFortLootPackage::PickLootDrops(TArray<FFortItemEntry>* OutLootToDrop, int ForcedLootTier, FName TierGroupName)

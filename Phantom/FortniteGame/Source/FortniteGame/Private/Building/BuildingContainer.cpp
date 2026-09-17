@@ -16,7 +16,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 {
 	FVector LootDropLocation = BuildingContainer->K2_GetActorLocation();
 
-	if (GSubGame == ESubGame::Athena)
+	if (CurrentSubGame == ESubGame::Athena)
 	{
 		LootDropLocation = LootDropLocation + (BuildingContainer->GetActorForwardVector() * BuildingContainer->LootSpawnLocation_Athena.X) + (BuildingContainer->GetActorRightVector() * BuildingContainer->LootSpawnLocation_Athena.Y) + (BuildingContainer->GetActorUpVector() * BuildingContainer->LootSpawnLocation_Athena.Z);
 
@@ -42,20 +42,9 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 
 		AFortPickup* FortPickup = AFortPickup::SpawnPickup(LootDrop, LootDropLocation, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
 
-		if (FortPickup != NULL && GSubGame == ESubGame::Campaign)
+		if (FortPickup != NULL && CurrentSubGame == ESubGame::Campaign)
 			FortPickup->SetPickupTarget(PlayerPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0,0,1), 0.0f));
 	}
-
-/*	if (PlayerPawn != NULL)
-	{
-		FVector BounceNormal = PlayerPawn->K2_GetActorLocation() - BuildingContainer->K2_GetActorLocation();
-		BounceNormal.Z = 0.0f;
-
-		if (!BounceNormal.IsZero())
-			BounceNormal.Normalize();
-
-		BuildingContainer->SearchBounceData.BounceNormal = BounceNormal;
-	}*/
 
 	BuildingContainer->SearchBounceData.SearchAnimationCount++;
 	BuildingContainer->BounceContainer();
@@ -63,7 +52,7 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 	BuildingContainer->bAlreadySearched = true;
 	BuildingContainer->OnRep_bAlreadySearched();
 
-	if (GSubGame == ESubGame::Campaign && BuildingContainer->bDestroyContainerOnSearch)
+	if (CurrentSubGame == ESubGame::Campaign && BuildingContainer->bDestroyContainerOnSearch)
 		BuildingContainer->K2_DestroyActor();
 
 	return true;

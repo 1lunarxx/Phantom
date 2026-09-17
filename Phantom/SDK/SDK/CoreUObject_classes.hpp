@@ -46,6 +46,12 @@ public:
 	{
 		return ((T * (*)(UObject*, UClass*))(*(uint64_t*)(__readgsqword(0x60) + 0x10) + 0x19BAC70))(this, T::StaticClass());
 	}
+
+	bool NeedsLoadForClient()
+	{
+		static bool(*NeedsLoadForClient)(UObject*) = decltype(NeedsLoadForClient)(InSDKUtils::GetImageBase() + 0x1983A10);
+		return NeedsLoadForClient(this);
+	}
 public:
 	static class UClass* FindClass(const std::string& ClassFullName)
 	{

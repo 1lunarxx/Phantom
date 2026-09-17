@@ -7489,6 +7489,12 @@ public:
 		static void (*SetDurability)(FFortItemEntry*, float) = decltype(SetDurability)(InSDKUtils::GetImageBase() + 0x10A1400);
 		SetDurability(this, InDurability);
 	}
+
+	void SetCount(int InCount)
+	{
+		static void (*SetCount)(FFortItemEntry*, int) = decltype(SetCount)(InSDKUtils::GetImageBase() + 0x10A12A0);
+		SetCount(this, InCount);
+	}
 public:
 	FFortItemEntry() = default;
 

@@ -7492,6 +7492,8 @@ public:
 	class AActor*                                 ViewTarget;                                        // 0x0010(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	struct FVector                                ViewLocation;                                      // 0x0018(0x000C)(IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	struct FVector                                ViewDir;                                           // 0x0024(0x000C)(IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+public:
+	FNetViewer(UNetConnection* InConnection, float DeltaSeconds);
 };
 static_assert(alignof(FNetViewer) == 0x000008, "Wrong alignment on FNetViewer");
 static_assert(sizeof(FNetViewer) == 0x000030, "Wrong size on FNetViewer");

@@ -11,8 +11,6 @@ private:
 	static void AddKillFeedMessage(UFortCheatManager* Context, FFrame* Stack);
 	static void AddUtilityScore(UFortCheatManager* Context, FFrame* Stack);
 
-	static void AllowRespawn(UFortCheatManager* Context, FFrame* Stack);
-
 	static void ApplyGameplayModifier(UFortCheatManager* Context, FFrame* Stack);
 	static void ApplyWeaponAlteration(UFortCheatManager* Context, FFrame* Stack);
 

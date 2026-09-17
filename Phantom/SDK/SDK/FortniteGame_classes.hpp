@@ -1810,7 +1810,12 @@ public:
 	float GetDPSAtLevel(int32 ItemLevel) const;
 	int32 GetFabricationValue(bool bUseDisintegrationOverride) const;
 	float GetMaxDurability(int32 ItemLevel) const;
-
+public:
+	bool ServerExecute(UFortItem* Item, AFortPlayerController* Instigator)
+	{
+		bool(*ServerExecute)(UFortWorldItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(VTable[0x418 / 8]);
+		return ServerExecute(this, Item, Instigator);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -6413,9 +6418,6 @@ public:
 
 	void RemoveItem(FGuid& ItemGuid);
 	void RemoveItem(FGuid& ItemGuid, int32 Count);
-
-	void UpdateItemEntry(FFortItemEntry* NewItemEntry);
-	void UpdateItemEntry(FFortItemEntry* ItemEntry, int32 Count);
 public:
 	static int GetInventoryUsed(const class IFortInventoryOwnerInterface* Owner, int InventoryType)
 	{
@@ -14172,7 +14174,7 @@ public:
 	class UFortItem* K2_FindExistingItemForDefinition(const class UFortItemDefinition* ItemDefinition, bool bInStorageVault) const;
 	class UFortItem* K2_GetInventoryItemWithGuid(const struct FGuid& ItemGuid) const;
 public:
-	AFortInventory* GetWorldInventory() { return this->WorldInventory; };
+	AFortInventory* GetWorldInventory() { return WorldInventory; };
 
 	FText BuildingLockedText()
 	{
@@ -15319,8 +15321,6 @@ public:
 		static void(*InitGameState)(AFortGameModeZone*, AFortWorldManager*) = decltype(InitGameState)(InSDKUtils::GetImageBase() + 0xF21050);
 		InitGameState(this, WorldManager);
 	}
-
-	bool FindBestStartTransformFor(AController* NewPlayer, const AActor* StartSpot, FTransform* OutBestTransform);
 public:
 	static class UClass* StaticClass()
 	{
@@ -19997,12 +19997,6 @@ public:
 	const bool HasUniqueAmmo() const;
 	bool ShouldAllowTargetingDuringReload() const;
 	bool TargetingPreventsReload() const;
-public:
-	char ServerExecute(UFortItem* Item, AFortPlayerController* Instigator)
-	{
-		char(*ServerExecute)(UFortWeaponItemDefinition*, UFortItem*, AFortPlayerController*) = decltype(ServerExecute)(VTable[0x418 / 8]);
-		return ServerExecute(this, Item, Instigator);
-	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -29655,18 +29649,16 @@ public:
 		return CreateFromData(CreationData);
 	}
 
-	void SetPickupItems(FFortItemEntry* PrimaryEntry, bool bInSplitOnPickup)
-	{
-		TArray<FFortItemEntry> AdditionalEntries{};
-
-		static void (*SetPickupItems)(AFortPickup*, FFortItemEntry*, TArray<FFortItemEntry>*, bool) = decltype(SetPickupItems)(InSDKUtils::GetImageBase() + 0x10A16B0);
-		SetPickupItems(this, PrimaryEntry, &AdditionalEntries, bInSplitOnPickup);
-	}
-
 	void SetPickupTarget(AFortPawn* PickupTarget, float InFlyTime, FVector InStartDirection)
 	{
 		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, float, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
 		SetPickupTarget(this, PickupTarget, InFlyTime, InStartDirection);
+	}
+
+	void SetPawnWhoDroppedPickup(AFortPawn* InPawnWhoDroppedPickup)
+	{
+		if (InPawnWhoDroppedPickup != PawnWhoDroppedPickup)
+			PawnWhoDroppedPickup = InPawnWhoDroppedPickup;
 	}
 
 	float GetFlyTime()
@@ -34522,6 +34514,11 @@ public:
 	void ListWeapons() const;
 public:
 	void AddScoreStat(unsigned int ScoreStat, unsigned int Amount);
+
+	AFortPlayerController* GetOuterAFortPlayerController()
+	{
+		return reinterpret_cast<AFortPlayerController*>(Outer);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -43631,6 +43628,7 @@ public:
 static_assert(alignof(AFortGlobalEnvironmentAbilityActorAthena) == 0x000008, "Wrong alignment on AFortGlobalEnvironmentAbilityActorAthena");
 static_assert(sizeof(AFortGlobalEnvironmentAbilityActorAthena) == 0x000340, "Wrong size on AFortGlobalEnvironmentAbilityActorAthena");
 
+#define CurrentSubGame UFortGlobals::GetCurrentSubGame(GWorld)
 // Class FortniteGame.FortGlobals
 // 0x01A0 (0x01C8 - 0x0028)
 class UFortGlobals final : public UObject
@@ -43770,7 +43768,7 @@ public:
 		static void (*InitializePlayerGameplayAbilities)(IAbilitySystemInterface*) = decltype(InitializePlayerGameplayAbilities)(InSDKUtils::GetImageBase() + 0x0);
 		InitializePlayerGameplayAbilities(PlayerStateOrProxy);
 	}
-
+public:
 	static FFortGlobalGameplayTags* GameplayTags()
 	{
 		static FFortGlobalGameplayTags*(*GameplayTags)() = decltype(GameplayTags)(InSDKUtils::GetImageBase() + 0xF63700);
@@ -46934,7 +46932,6 @@ static_assert(offsetof(UFortMusicContext, OnMusicPackChanged) == 0x000028, "Memb
 static_assert(offsetof(UFortMusicContext, DesiredActiveMusicPack) == 0x000038, "Member 'UFortMusicContext::DesiredActiveMusicPack' has a wrong offset!");
 static_assert(offsetof(UFortMusicContext, LoadedPacks) == 0x000040, "Member 'UFortMusicContext::LoadedPacks' has a wrong offset!");
 
-#define GSubGame UFortKismetLibrary::GetSubGame(GWorld)
 // Class FortniteGame.FortKismetLibrary
 // 0x0000 (0x0028 - 0x0028)
 class UFortKismetLibrary final : public UBlueprintFunctionLibrary
@@ -57205,7 +57202,7 @@ public:
 		static UFortWorldItem* (*New)(AFortInventory*, FFortItemEntry*) = decltype(New)(InSDKUtils::GetImageBase() + 0x10CC7B0);
 		return New(OwnerInventory, &ItemDescription);
 	}
-
+public:
 	void OnItemInstanceAdded(IFortInventoryOwnerInterface* InventoryOwner)
 	{
 		void(*OnItemInstanceAdded)(UFortWorldItem*, IFortInventoryOwnerInterface*) = decltype(OnItemInstanceAdded)(VTable[0x450 / 8]);
@@ -57223,20 +57220,26 @@ public:
 		static void(*RemoveFromInventory)(UFortWorldItem*) = decltype(RemoveFromInventory)(InSDKUtils::GetImageBase() + 0x10D13A0);
 		RemoveFromInventory(this);
 	}
-
-	bool SetInInventoryOverflow(bool bInInventoryOverflow)
-	{
-		if (ItemEntry.inventory_overflow_date == bInInventoryOverflow)
-			return false;
-
-		ItemEntry.inventory_overflow_date = bInInventoryOverflow;
-
-		return true;
-	}
-
+public:
 	bool IsInventoryOverflowItem()
 	{
 		return ItemEntry.inventory_overflow_date;
+	}
+
+	bool SetInInventoryOverflow(bool bInInventoryOverflow)
+	{
+		ItemEntry.SetInInventoryOverflow(bInInventoryOverflow);
+		return bInInventoryOverflow;
+	}
+public:
+	UFortItemDefinition* GetItemDefinition()
+	{
+		return ItemEntry.ItemDefinition;
+	}
+
+	FFortItemEntry* GetItemEntry()
+	{
+		return &ItemEntry;
 	}
 public:
 	static class UClass* StaticClass()

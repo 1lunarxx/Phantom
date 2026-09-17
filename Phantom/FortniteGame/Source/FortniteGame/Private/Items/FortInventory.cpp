@@ -4,30 +4,17 @@
 
 UFortWorldItem* AFortInventory::AddItem(UFortItemDefinition* ItemDefinition, int32 Count)
 {
-	if (ItemDefinition == NULL || Count <= 0)
+	UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemDefinition);
+
+	if (WorldItemDefinition == NULL)
+		return NULL;
+			
+	FFortItemEntry ItemToAddEntry = FFortItemEntry(WorldItemDefinition, Count, UFortLootLevel::GetItemLevel(&WorldItemDefinition->LootLevelData, GetWorld()->GetGameState()->WorldLevel));
+
+	if (ItemToAddEntry.Count <= 0)
 		return NULL;
 
-	UFortWorldItem* WorldItem = UFortWorldItem::New(this, FFortItemEntry(ItemDefinition, Count, 0));
-
-	if (WorldItem == NULL)
-		return NULL;
-
-	InitializeExistingItem(WorldItem);
-
-	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(GetOwner()))
-	{
-		WorldItem->SetOwningControllerForTemporaryItem(FortPlayerController);
-
-		if (IFortInventoryOwnerInterface* FortInventoryOwnerInterface = FortPlayerController->GetInterfaceAddress<IFortInventoryOwnerInterface>())
-		{
-			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
-		}
-
-		if (GSubGame == ESubGame::Campaign)
-			FortPlayerController->TryAddToQuickBar(WorldItem);
-	}
-
-	return WorldItem;
+	return AddItem(&ItemToAddEntry);
 }
 
 UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
@@ -48,7 +35,7 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 			WorldItem->OnItemInstanceAdded(FortInventoryOwnerInterface);
 		}
 
-		if (GSubGame == ESubGame::Campaign)
+		if (CurrentSubGame == ESubGame::Campaign)
 			FortPlayerController->TryAddToQuickBar(WorldItem);
 	}
 
@@ -57,12 +44,14 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 
 void AFortInventory::AddItemStack(UFortItemDefinition* ItemDefinition, int32 Count)
 {
-	UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemDefinition);
-
-	if (WorldItem != NULL)
-		UpdateItemEntry(&WorldItem->ItemEntry);
+	if (UFortWorldItem* ExistingItem = FindExistingItemForDefinition(ItemDefinition))
+	{
+		ExistingItem->ItemEntry.SetCount(Count);
+	}
 	else
+	{
 		AddItem(ItemDefinition, Count);
+	}
 }
 
 void AFortInventory::RemoveItem(FGuid& ItemGuid)
@@ -103,32 +92,8 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
 	}
 	else
 	{
-		ItemEntry->Count -= Count;
-
-		UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
-
-		if (WorldItem != NULL)
-			WorldItem->ItemEntry.Count = ItemEntry->Count;
-
-		UpdateItemEntry(ItemEntry);
+		ItemEntry->SetCount(ItemEntry->Count - Count);
 	}
-}
-
-void AFortInventory::UpdateItemEntry(FFortItemEntry* ItemEntry, int32 Count)
-{
-	ItemEntry->Count += Count;
-	SetItemRequiresUpdate(ItemEntry);
-}
-
-void AFortInventory::UpdateItemEntry(FFortItemEntry* NewItemEntry)
-{
-	FFortItemEntry* ItemEntry = GetReplicatedItemEntry(&NewItemEntry->ItemGuid);
-
-	if (ItemEntry == NULL)
-		return;
-
-	*ItemEntry = *NewItemEntry;
-	SetItemRequiresUpdate(ItemEntry);
 }
 
 void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const FGuid* ItemGuid)
@@ -189,7 +154,7 @@ void AFortInventory::OnRemoveItemStack(UFortWorldItem* ItemStackToRemove, const 
 			if (StateValue.StateType != EFortItemEntryState::EFortItemEntryState_MAX)
 				continue;
 
-			RemovedItemEntry.StateValues.Remove(i); // they dont do this but why not
+			RemovedItemEntry.StateValues.Remove(i);
 
 			break;
 		}
