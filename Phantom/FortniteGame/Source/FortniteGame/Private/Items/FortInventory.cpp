@@ -36,7 +36,7 @@ UFortWorldItem* AFortInventory::AddItem(FFortItemEntry* ItemEntry)
 		}
 
 		if (CurrentSubGame == ESubGame::Campaign)
-			FortPlayerController->TryAddToQuickBar(WorldItem);
+			FortPlayerController->TryAddToQuickBar(WorldItem); // should get called auto idfk
 	}
 
 	return WorldItem;

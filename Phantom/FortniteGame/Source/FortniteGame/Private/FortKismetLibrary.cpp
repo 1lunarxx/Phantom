@@ -35,7 +35,17 @@ AFortPickup* FortKismetLibrary::K2_SpawnPickupInWorld(UFortKismetLibrary* Contex
     Stack->StepCompiledIn(&bBlockedFromAutoPickup);
     Stack->IncrementCode();
 
-    return *Result = AFortPickup::SpawnPickup(FFortItemEntry(ItemDefinition, NumberToSpawn, 0), Position, NumberToSpawn, EFortPickupSourceTypeFlag::Other, -1, bRandomRotation, bToss);
+    FFortItemEntry ItemEntry = FFortItemEntry(ItemDefinition, NumberToSpawn, 0);
+
+    if (UFortWeaponRangedItemDefinition* WeaponRangedItemDefinition = Cast<UFortWeaponRangedItemDefinition>(ItemDefinition))
+    {
+        FFortRangedWeaponStats OutRow;
+        UFortKismetLibrary::GetRangedWeaponStatsRow(WeaponRangedItemDefinition->WeaponStatHandle, &OutRow);
+
+        ItemEntry.LoadedAmmo = OutRow.ClipSize;
+    }
+
+    return *Result = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &ItemEntry, Position, FRotator(), NULL, NULL, NULL, EFortPickupSourceTypeFlag::Other, 0, true, false));
 }
 
 bool FortKismetLibrary::PickLootDrops(UFortKismetLibrary* Context, FFrame* Stack, bool* Result)

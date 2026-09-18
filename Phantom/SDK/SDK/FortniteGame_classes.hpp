@@ -29595,10 +29595,37 @@ struct FortPickupCreationData
 	UClass* OverrideClass;
 	AActor* OwnerContainer;
 	EFortPickupSourceTypeFlag SourceTypeFlags;
-	uint8 Pad_39[0x3];
 	uint8 SpawnSource;
 	uint8 bRandomRotation : 1;
 	uint8 bPickupOnlyRelevantToOwner : 1;
+public:
+	FortPickupCreationData() = default;
+
+	FortPickupCreationData(
+		UWorld* InWorld,
+		FFortItemEntry* InItemEntry,
+		FVector InPosition,
+		FRotator InRotation,
+		AFortPlayerController* InOptionalPCOwner,
+		UClass* InOverrideClass,
+		AActor* InOwnerContainer,
+		EFortPickupSourceTypeFlag InSourceTypeFlags,
+		uint8 InSpawnSource,
+		bool bInRandomRotation,
+		bool bInPickupOnlyRelevantToOwner)
+	{
+		World = InWorld;
+		PickupDataItemEntry = InItemEntry;
+		Position = new FVector(InPosition);
+		Rotation = new FRotator(InRotation);
+		OptionalPCOwner = InOptionalPCOwner;
+		OverrideClass = InOverrideClass;
+		OwnerContainer = InOwnerContainer;
+		SourceTypeFlags = InSourceTypeFlags;
+		SpawnSource = InSpawnSource;
+		bRandomRotation = bInRandomRotation;
+		bPickupOnlyRelevantToOwner = bInPickupOnlyRelevantToOwner;
+	}
 };
 
 // Class FortniteGame.FortPickup
@@ -29668,6 +29695,15 @@ public:
 		return CreateFromData(CreationData);
 	}
 
+	static AFortPickup* CreateFromData(const FortPickupCreationData CreationData)
+	{
+		AFortPickup* Pickup = CreateFromData(&CreationData);
+
+		Pickup->TossPickup(*CreationData.Position, NULL, -1, true, CreationData.SourceTypeFlags);
+
+		return Pickup;
+	}
+public:
 	void SetPickupTarget(AFortPawn* PickupTarget, float InFlyTime, FVector InStartDirection)
 	{
 		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, float, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
@@ -29685,8 +29721,6 @@ public:
 		static float(*GetFlyTime)(AFortPickup*) = decltype(GetFlyTime)(InSDKUtils::GetImageBase() + 0x1093D30);
 		return GetFlyTime(this);
 	}
-
-	static AFortPickup* SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation = true, bool bToss = true, AFortPlayerPawn* PlayerPawn = NULL, ABuildingContainer* Container = NULL);
 public:
 	static class UClass* StaticClass()
 	{
@@ -30663,7 +30697,12 @@ public:
 	class FString                                 ActiveTheaterListPath;                             // 0x0520(0x0010)(ZeroConstructor, Config, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	TArray<class FName>                           BROnlyLootPackagesExclusionList;                   // 0x0530(0x0010)(ZeroConstructor, Config, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_540[0x140];                                    // 0x0540(0x0140)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	static UFortAssetManager* Get()
+	{
+		static UFortAssetManager* (*Get)() = decltype(Get)(InSDKUtils::GetImageBase() + 0xEA4DC0);
+		return Get();
+	}
 public:
 	static class UClass* StaticClass()
 	{

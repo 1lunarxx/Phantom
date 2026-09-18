@@ -217,6 +217,15 @@ struct FGenericPlatformMath
 	/** Returns a random float between 0 and 1, inclusive. */
 	static FORCEINLINE float FRand() { return Rand() / (float)RAND_MAX; }
 
+	/** Seeds future calls to SRand() */
+	static void SRandInit(int32 Seed);
+
+	/** Returns the current seed for SRand(). */
+	static int32 GetRandSeed();
+
+	/** Returns a seeded random float in the range [0,1), using the seed from SRandInit(). */
+	static float SRand();
+
 	/**
 	 * Counts the number of trailing zeros in the bit representation of the value
 	 *

@@ -10,19 +10,16 @@ void FortPlayerControllerZone::ServerAcknowledgePossession_Implementation(AFortP
 		if (FortPlayerControllerZone->MyFortPawn != NULL)
 			PS->ApplyCharacterCustomization(FortPlayerControllerZone->MyFortPawn);
 
-		if (UFortAssetManager* AssetManager = Cast<UFortAssetManager>(UEngine::GetEngine()->AssetManager))
+		UFortAbilitySet* GenericPlayerAbilitySet = UFortAssetManager::Get()->GameData->GenericPlayerAbilitySet.Get();
+
+		if (GenericPlayerAbilitySet != NULL)
 		{
-			UFortAbilitySet* GenericPlayerAbilitySet = AssetManager->GameData->GenericPlayerAbilitySet.Get();
+			TScriptInterface<IAbilitySystemInterface> AbilitySystemInterfaceActor;
 
-			if (GenericPlayerAbilitySet != NULL)
-			{
-				TScriptInterface<IAbilitySystemInterface> AbilitySystemInterfaceActor;
+			AbilitySystemInterfaceActor.ObjectPointer = FortPlayerControllerZone->MyFortPawn;
+			AbilitySystemInterfaceActor.InterfacePointer = FortPlayerControllerZone->MyFortPawn->GetInterfaceAddress<IAbilitySystemInterface>();
 
-				AbilitySystemInterfaceActor.ObjectPointer = FortPlayerControllerZone->MyFortPawn;
-				AbilitySystemInterfaceActor.InterfacePointer = FortPlayerControllerZone->MyFortPawn->GetInterfaceAddress<IAbilitySystemInterface>();
-
-				UFortKismetLibrary::EquipFortAbilitySet(AbilitySystemInterfaceActor, GenericPlayerAbilitySet, NULL);
-			}
+			UFortKismetLibrary::EquipFortAbilitySet(AbilitySystemInterfaceActor, GenericPlayerAbilitySet, NULL);
 		}
 	}
 }

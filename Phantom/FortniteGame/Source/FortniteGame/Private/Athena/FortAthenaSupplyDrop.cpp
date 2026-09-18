@@ -27,7 +27,7 @@ AFortPickup* FortAthenaSupplyDrop::SpawnPickup(AFortAthenaSupplyDrop* Context, F
         ItemEntry.LoadedAmmo = OutRow.ClipSize;
     }
 
-    return *Result = AFortPickup::SpawnPickup(ItemEntry, Position, NumberToSpawn, EFortPickupSourceTypeFlag::Container_SupplyDrop, 3);
+    return *Result = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &ItemEntry, Position, FRotator(), NULL, NULL, NULL, EFortPickupSourceTypeFlag::Container_SupplyDrop, 0, true, false));
 }
 
 void FortAthenaSupplyDrop::Setup()

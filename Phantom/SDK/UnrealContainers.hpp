@@ -232,24 +232,6 @@ namespace UC
 		};
 	}
 
-	template<typename T>
-	inline void Sort(T* Data, int32 Count)
-	{
-		for (int32 i = 1; i < Count; i++)
-		{
-			T Value = Data[i];
-			int32 j = i - 1;
-
-			while (j >= 0 && Value->Priority < Data[j]->Priority)
-			{
-				Data[j + 1] = Data[j];
-				j--;
-			}
-
-			Data[j + 1] = Value;
-		}
-	}
-
 	template<typename ObjectType>
 	class TUniquePtr
 	{
@@ -764,6 +746,17 @@ namespace UC
 			return Elements.Add(Element);
 		}
 
+		bool Contains(const SetElementType& Element) const
+		{
+			for (const auto& It : *this)
+			{
+				if (It == Element)
+					return true;
+			}
+
+			return false;
+		}
+
 		inline bool Remove(int32 Index)
 		{
 			return Elements.Remove(Index);
@@ -963,8 +956,10 @@ namespace UC
 				, CurrentBitIndex(StartIndex)
 				, BaseBitIndex(StartIndex & ~(NumBitsPerDWORD - 1))
 			{
-				if (StartIndex != Array.Num())
+				if (StartIndex < Array.Num())
 					FindFirstSetBit();
+				else
+					CurrentBitIndex = Array.Num();
 			}
 
 		public:
@@ -987,15 +982,37 @@ namespace UC
 
 			void FindFirstSetBit()
 			{
+				const int32 ArrayNum = Array.Num();
+
+				if (ArrayNum <= 0 || CurrentBitIndex >= ArrayNum)
+				{
+					CurrentBitIndex = ArrayNum > 0 ? ArrayNum : 0;
+					return;
+				}
+
 				const uint32* ArrayData = Array.GetData();
-				const int32   ArrayNum = Array.Num();
-				const int32   LastWordIndex = (ArrayNum - 1) / NumBitsPerDWORD;
+
+				if (ArrayData == nullptr)
+				{
+					CurrentBitIndex = ArrayNum;
+					return;
+				}
+
+				const int32 LastWordIndex = (ArrayNum - 1) / NumBitsPerDWORD;
+
+				if (this->WordIndex < 0 || this->WordIndex > LastWordIndex)
+				{
+					CurrentBitIndex = ArrayNum;
+					return;
+				}
 
 				uint32 RemainingBitMask = ArrayData[this->WordIndex] & UnvisitedBitMask;
+
 				while (!RemainingBitMask)
 				{
 					++this->WordIndex;
 					BaseBitIndex += NumBitsPerDWORD;
+
 					if (this->WordIndex > LastWordIndex)
 					{
 						CurrentBitIndex = ArrayNum;
@@ -1003,7 +1020,7 @@ namespace UC
 					}
 
 					RemainingBitMask = ArrayData[this->WordIndex];
-					UnvisitedBitMask = ~0;
+					UnvisitedBitMask = ~0U;
 				}
 
 				const uint32 NewRemainingBitMask = RemainingBitMask & (RemainingBitMask - 1);
@@ -1012,7 +1029,7 @@ namespace UC
 
 				CurrentBitIndex = BaseBitIndex + NumBitsPerDWORD - 1 - ContainerImpl::HelperFunctions::CountLeadingZeros(this->Mask);
 
-				if (CurrentBitIndex > ArrayNum)
+				if (CurrentBitIndex >= ArrayNum)
 					CurrentBitIndex = ArrayNum;
 			}
 		};

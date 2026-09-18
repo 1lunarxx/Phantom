@@ -57,12 +57,19 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 					if (!BuildingSMActor->DestructionLootTierGroup.IsNone())
 					{
+						int32 WorldLevel = -1;
+
+						if (AFortGameState* GameState = FortPlayerController->GetWorld()->GetGameState())
+						{
+							WorldLevel = GameState->WorldLevel;
+						}
+
 						TArray<FFortItemEntry> OutLootDrops;
-						UFortLootPackage::PickLootDrops(&OutLootDrops, -1, BuildingSMActor->DestructionLootTierGroup);
+						UFortLootPackage::PickLootDrops(&OutLootDrops, WorldLevel, BuildingSMActor->DestructionLootTierGroup);
 
 						for (FFortItemEntry& LootDrop : OutLootDrops)
 						{
-							AFortPickup* FortPickup = AFortPickup::SpawnPickup(LootDrop, BuildingSMActor->K2_GetActorLocation(), LootDrop.Count, EFortPickupSourceTypeFlag::Destruction, 0);
+							AFortPickup* FortPickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &LootDrop, BuildingSMActor->K2_GetActorLocation(), FRotator(), NULL, NULL, BuildingSMActor, EFortPickupSourceTypeFlag::Destruction, 0, true, false));
 
 							if (FortPickup != NULL)
 								FortPickup->SetPickupTarget(InstigatorPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
@@ -98,7 +105,9 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 
 							if (ItemEntry->Count >= ResourceItemDefinition->MaxStackSize)
 							{
-								AFortPickup* FortPickup = AFortPickup::SpawnPickup(*ItemEntry, InstigatorPawn->K2_GetActorLocation(), ItemEntry->Count - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
+								ItemEntry->Count = ItemEntry->Count - ResourceItemDefinition->MaxStackSize;
+
+								AFortPickup* FortPickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, ItemEntry, BuildingSMActor->K2_GetActorLocation(), FRotator(), NULL, NULL, BuildingSMActor, EFortPickupSourceTypeFlag::Destruction, 0, true, false));
 
 								if (FortPickup != NULL)
 									ItemEntry->SetCount(ResourceItemDefinition->MaxStackSize);
@@ -107,7 +116,10 @@ void BuildingSMActor::AttemptSpawnResources(ABuildingSMActor* BuildingSMActor, A
 						else
 						{
 							if (ResourceCount >= ResourceItemDefinition->MaxStackSize)
-								AFortPickup::SpawnPickup(FFortItemEntry(ResourceItemDefinition, ResourceCount - ResourceItemDefinition->MaxStackSize, 0), InstigatorPawn->K2_GetActorLocation(), ResourceCount - ResourceItemDefinition->MaxStackSize, EFortPickupSourceTypeFlag::Destruction, 0, InstigatorPawn);
+							{
+								FFortItemEntry ItemEntry = FFortItemEntry(ResourceItemDefinition, ResourceCount - ResourceItemDefinition->MaxStackSize, 0);
+								AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &ItemEntry, BuildingSMActor->K2_GetActorLocation(), FRotator(), NULL, NULL, BuildingSMActor, EFortPickupSourceTypeFlag::Destruction, 0, true, false));
+							}
 
 							FortPlayerController->WorldInventory->AddItem(ResourceItemDefinition, ResourceCount);
 						}

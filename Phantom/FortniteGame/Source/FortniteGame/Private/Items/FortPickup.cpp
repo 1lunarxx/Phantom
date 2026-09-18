@@ -2,42 +2,6 @@
 #include "FortniteGame/Public/Items/FortPickup.h"
 #include "FortniteGame/Public/Items/FortLootLevel.h"
 
-AFortPickup* AFortPickup::SpawnPickup(FFortItemEntry ItemEntry, FVector InLocation, int32 Count, EFortPickupSourceTypeFlag PickupSourceTypeFlag, uint8 SpawnSource, bool bRandomRotation, bool bToss, AFortPlayerPawn* PlayerPawn, ABuildingContainer* Container)
-{
-	if (Count)
-		ItemEntry.Count = Count;
-
-	if (UFortWorldItemDefinition* WorldItemDefinition = Cast<UFortWorldItemDefinition>(ItemEntry.ItemDefinition))
-	{
-		if (ItemEntry.Level <= 0)
-			ItemEntry.Level = UFortLootLevel::GetItemLevel(&WorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel);
-
-		ItemEntry.Durability = WorldItemDefinition->GetMaxDurability(ItemEntry.Level);
-	}
-
-	FortPickupCreationData* CreationData = new FortPickupCreationData();
-
-	CreationData->World = GWorld;
-	CreationData->PickupDataItemEntry = &ItemEntry;
-	CreationData->Position = &InLocation;
-	CreationData->OptionalPCOwner = NULL;
-	CreationData->OverrideClass = NULL;
-	CreationData->OwnerContainer = Container;
-	CreationData->SourceTypeFlags = PickupSourceTypeFlag;
-	CreationData->SpawnSource = SpawnSource;
-	CreationData->bPickupOnlyRelevantToOwner = bToss;
-
-	AFortPickup* Pickup = AFortPickup::CreateFromData(CreationData);
-
-	if (Pickup != NULL)
-	{
-		Pickup->SetPawnWhoDroppedPickup(PlayerPawn);
-		Pickup->TossPickup(InLocation, Pickup->PawnWhoDroppedPickup, -1, bToss, PickupSourceTypeFlag);
-	}
-
-	return Pickup;
-}
-
 void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterface* InventoryOwner, bool DestoryAfterPickup)
 {
 	Originals::GivePickupTo(FortPickup, InventoryOwner, DestoryAfterPickup);
@@ -91,7 +55,10 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 						WorldInventory->AddItem(PickupItemEntry);
 					}
 
-					AFortPickup::SpawnPickup(*PickupItemEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), OverflowFromAddingItem, EFortPickupSourceTypeFlag::Player, -1, true, true, FortPlayerController->GetPlayerPawn());
+					AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, PickupItemEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
+
+					if (Pickup != NULL)
+						Pickup->SetPawnWhoDroppedPickup(FortPlayerController->GetPlayerPawn());
 				}
 			}
 			else
@@ -100,9 +67,13 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 
 				if (CurrentWeaponEntry != NULL)
 				{
-					AFortPickup::SpawnPickup(*CurrentWeaponEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), CurrentWeaponEntry->Count, EFortPickupSourceTypeFlag::Player, -1, true, true, FortPlayerController->GetPlayerPawn());
-
 					WorldInventory->RemoveItem(CurrentWeaponEntry->ItemGuid);
+
+					AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, CurrentWeaponEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
+
+					if (Pickup != NULL)
+						Pickup->SetPawnWhoDroppedPickup(FortPlayerController->GetPlayerPawn());
+
 					WorldInventory->AddItem(PickupItemEntry);
 				}
 			}

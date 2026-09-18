@@ -32,10 +32,10 @@ bool BuildingContainer::SpawnLoot(ABuildingContainer* BuildingContainer, AFortPl
 
 	for (FFortItemEntry& LootDrop : OutLootDrops)
 	{
-		AFortPickup* FortPickup = AFortPickup::SpawnPickup(LootDrop, LootDropLocation, LootDrop.Count, InSourceTypeFlag, InSpawnSource, false, true, NULL, BuildingContainer);
+		AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &LootDrop, LootDropLocation, BuildingContainer->K2_GetActorRotation(), NULL, NULL, BuildingContainer, InSourceTypeFlag, InSpawnSource, true, false));
 
-		if (FortPickup != NULL && CurrentSubGame == ESubGame::Campaign)
-			FortPickup->SetPickupTarget(PlayerPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0,0,1), 0.0f));
+		if (Pickup != NULL && CurrentSubGame == ESubGame::Campaign)
+			Pickup->SetPickupTarget(PlayerPawn, Pickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
 	}
 
 	BuildingContainer->SearchBounceData.SearchAnimationCount++;

@@ -2419,9 +2419,11 @@ public:
 	uint8                                         bReplicates : 1;                                   // 0x0082(0x0001)(BitIndex: 0x07, PropSize: 0x0001 (Edit, BlueprintVisible, BlueprintReadOnly, DisableEditOnInstance, NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected))
 	uint8                                         bCanBeInCluster : 1;                               // 0x0083(0x0001)(BitIndex: 0x00, PropSize: 0x0001 (Edit, NoDestructor, AdvancedDisplay, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected))
 	uint8                                         bAllowReceiveTickEventOnDedicatedServer : 1;       // 0x0083(0x0001)(BitIndex: 0x01, PropSize: 0x0001 (NoDestructor, Protected, HasGetValueTypeHash, NativeAccessSpecifierProtected))
-	uint8                                         BitPad_83_2 : 6;                                   // 0x0083(0x0001)(Fixing Bit-Field Size For New Byte [ Dumper-7 ])
+	uint8                                         BitPad_83_2 : 2;                                   // 0x0083(0x0001)(Fixing Bit-Field Size Between Bits [ Dumper-7 ])
+	uint8                                         bActorInitialized : 1;                             // 0x0083(0x0001)(BitIndex: 0x04, PropSize: 0x0001 (NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate))
+	uint8                                         BitPad_83_5 : 3;                                   // 0x0083(0x0001)(Fixing Bit-Field Size For New Byte [ Dumper-7 ])
 	uint8                                         bActorEnableCollision : 1;                         // 0x0084(0x0001)(BitIndex: 0x00, PropSize: 0x0001 (NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate))
-	uint8                                         bActorIsBeingDestroyed : 1;                        // 0x0084(0x0001)(BitIndex: 0x01, PropSize: 0x0001 (Transient, DuplicateTransient, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate))
+	uint8                                         bActorIsBeingDestroyed : 1;                        // 0x0084(0x0001)(BitIndex: 0x01, PropSize: 0x0001 (Transient, DuplicateTransient, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate))uint8                                         bActorIsBeingDestroyed : 1;                        // 0x0084(0x0001)(BitIndex: 0x01, PropSize: 0x0001 (Transient, DuplicateTransient, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate))
 	ENetRole                                      RemoteRole;                                        // 0x0085(0x0001)(Net, ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_86[0x2];                                       // 0x0086(0x0002)(Fixing Size After Last Property [ Dumper-7 ])
 	struct FRepMovement                           ReplicatedMovement;                                // 0x0088(0x0034)(Edit, Net, DisableEditOnInstance, RepNotify, NoDestructor, AdvancedDisplay, NativeAccessSpecifierPublic)
@@ -2601,6 +2603,8 @@ public:
 	class USceneComponent* K2_GetRootComponent() const;
 	bool WasRecentlyRendered(float Tolerance) const;
 public:
+	class ULevel* GetLevel();
+public:
 	class UWorld* GetWorld()
 	{
 		static UWorld* (*GetWorld)(AActor*) = decltype(GetWorld)(InSDKUtils::GetImageBase() + 0x24628B0);
@@ -2612,40 +2616,46 @@ public:
 		static AWorldSettings* (*GetWorldSettings)(AActor*) = decltype(GetWorldSettings)(InSDKUtils::GetImageBase() + 0x2462960);
 		return GetWorldSettings(this);
 	}
-public:
-	bool IsActorInitialized()
-	{
-		return *(bool*)(__int64(this) + 0x83);
-	}
-
-	bool IsRelevancyOwnerFor(const AActor* ReplicatedActor, const AActor* ActorOwner, const AActor* ConnectionActor) const
-	{
-		return (ActorOwner == this);
-	}
-
-	class ULevel* GetLevel()
-	{
-		static ULevel* (*GetLevel)(AActor*) = decltype(GetLevel)(InSDKUtils::GetImageBase() + 0x24606C0);
-		return GetLevel(this);
-	}
-
-	bool IsNetRelevantFor(AActor* RealViewer, AActor* ViewTarget, FVector SrcLocation)
-	{
-		bool(*IsNetRelevantFor)(AActor*, AActor*, AActor*, FVector) = decltype(IsNetRelevantFor)(VTable[0x428 / 8]);
-		return IsNetRelevantFor(this, RealViewer, ViewTarget, SrcLocation);
-	}
 
 	void CallPreReplication(class UNetDriver* NetDriver)
 	{
-		static void(*CallPreReplication)(AActor*, UNetDriver*) = decltype(CallPreReplication)(InSDKUtils::GetImageBase() + 0x2452630);
+		static void (*CallPreReplication)(AActor*, UNetDriver*) = decltype(CallPreReplication)(InSDKUtils::GetImageBase() + 0x2452630);
 		CallPreReplication(this, NetDriver);
 	}
 
-	bool IsNetStartupActor()
+	bool IsPendingKillPending()
 	{
-		static bool(*IsNetStartupActor)(AActor*) = decltype(IsNetStartupActor)(InSDKUtils::GetImageBase() + 0x2464890);
-		return IsNetStartupActor(this);
+		static bool(*IsPendingKillPending)(AActor*) = decltype(IsPendingKillPending)(InSDKUtils::GetImageBase() + 0x7603E0);
+		return IsPendingKillPending(this);
 	}
+
+	bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation)
+	{
+		bool(*IsNetRelevantFor)(AActor*, const AActor*, const AActor*, const FVector&) = decltype(IsNetRelevantFor)(VTable[0x428 / 8]);
+		return IsNetRelevantFor(this, RealViewer, ViewTarget, SrcLocation);
+	}
+
+public:
+	bool IsRelevancyOwnerFor(const AActor* ReplicatedActor, const AActor* ActorOwner, const AActor* ConnectionActor)
+	{
+		bool(*IsRelevancyOwnerFor)(AActor*, const AActor*, const AActor*, const AActor*) = decltype(IsRelevancyOwnerFor)(VTable[0x87]);
+		return IsRelevancyOwnerFor(this, ReplicatedActor, ActorOwner, ConnectionActor);
+	}
+
+	AActor* GetNetOwner()
+	{
+		AActor* (*GetNetOwner)(AActor*) = decltype(GetNetOwner)(VTable[0x8B]);
+		return GetNetOwner(this);
+	}
+
+	bool GetNetDormancy(const FVector& ViewPos, const FVector& ViewDir, AActor* Viewer, AActor* ViewTarget, class UActorChannel* InChannel, float Time, bool bLowBandwidth)
+	{
+		return false;
+	}
+public:
+	bool GetTearOff() { return bTearOff; }
+	bool IsActorInitialized() const { return bActorInitialized; }
+	bool IsNetStartupActor() const { return bNetStartup; }
 public:
 	static class UClass* StaticClass()
 	{
@@ -3139,8 +3149,9 @@ public:
 	bool WasInputKeyJustPressed(const struct FKey& Key) const;
 	bool WasInputKeyJustReleased(const struct FKey& Key) const;
 public:
-	APlayerState* GetPlayerState() { return PlayerState; }
-
+	APlayerState* GetPlayerState() const { return PlayerState; }
+	APawn* GetPawn() const { return Pawn; }
+public:
 	FString* ConsoleCommand(FString* result, const FString* Cmd, bool bWriteToLog)
 	{
 		static FString* (*ConsoleCommand)(APlayerController*, FString*, const FString*, bool) = decltype(ConsoleCommand)(InSDKUtils::GetImageBase() + 0x28E0840);
@@ -3158,7 +3169,6 @@ public:
 		static void(*SendClientAdjustment)(APlayerController*) = decltype(SendClientAdjustment)(InSDKUtils::GetImageBase() + 0x28F64F0);
 		SendClientAdjustment(this);
 	}
-
 public:
 	static class UClass* StaticClass()
 	{
@@ -4010,10 +4020,17 @@ enum EConnectionState
 	USOCK_Closing = 4, // Connection is closing and waiting for all reliable data to be acked. No new data will be sent.
 };
 
-enum class EChannelCreateFlags : uint32
+enum EChannelType
 {
-	None = 1,
-	OpenedLocally = 2
+	CHTYPE_None = 0,  // Invalid type.
+	CHTYPE_Control = 1,  // Connection control.
+	CHTYPE_Actor = 2,  // Actor-update channel.
+
+	// @todo: Remove and reassign number to CHTYPE_Voice (breaks net compatibility)
+	CHTYPE_File = 3,  // Binary file transfer.
+
+	CHTYPE_Voice = 4,  // VoIP data channel
+	CHTYPE_MAX = 8,  // Maximum.
 };
 
 // Class Engine.NetConnection
@@ -4036,13 +4053,15 @@ public:
 	uint8                                         Pad_128[0x28];                                     // 0x0128(0x0028)(Fixing Size After Last Property [ Dumper-7 ])
 	struct FUniqueNetIdRepl                       PlayerID;                                          // 0x0150(0x0028)(HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_178[0x68];                                     // 0x0178(0x0068)(Fixing Size After Last Property [ Dumper-7 ])
-	double                                        LastReceiveTime;                                   // 0x01E0(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_1E8[0x15D8];                                   // 0x01E8(0x15D8)(Fixing Size After Last Property [ Dumper-7 ])
-	TArray<class UChannel*>                       ChannelsToTick;                                    // 0x17C0(0x0010)(ZeroConstructor, NativeAccessSpecifierPrivate)
+	double LastReceiveTime;                 // 0x01E0
+	uint8 Pad_1E8[0x24];                    // 0x01E8
+	int32 TickCount;                        // 0x020C
+	uint8 Pad_210[0x15B0];                  // 0x0210
+	TArray<class UChannel*> ChannelsToTick; // 0x17C0
 	uint8                                         Pad_17D0[0x158];                                   // 0x17D0(0x0158)(Fixing Struct Size After Last Property [ Dumper-7 ])
 public:
 	class UActorChannel* FindActorChannelRef(const TWeakObjectPtr<AActor>& Actor);
-
+public:
 	FName GetClientWorldPackageName()
 	{
 		return *(FName*)(__int64(this) + 0x1858);
@@ -4054,16 +4073,18 @@ public:
 		return IsNetReady(this, Saturate);
 	}
 
-	UChannel* CreateChannelByName(const FName& ChName, EChannelCreateFlags CreateFlags, int32 ChIndex = -1)
+	UChannel* CreateChannel(FName ChType, EChannelType ChannelType, int32 ChIndex = -1)
 	{
-		static UChannel* (*CreateChannelByName)(UNetConnection*, const FName&, EChannelCreateFlags, int32) = decltype(CreateChannelByName)(InSDKUtils::GetImageBase() + 0x27BA5C0);
-		return CreateChannelByName(this, ChName, CreateFlags, ChIndex);
+		static UChannel* (*CreateChannel)(UNetConnection*, FName*, EChannelType, int32) = decltype(CreateChannel)(InSDKUtils::GetImageBase() + 0x27BA5C0);
+		return CreateChannel(this, &ChType, ChannelType, ChIndex);
 	}
-	
+
 	TSet<struct FNetworkGUID>& GetDestroyedStartupOrDormantActorGUIDs()
 	{
 		return *(TSet<FNetworkGUID>*)((__int64)this + 0x1678);
 	}
+public:
+	void RemoveDestructionInfo(struct FActorDestructionInfo* DestructionInfo);
 public:
 	static class UClass* StaticClass()
 	{
@@ -4170,7 +4191,28 @@ public:
 	TMap<TWeakObjectPtr<class UNetConnection>, int32> NumDormantObjectsPerConnection;
 
 public:
-	FNetworkObjectSet GetActiveNetworkObjects() { return ActiveNetworkObjects; }
+	FNetworkObjectSet& GetActiveObjects()
+	{
+		return ActiveNetworkObjects;
+	}
+public:
+	void Remove(AActor* const Actor)
+	{
+		static void(*Remove)(FNetworkObjectList*, AActor* const) = decltype(Remove)(InSDKUtils::GetImageBase() + 0x2803FE0);
+		Remove(this, Actor);
+	}
+};
+
+enum class EChannelCloseReason : uint8
+{
+	Destroyed,
+	Dormancy,
+	LevelUnloaded,
+	Relevancy,
+	TearOff,
+	Migrated,
+	/* reserved */
+	MAX = 15		// this value is used for serialization, modifying it may require a network version change
 };
 
 /**
@@ -4193,18 +4235,6 @@ public:
 	{
 		return ObjectId != Other.ObjectId;
 	}
-};
-
-enum class EChannelCloseReason : uint8
-{
-	Destroyed,
-	Dormancy,
-	LevelUnloaded,
-	Relevancy,
-	TearOff,
-	Migrated,
-	/* reserved */
-	MAX = 15		// this value is used for serialization, modifying it may require a network version change
 };
 
 struct FActorDestructionInfo
@@ -4253,6 +4283,110 @@ public:
 	}
 };
 
+class FNetGuidCacheObject
+{
+public:
+	FNetGuidCacheObject() : NetworkChecksum(0), ReadOnlyTimestamp(0), bNoLoad(0), bIgnoreWhenMissing(0), bIsPending(0), bIsBroken(0)
+	{
+	}
+
+	TWeakObjectPtr< UObject >	Object;
+
+	// These fields are set when this guid is static
+	FNetworkGUID				OuterGUID;
+	FName						PathName;
+	uint32						NetworkChecksum;			// Network checksum saved, used to determine backwards compatible
+
+	double						ReadOnlyTimestamp;			// Time in second when we should start timing out after going read only
+
+	uint8						bNoLoad : 1;	// Don't load this, only do a find
+	uint8						bIgnoreWhenMissing : 1;	// Don't warn when this asset can't be found or loaded
+	uint8						bIsPending : 1;	// This object is waiting to be fully loaded
+	uint8						bIsBroken : 1;	// If this object failed to load, then we set this to signify that we should stop trying
+};
+
+class FNetFieldExport
+{
+public:
+	bool			bExported;
+	uint32			Handle;
+	uint32			CompatibleChecksum;
+	FString			Name;
+	FString			Type;
+
+	// Transient properties
+	mutable bool	bIncompatible;		// If true, we've already determined that this property isn't compatible. We use this to curb warning spam.
+};
+
+class FNetFieldExportGroup
+{
+public:
+	FString						PathName;
+	uint32						PathNameIndex;
+	TArray< FNetFieldExport >	NetFieldExports;
+};
+
+class FNetGUIDCache
+{
+public:
+	enum class ENetworkChecksumMode
+	{
+		None = 0,		// Don't use checksums
+		SaveAndUse = 1,		// Save checksums in stream, and use to validate while loading packages
+		SaveButIgnore = 2,		// Save checksums in stream, but ignore when loading packages
+	};
+
+	enum class EAsyncLoadMode
+	{
+		UseCVar = 0,		// Use CVar (net.AllowAsyncLoading) to determine if we should async load
+		ForceDisable = 1,		// Disable async loading
+		ForceEnable = 2,		// Force enable async loading
+	};
+
+	TMap< FNetworkGUID, FNetGuidCacheObject >		ObjectLookup;
+	TMap< TWeakObjectPtr< UObject >, FNetworkGUID >	NetGUIDLookup;
+	int32											UniqueNetIDs[2];
+
+	TSet< FNetworkGUID >							ImportedNetGuids;
+	TMap< FNetworkGUID, TSet< FNetworkGUID > >		PendingOuterNetGuids;
+
+	bool											IsExportingNetGUIDBunch;
+
+	UNetDriver* Driver;
+
+	TMap< FName, FNetworkGUID >						PendingAsyncPackages;
+
+	ENetworkChecksumMode							NetworkChecksumMode;
+	EAsyncLoadMode									AsyncLoadMode;
+
+	/** Maps net field export group name to the respective FNetFieldExportGroup */
+	TMap < FString, TSharedPtr< FNetFieldExportGroup > >	NetFieldExportGroupMap;
+
+	/** Maps field export group path to assigned index */
+	TMap < FString, uint32 >								NetFieldExportGroupPathToIndex;
+
+	/** Maps assigned net field export group index to assigned path */
+	TMap < uint32, FString >								NetFieldExportGroupIndexToPath;
+
+	/** Current index used when filling in NetFieldExportGroupPathToIndex/NetFieldExportGroupIndexToPath */
+	int32													UniqueNetFieldExportGroupPathIndex;
+public:
+	bool SupportsObject(UObject* Object)
+	{
+		static bool(*SupportsObject)(FNetGUIDCache*, UObject*, int*) = decltype(SupportsObject)(InSDKUtils::GetImageBase() + 0x280F880);
+		return SupportsObject(this, Object, NULL);
+	}
+};
+
+struct FCompareFActorPriority
+{
+	inline bool operator()(const FActorPriority& A, const FActorPriority& B) const
+	{
+		return B.Priority < A.Priority;
+	}
+};
+
+#define GSetNetDormancyEnabled (*(int32*)(InSDKUtils::GetImageBase() + 0x52F3D9C))
 
 // Class Engine.NetDriver
 // 0x06F8 (0x0720 - 0x0028)
@@ -4296,11 +4430,15 @@ public:
 	TArray<class UChannel*>                       ActorChannelPool;                                  // 0x0238(0x0010)(ZeroConstructor, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_248[0x8];                                      // 0x0248(0x0008)(Fixing Size After Last Property [ Dumper-7 ])
 	float                                         Time;                                              // 0x0250(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_254[0x1FC];                                    // 0x0254(0x01FC)
-	uint32                                        ReplicationFrame;                                  // 0x0450(0x0004)
-	uint8                                         Pad_454[0x2A4];                                    // 0x0454(0x02A4)
+	uint8                                         Pad_254[0xBC];                                     // 0x0254(0x00BC)(Fixing Size After Last Property [ Dumper-7 ])
+	int32                                         NetTag;                                            // 0x0310(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	uint8                                         Pad_314[0x4C];                                     // 0x0314(0x004C)(Fixing Size After Last Property [ Dumper-7 ])
+	uint8                                         Pad_360[0xF0];                                     // 0x0360(0x00F0)(Fixing Size After Last Property [ Dumper-7 ])
+	uint32                                        ReplicationFrame;                                  // 0x0450(0x0004)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	uint8                                         Pad_454[0x2A4];                                    // 0x0454(0x02A4)(Fixing Size After Last Property [ Dumper-7 ])
 	class UReplicationDriver* ReplicationDriver;                                 // 0x06F8(0x0008)(ZeroConstructor, Transient, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_700[0x20];                                     // 0x0700(0x0020)(Fixing Struct Size After Last Property [ Dumper-7 ])
+
 public:
 	void SetWorld(UWorld* InWorld)
 	{
@@ -4314,34 +4452,44 @@ public:
 		return InitListen(this, InNotify, LocalURL, bReuseAddressAndPort, Error);
 	}
 
-	TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>& GetDestroyedStartupOrDormantActors()
+	bool IsAdaptiveNetUpdateFrequencyEnabled()
 	{
-		return *(TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>*)((__int64)this + 0x360);
+		return *(int32*)(InSDKUtils::GetImageBase() + 0x580A5E0) != 0;
 	}
 
+	bool IsLevelInitializedForActor(AActor* InActor, UNetConnection* InConnection)
+	{
+		bool(*IsLevelInitializedForActor)(UNetDriver*, AActor*, UNetConnection*) = decltype(IsLevelInitializedForActor)(VTable[0x390 / 8]);
+		return IsLevelInitializedForActor(this, InActor, InConnection);
+	}
+
+public:
 	void ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectInfo*>& OutConsiderList, const float ServerTickTime);
 
-	int32 ServerReplicateActors_PrioritizeActors(UNetConnection* Connection, const TArray<FNetViewer>& ConnectionViewers, const TArray<FNetworkObjectInfo*>& ConsiderList, const bool bCPUSaturated, FActorPriority*& OutPriorityList, FActorPriority**& OutPriorityActors);
+	int32 ServerReplicateActors_PrioritizeActors(UNetConnection* Connection, const TArray<FNetViewer>& ConnectionViewers, const TArray<FNetworkObjectInfo*> ConsiderList, const bool bCPUSaturated, FActorPriority*& OutPriorityList, FActorPriority**& OutPriorityActors);
 	int32 ServerReplicateActors_ProcessPrioritizedActors(UNetConnection* Connection, const TArray<FNetViewer>& ConnectionViewers, FActorPriority** PriorityActors, const int32 FinalSortedCount, int32& OutUpdated);
 	int32 ServerReplicateActors_PrepConnections(float DeltaSeconds);
 	int32 ServerReplicateActors(float DeltaSeconds);
 public:
-	float GetElapsedTime()
+	void RemoveNetworkActor(AActor* Actor)
 	{
-		return *(float*)(__int64(this) + 0x250);
+		GetNetworkObjectList()->Remove(Actor);
 	}
-
+public:
 	FNetworkObjectList* GetNetworkObjectList()
 	{
 		return *(FNetworkObjectList**)(__int64(this) + 0x700);
 	}
 
-	bool IsDormInitialStartupActor(AActor* Actor)
+	FNetGUIDCache* GetGuidCache()
 	{
-		return Actor && Actor->IsNetStartupActor() && (Actor->NetDormancy == ENetDormancy::DORM_Initial);
+		return *(FNetGUIDCache**)(__int64(this) + 0x150);
 	}
 
-	bool IsLevelInitializedForActor(AActor* InActor, UNetConnection* InConnection) const;
+	TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>& GetDestroyedStartupOrDormantActors()
+	{
+		return *(TMap<FNetworkGUID, TUniquePtr<FActorDestructionInfo>>*)(__int64(this) + 0x360);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -7321,6 +7469,9 @@ public:
 	template <class T>
 	T* SpawnActor(FVector Location = FVector(), FRotator Rotation = FRotator(0, 0, 0), UClass* InClass = T::StaticClass(), AActor* Owner = NULL);
 public:
+	ULevel* GetCurrentLevelPendingVisibility() const { return CurrentLevelPendingVisibility; }
+	ULevel* GetCurrentLevelPendingInvisibility() const { return CurrentLevelPendingInvisibility; }
+public:
 	class AFortGameStateAthena* GetGameStateAthena();
 	class AFortGameModeAthena* GetGameModeAthena();
 
@@ -8893,8 +9044,11 @@ static_assert(offsetof(AExponentialHeightFog, Component) == 0x000328, "Member 'A
 class UChannel : public UObject
 {
 public:
-	class UNetConnection*                         Connection;                                        // 0x0028(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
-	uint8                                         Pad_30[0x40];                                      // 0x0030(0x0040)(Fixing Struct Size After Last Property [ Dumper-7 ])
+	class UNetConnection* Connection;                                        // 0x0028(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
+	uint32                                        BitPad_30_0 : 2;                                   // 0x0030(0x0004)
+	uint32                                        Dormant : 1;                                       // 0x0030(0x0004)(BitIndex: 0x02, PropSize: 0x0004, NativeAccessSpecifierPublic)
+	uint32                                        BitPad_30_3 : 29;                                  // 0x0030(0x0004)
+	uint8                                         Pad_34[0x3C];                                      // 0x0034(0x003C)(Fixing Struct Size After Last Property [ Dumper-7 ])
 public:
 	bool IsNetReady(bool Saturate)
 	{
@@ -11097,10 +11251,28 @@ public:
 		SetChannelActor(this, Actor);
 	}
 
+	void StartBecomingDormant()
+	{
+		static void(*StartBecomingDormant)(UActorChannel*, AActor*) = decltype(StartBecomingDormant)(InSDKUtils::GetImageBase() + 0x26312C0);
+		StartBecomingDormant(this, Actor);
+	}
+
+	int64 SetChannelActorForDestroy(FActorDestructionInfo* DestructInfo)
+	{
+		int64(*SetChannelActorForDestroy)(UActorChannel*, FActorDestructionInfo*) = decltype(SetChannelActorForDestroy)(InSDKUtils::GetImageBase() + 0x2630D90);
+		return SetChannelActorForDestroy(this, DestructInfo);
+	}
+
 	int64 ReplicateActor()
 	{
 		int64(*ReplicateActor)(UActorChannel*) = decltype(ReplicateActor)(InSDKUtils::GetImageBase() + 0x262BEE0);
 		return ReplicateActor(this);
+	}
+
+public:
+	bool IsPendingDormancy()
+	{
+		return (*(uint32*)((uintptr_t)this + 0x30) & 0x80) != 0;
 	}
 public:
 	static class UClass* StaticClass()
@@ -15167,8 +15339,12 @@ public:
 	uint8                                         bTextureStreamingRotationChanged : 1;              // 0x01EC(0x0001)(BitIndex: 0x03, PropSize: 0x0001 (NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
 	uint8                                         bStaticComponentsRegisteredInStreamingManager : 1; // 0x01EC(0x0001)(BitIndex: 0x04, PropSize: 0x0001 (Transient, DuplicateTransient, NonTransactional, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
 	uint8                                         bIsVisible : 1;                                    // 0x01EC(0x0001)(BitIndex: 0x05, PropSize: 0x0001 (Transient, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
-	uint8                                         Pad_1ED[0x4B];                                     // 0x01ED(0x004B)(Fixing Size After Last Property [ Dumper-7 ])
-	class AWorldSettings*                         WorldSettings;                                     // 0x0238(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
+	uint8                                         BitPad_1EC_6 : 2;                                  // 0x01EC(0x0001)(Fixing Bit-Field Size For New Byte [ Dumper-7 ])
+	uint8                                         BitPad_1ED_0 : 5;                                  // 0x01ED(0x0001)(Fixing Bit-Field Size Between Bits [ Dumper-7 ])
+	uint8                                         bIsAssociatingLevel : 1;                            // 0x01ED(0x0001)(BitIndex: 0x05, PropSize: 0x0001 (NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic))
+	uint8                                         BitPad_1ED_6 : 2;                                  // 0x01ED(0x0001)(Fixing Bit-Field Size For New Byte [ Dumper-7 ])
+	uint8                                         Pad_1EE[0x4A];                                     // 0x01EE(0x004A)(Fixing Size After Last Property [ Dumper-7 ])
+	class AWorldSettings* WorldSettings;                                     // 0x0238(0x0008)(ZeroConstructor, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPrivate)
 	uint8                                         Pad_240[0x8];                                      // 0x0240(0x0008)(Fixing Size After Last Property [ Dumper-7 ])
 	TArray<class UAssetUserData*>                 AssetUserData;                                     // 0x0248(0x0010)(ExportObject, ZeroConstructor, ContainsInstancedReference, Protected, NativeAccessSpecifierProtected)
 	uint8                                         Pad_258[0x10];                                     // 0x0258(0x0010)(Fixing Size After Last Property [ Dumper-7 ])
@@ -15178,6 +15354,12 @@ public:
 	{
 		return (*(uint8*)((uintptr_t)this + 0x1ED) & 0x20) != 0;
 	}
+
+	bool HasVisibilityChangeRequestPending() const
+	{
+		return (OwningWorld && (this == OwningWorld->GetCurrentLevelPendingVisibility() || this == OwningWorld->GetCurrentLevelPendingInvisibility()));
+	}
+
 public:
 	static class UClass* StaticClass()
 	{
@@ -16083,7 +16265,11 @@ public:
 	bool                                          bMovementTimeDiscrepancyForceCorrectionsDuringResolution; // 0x03AC(0x0001)(ZeroConstructor, Config, GlobalConfig, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	bool                                          bUseDistanceBasedRelevancy;                        // 0x03AD(0x0001)(ZeroConstructor, Config, GlobalConfig, IsPlainOldData, NoDestructor, HasGetValueTypeHash, NativeAccessSpecifierPublic)
 	uint8                                         Pad_3AE[0xA];                                      // 0x03AE(0x000A)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	bool IsInLowBandwidthMode()
+	{
+		return false;
+	}
 public:
 	static class UClass* StaticClass()
 	{

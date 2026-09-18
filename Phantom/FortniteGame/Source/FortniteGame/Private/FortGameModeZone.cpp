@@ -54,7 +54,10 @@ APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* F
 	if (AFortPlayerControllerZone* FortPlayerController = Cast<AFortPlayerControllerZone>(NewPlayer))
 	{
 		if (FortPlayerController->QuickBars == NULL)
+		{
+			printf(__FUNCTION__);
 			FortPlayerController->QuickBars = GWorld->SpawnActor<AFortQuickBars>(FVector(), FRotator(), AFortQuickBars::StaticClass(), FortPlayerController);
+		}
 
 		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
 		{

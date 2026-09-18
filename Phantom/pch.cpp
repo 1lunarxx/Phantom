@@ -1,6 +1,7 @@
 // pch.cpp: source file corresponding to the pre-compiled header
 
 #include "pch.h"
+#include "Utils.h"
 
 // When you are using pre-compiled headers, this source file is necessary for compilation to succeed.
 
@@ -118,26 +119,39 @@ FWeakObjectPtr::FWeakObjectPtr(UObject* Object)
 		ObjectSerialNumber = ObjectItem->SerialNumber;
 }
 
-bool UNetDriver::IsLevelInitializedForActor(AActor* InActor, UNetConnection* InConnection) const
-{
-	if (InActor == NULL || InConnection == NULL || World != InActor->GetWorld())
-		return false;
-
-	const bool bCorrectWorld = WorldPackage != NULL && (InConnection->GetClientWorldPackageName().ToString() == WorldPackage->GetName());
-
-	const bool bIsConnectionPC = (InActor == InConnection->PlayerController);
-	return bCorrectWorld || bIsConnectionPC;
-}
-
 UActorChannel* UNetConnection::FindActorChannelRef(const TWeakObjectPtr<AActor>& Actor)
 {
-	TMap<TWeakObjectPtr<AActor>, UActorChannel*>& ActorChannels = *(TMap<TWeakObjectPtr<AActor>, UActorChannel*>*)((__int64)this + 0x1620);
-
-	for (auto& ActorChannel : ActorChannels)
+	for (UChannel* OpenChannel : OpenChannels)
 	{
-		if (ActorChannel.Key() == Actor)
-			return ActorChannel.Value();
+		if (UActorChannel* ActorChannel = Cast<UActorChannel>(OpenChannel))
+		{
+			if (ActorChannel->Actor == Actor.Get())
+				return ActorChannel;
+		}
 	}
 
 	return NULL;
+}
+
+void UNetConnection::RemoveDestructionInfo(FActorDestructionInfo* DestructionInfo)
+{
+	if (DestructionInfo == NULL)
+		return;
+
+	for (int32 i = 0; i < GetDestroyedStartupOrDormantActorGUIDs().Num(); i++)
+	{
+		const auto& DestroyedStartupOrDormantActorGUID = GetDestroyedStartupOrDormantActorGUIDs()[i];
+
+		if (DestroyedStartupOrDormantActorGUID.ObjectId == DestructionInfo->NetGUID.ObjectId)
+		{
+			GetDestroyedStartupOrDormantActorGUIDs().Remove(i);
+			return;
+		}
+	}
+}
+
+ULevel* AActor::GetLevel()
+{
+	static ULevel* (*GetLevel)(AActor*, UClass*) = decltype(GetLevel)(InSDKUtils::GetImageBase() + 0x19BC230);
+	return GetLevel(this, ULevel::StaticClass());
 }

@@ -165,6 +165,7 @@
     <ClInclude Include="Engine\Source\Runtime\Core\Public\GenericPlatform\GenericPlatformMisc.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Math\UnrealMathUtility.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Misc\OutputDevice.h" />
+    <ClInclude Include="Engine\Source\Runtime\Core\Public\Templates\Sorting.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\UObject\UnrealNames.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Character.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Engine\Restricted\NotForLicensees\Plugins\Online\OnlineSubsystemMcp\Source\Private\ServiceConfigMcp.cpp" />
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\Obj.cpp" />
     <ClCompile Include="Engine\Source\Runtime\CoreUObject\Private\UObject\ScriptCore.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Core\Private\GenericPlatform\GenericPlatformMath.cpp" />
     <ClCompile Include="Engine\Source\Runtime\EngineSettingsModule\Private\EngineSettingsModule.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\CheatManager.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\Character.cpp" />

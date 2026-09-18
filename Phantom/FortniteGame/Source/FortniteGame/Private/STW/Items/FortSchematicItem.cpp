@@ -42,10 +42,11 @@ int32 FortSchematicItem::ServerCraftSchematic(UFortSchematicItem* FortSchematicI
 		if (ResultWorldItemDefinition->Tier != RequestedTier)
 			ResultWorldItemDefinition->Tier = RequestedTier;
 
-		AFortPickup* FortPickup = AFortPickup::SpawnPickup(FFortItemEntry(ResultWorldItemDefinition, CraftAmount, UFortLootLevel::GetItemLevel(&ResultWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel)), Instigator->MyFortPawn->K2_GetActorLocation(), CraftAmount, EFortPickupSourceTypeFlag::Other, 0);
+		FFortItemEntry ItemEntry = FFortItemEntry(ResultWorldItemDefinition, CraftAmount, UFortLootLevel::GetItemLevel(&ResultWorldItemDefinition->LootLevelData, GWorld->GetGameState()->WorldLevel));
+		AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &ItemEntry, Instigator->MyFortPawn->K2_GetActorLocation(), FRotator(), NULL, NULL, NULL, EFortPickupSourceTypeFlag::Other, 0, true, false));
 
-		if (FortPickup != NULL)
-			FortPickup->SetPickupTarget(Instigator->MyFortPawn, FortPickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
+		if (Pickup != NULL)
+			Pickup->SetPickupTarget(Instigator->MyFortPawn, Pickup->GetFlyTime(), FMath::VRandCone(FVector(0, 0, 1), 0.0f));
 	}
 
 	return CraftAmount;

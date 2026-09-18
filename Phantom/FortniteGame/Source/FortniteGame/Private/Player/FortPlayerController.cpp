@@ -49,7 +49,14 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 		AFortPlayerPawn* FortPlayerPawn = FortPlayerController->GetPlayerPawn();
 		
 		if (FortPlayerPawn != NULL)
-			AFortPickup::SpawnPickup(WorldItem->ItemEntry, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), Count, EFortPickupSourceTypeFlag::Player, -1, true, true, FortPlayerPawn);
+		{
+			AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &WorldItem->ItemEntry, FortPlayerPawn->K2_GetActorLocation() + FortPlayerPawn->GetActorForwardVector() * 70.f + FVector(0, 0, 50), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
+
+			if (Pickup != NULL)
+			{
+				Pickup->SetPawnWhoDroppedPickup(FortPlayerPawn);
+			}
+		}
 	}
 }
 
@@ -383,7 +390,12 @@ void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* For
 		for (UFortWorldItem* WorldItem : WorldInventory->Inventory.ItemInstances)
 		{
 			if (WorldItem->CanBeDropped())
-				AFortPickup::SpawnPickup(WorldItem->ItemEntry, DestructionPawn->K2_GetActorLocation(), WorldItem->ItemEntry.Count, EFortPickupSourceTypeFlag::Player, -1);
+			{
+				AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &WorldItem->ItemEntry, DestructionPawn->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
+
+				if (Pickup != NULL)
+					Pickup->SetPawnWhoDroppedPickup(DestructionPawn);
+			}
 		}
 	}
 }
