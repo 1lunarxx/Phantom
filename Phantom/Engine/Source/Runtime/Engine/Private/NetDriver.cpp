@@ -651,11 +651,11 @@ int32 UNetDriver::ServerReplicateActors(float DeltaSeconds)
 
 void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 {
-/*	if (UReplicationDriver* ReplicationDriver = NetDriver->ReplicationDriver)
+	if (UReplicationDriver* ReplicationDriver = NetDriver->ReplicationDriver)
 	{
 		ReplicationDriver->ServerReplicateActors();
 	}
-	else*/
+	else
 	{
 		NetDriver->ServerReplicateActors(DeltaSeconds);
 	}
