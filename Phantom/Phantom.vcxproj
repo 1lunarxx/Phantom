@@ -168,6 +168,7 @@
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Templates\Sorting.h" />
     <ClInclude Include="Engine\Source\Runtime\Core\Public\UObject\UnrealNames.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\Engine.h" />
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\LocalPlayer.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\GameFramework\Character.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\NetDriver.h" />
     <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\World.h" />
@@ -186,6 +187,8 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingContainer.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingItemCollectorActor.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Building\BuildingSMActor.h" />
+    <ClInclude Include="Configuration.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameMode.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameModeZone.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameState.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortKismetLibrary.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortLootTier.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortPickup.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Items\FortWorldItem.h" />
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSession.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Online\FortGameSessionDedicated.h" />
     <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Pawns\FortPlayerPawn.h" />
@@ -224,6 +228,7 @@
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\CheatManager.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\Character.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\Engine.cpp" />
+    <ClCompile Include="Engine\Source\Runtime\Engine\Private\LocalPlayer.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\NetDriver.cpp" />
     <ClCompile Include="Engine\Source\Runtime\Engine\Private\World.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteAI\Private\FortAIDirector.cpp" />
@@ -264,6 +269,8 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSessionDedicated.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameStateAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\STW\FortTaggedActorsManager.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameMode.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

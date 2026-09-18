@@ -3,5 +3,5 @@
 
 void FortGameSessionDedicated::Setup()
 {
-	Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0x112C369 + 1, 0x85); // Dedicated Server Ready!
+	Utils::Patch<uint16>(InSDKUtils::GetImageBase() + 0x112C3AC, 0xe990);
 }

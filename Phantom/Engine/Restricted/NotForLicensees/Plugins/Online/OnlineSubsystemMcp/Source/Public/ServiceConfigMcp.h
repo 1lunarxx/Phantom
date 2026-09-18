@@ -14,6 +14,7 @@ class FServiceConfigMcp
 {
 private:
 	static FServicePermissionsMcp* GetServicePermissionsById(FServiceConfigMcp* ServiceConfigMcp, const FString* Id);
+	static FServicePermissionsMcp* GetServicePermissionsByName(FServiceConfigMcp* ServiceConfigMcp, const FString* Id);
 public:
 	static void Setup();
 };

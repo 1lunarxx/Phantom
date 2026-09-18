@@ -106,7 +106,7 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 			continue;
 		}*/
 
-		if (Actor->GetRemoteRole() == ENetRole::ROLE_None)
+		if (Actor->RemoteRole == ENetRole::ROLE_None)
 		{
 			continue;
 		}
@@ -122,6 +122,11 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 		}
 
 		ULevel* Level = Actor->GetLevel();
+		if (Level == NULL)
+		{
+			continue;
+		}
+
 		if (Level->HasVisibilityChangeRequestPending() || Level->bIsAssociatingLevel)
 		{
 			continue;
@@ -270,9 +275,14 @@ int32 UNetDriver::ServerReplicateActors_PrioritizeActors(UNetConnection* Connect
 	NetTag++;
 	Connection->TickCount++;
 
-	for (int32 j = 0; j < Connection->SentTemporaries.Num(); j++)
+/*	for (int32 j = 0; j < Connection->SentTemporaries.Num(); j++)
 	{
 		Connection->SentTemporaries[j]->NetTag = NetTag;
+	}*/
+
+	if (Connection->OwningActor == NULL)
+	{
+		return 0;
 	}
 
 	if (World != Connection->OwningActor->GetWorld())
@@ -464,7 +474,11 @@ int32 UNetDriver::ServerReplicateActors_ProcessPrioritizedActors(UNetConnection*
 				}
 
 				if (Channel)
-				{					
+				{
+					if (Channel->Actor != Actor)
+					{
+						continue;
+					}
 					if (bIsRelevant)
 					{
 						Channel->RelevantTime = Time + 0.5f * FMath::SRand();

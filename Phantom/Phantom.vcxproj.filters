@@ -189,6 +189,18 @@
     <ClInclude Include="Engine\Source\Runtime\Core\Public\Templates\Sorting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Source\Runtime\Engine\Classes\Engine\LocalPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\FortGameMode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FortniteGame\Source\FortniteGame\Public\Missions\FortMission.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -360,6 +372,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Source\Runtime\Core\Private\GenericPlatform\GenericPlatformMath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Source\Runtime\Engine\Private\LocalPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameMode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "Engine/Restricted/NotForLicensees/Plugins/Online/OnlineSubsystemMcp/Source/Public/ServiceConfigMcp.h"
 #include "Engine/NetDriver.h"
 #include "Engine/Source/Runtime/CoreUObject/Public/UObject/Object.h"
+#include "Engine/LocalPlayer.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CheatManager.h"
@@ -14,6 +15,7 @@
 
 #include "FortniteGame/Public/FortGameState.h"
 #include "FortniteGame/Public/FortGameModeZone.h"
+#include "FortniteGame/Public/FortGameMode.h"
 #include "FortniteGame/Public/FortKismetLibrary.h"
 
 #include "FortniteGame/Public/Online/FortGameSession.h"
@@ -51,8 +53,12 @@
 #include "FortniteGame/Public/STW/FortTaggedActorsManager.h"
 #include "FortniteGame/Public/STW/Items/FortSchematicItem.h"
 
+#include "FortniteGame/Public/Missions/FortMission.h"
+
 #include "FortniteAI/Public/FortAIDirector.h"
 #include "FortniteAI/Public/FortAIGoalManager.h"
+
+#include "Configuration.h"
 
 DWORD WINAPI LaunchWindowsStartup(LPVOID)
 {
@@ -107,12 +113,18 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     FortGameStateAthena::Setup();
     FortTaggedActorsManager::Setup();
     BuildingItemCollectorActor::Setup();
+    LocalPlayer::Setup();
+    FortGameMode::Setup();
+    FortMission::Setup();
 
     *GIsClient = false;
     *GIsServer = true;
 
+    // FortniteEmptyDedicated, Zone_Outpost_Stonewood, Athena_Terrain
     GWorld->ServerTravel(L"Athena_Terrain", false, false);
-    GWorld->OwningGameInstance->RemoveLocalPlayer();
+
+    if (!Configuration::bIsGameSessionsEnabled)
+        GWorld->OwningGameInstance->RemoveLocalPlayer();
 
     return 0;
 }

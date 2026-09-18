@@ -20,23 +20,8 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 	{
 		if (AFortGameStateOutpost* FortGameStateOutpost = Cast<AFortGameStateOutpost>(FortGameModeZone->GameState))
 		{
-			// scuffed because no gamesessions
-
-			UFortMissionGenerator* MissionGenerator = NewObject<UFortMissionGenerator>(FortGameModeZone, Utils::StaticLoadObject<UClass>(TEXT("/Game/World/MissionGens/MissionGen_TheOutpost_PvE_01.MissionGen_TheOutpost_PvE_01_C")));
-
-			FFortMissionManagerRecord MissionManagerRecord = WorldManager->MissionManagerRecord;
-			FFortMissionRecord MissionRecord = FFortMissionRecord{};
-
-			MissionRecord.MissionEntry.MissionGenerator = MissionGenerator;
-			MissionRecord.MissionEntry.MissionInfo = MissionGenerator->PrimaryMissionInfo.LoadSynchronous();
-
-			MissionManagerRecord.MissionRecords.Add(MissionRecord);
-
 			if (FortGameStateOutpost->MissionManager == NULL)
-				FortGameStateOutpost->CreateMissionManager(&MissionManagerRecord);
-
-			if (FortGameModeZone->AIGoalManager == NULL)
-				FortGameModeZone->CreateAIGoalManager();
+				FortGameStateOutpost->CreateMissionManager(&WorldManager->MissionManagerRecord);
 
 			FortGameModeZone->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeZone);
 		}
@@ -49,7 +34,14 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 
 APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* FortGameModeZone, AController* NewPlayer, AActor* StartSpot)
 {
-	APawn* DefaultPawn = FortGameModeZone->SpawnDefaultPawnFor_Implementation(NewPlayer, StartSpot);
+	FTransform Transform = StartSpot->GetTransform();
+
+	if (AFortGameModeOutpost* FortGameModeOutpost = Cast<AFortGameModeOutpost>(FortGameModeZone))
+	{
+		Transform.Translation.Z += 1000; // yes im scuffed im sorry this is temp
+	}
+
+	APawn* DefaultPawn = FortGameModeZone->SpawnDefaultPawnAtTransform(NewPlayer, Transform);
 
 	if (AFortPlayerControllerZone* FortPlayerController = Cast<AFortPlayerControllerZone>(NewPlayer))
 	{
