@@ -238,10 +238,12 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\Building\AthenaBigBaseWall.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortPlayerPawnAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Building\BuildingItemCollectorActor.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameData.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameState.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Athena\FortGameModeAthena.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortInventory.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortPickup.cpp" />
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortQuickBars.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Online\FortGameSession.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerControllerZone.cpp" />
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Player\FortPlayerController.cpp" />

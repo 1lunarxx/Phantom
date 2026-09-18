@@ -16,19 +16,16 @@ void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 
 void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameModeZone, AFortWorldManager* WorldManager)
 {
-/*	if (WorldManager != NULL)
-	{
-		if (AFortGameStateOutpost* FortGameStateOutpost = Cast<AFortGameStateOutpost>(FortGameModeZone->GameState))
-		{
-			if (FortGameStateOutpost->MissionManager == NULL)
-				FortGameStateOutpost->CreateMissionManager(&WorldManager->MissionManagerRecord);
-
-			FortGameModeZone->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeZone);
-		}
-	}*/
-
 	FortGameModeZone->FinishWorldInitialization(WorldManager);
-	
+
+	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
+	{
+		FortGameStateZone->CreateMissionManager(&WorldManager->MissionManagerRecord);
+	}
+
+	FortGameModeZone->SharedMissionLists = NewObject<UFortSharedMissionLists>(FortGameModeZone, UFortGameData::Get()->SharedMissionListsClass.Get());
+	FortGameModeZone->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>();
+
 	SetConsoleTitleA("Phantom | Ready");
 }
 
@@ -41,23 +38,7 @@ APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* F
 		Transform.Translation.Z += 1000; // yes im scuffed im sorry this is temp
 	}
 
-	APawn* DefaultPawn = FortGameModeZone->SpawnDefaultPawnAtTransform(NewPlayer, Transform);
-
-	if (AFortPlayerControllerZone* FortPlayerController = Cast<AFortPlayerControllerZone>(NewPlayer))
-	{
-		if (FortPlayerController->QuickBars == NULL)
-			FortPlayerController->QuickBars = GWorld->SpawnActor<AFortQuickBars>(FVector(), FRotator(), AFortQuickBars::StaticClass(), FortPlayerController);
-
-		if (AFortInventory* WorldInventory = FortPlayerController->GetWorldInventory())
-		{
-			for (const FItemDefinitionAndCount& InventoryItem : UFortGameData::Get()->FastLoadDefaultInventoryList)
-			{
-				WorldInventory->AddItem(InventoryItem.ItemDefinition.LoadSynchronous(), InventoryItem.Count);
-			}
-		}
-	}
-
-	return DefaultPawn;
+	return FortGameModeZone->SpawnDefaultPawnAtTransform(NewPlayer, Transform);
 }
 
 void FortGameModeZone::Setup()

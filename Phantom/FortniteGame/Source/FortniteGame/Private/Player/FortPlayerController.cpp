@@ -2,6 +2,30 @@
 #include "FortniteGame/Public/Player/FortPlayerController.h"
 #include "FortniteGame/Public/Items/FortLootPackage.h"
 
+void AFortPlayerController::SpawnQuickBars()
+{
+	if (QuickBars == NULL)
+	{
+		UWorld* World = GetWorld();
+
+		if (World == NULL)
+			return;
+
+		AFortQuickBars* InQuickBars = World->SpawnActor<AFortQuickBars>(FVector(), FRotator(), AFortQuickBars::StaticClass(), this);
+
+		if (InQuickBars != NULL)
+		{
+			QuickBars = InQuickBars;
+			QuickBars->InitializeDefaultInventory(this);
+		}
+	}
+}
+
+void AFortPlayerController::SetupQuickBars()
+{
+	QuickBars->ValidateQuickBars();
+}
+
 void FortPlayerController::ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid)
 {
 	IFortInventoryInterface* InventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
@@ -351,6 +375,8 @@ void FortPlayerController::TogglePersonalVehicle_Implementation(AFortPlayerContr
 	if (AbilitySystemComponent == NULL)
 		return;
 
+	// todo: get personal vehicle from campaign profile
+
 	UFortPersonalVehicleItemDefinition* FortPersonalVehicleItemDefinition = Utils::StaticFindObject<UFortPersonalVehicleItemDefinition>(TEXT("VID_Hoverboard"), ANY_PACKAGE);
 
 	if (FortPersonalVehicleItemDefinition == NULL)
@@ -378,6 +404,17 @@ void FortPlayerController::TogglePersonalVehicle_Implementation(AFortPlayerContr
 		FGameplayAbilitySpecHandle Handle;
 		AbilitySystemComponent->GiveAbilityAndActivateOnce(&Handle, &Spec);
 	}
+}
+
+void FortPlayerController::OnReadyToStartMatch(AFortPlayerController* FortPlayerController)
+{
+	if (FortPlayerController->QuickBars == NULL)
+	{
+		FortPlayerController->SpawnQuickBars();
+		FortPlayerController->SetupQuickBars();
+	}
+
+	Originals::OnReadyToStartMatch(FortPlayerController);
 }
 
 void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn)
@@ -491,6 +528,8 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1190 / 8, TogglePersonalVehicle_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
+
+	Utils::Virtual<AFortPlayerController, AFortPlayerControllerZone, AFortPlayerControllerOutpost>(0x1430 / 8, OnReadyToStartMatch, (void**)&Originals::OnReadyToStartMatch);
 
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);
 }

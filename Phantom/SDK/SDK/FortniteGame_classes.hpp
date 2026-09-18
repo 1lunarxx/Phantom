@@ -14180,7 +14180,12 @@ public:
 	class UFortItem* K2_GetInventoryItemWithGuid(const struct FGuid& ItemGuid) const;
 public:
 	AFortInventory* GetWorldInventory() { return WorldInventory; };
+public:
+	void SpawnQuickBars();
+	void SetupQuickBars();
 
+	bool ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap);
+public:
 	FText BuildingLockedText()
 	{
 		static FText* BuildingLockedText = (FText*)(InSDKUtils::GetImageBase() + 0x55B7210);
@@ -14224,8 +14229,6 @@ public:
 
 		return false;
 	}
-
-	bool ObjectiveOncePerMatch(UFortQuestItemDefinition* FortQuestItemDefinition, TMap<UFortQuestManager*, UFortQuestItemDefinition*>* ObjectiveOncePerMatchMap);
 
 	__int64 PayBuildableClassPlacementCost(FBuildingClassData* BuildingClassData)
 	{
@@ -21628,6 +21631,8 @@ public:
 	static float GetPersonalXpBoost();
 	static float GetTeamXpBoost();
 	static int32 GetXpPerAccountLevel();
+public:
+	TArray<FItemDefinitionAndCount>* GetDefaultInventory(AFortPlayerController* PlayerController, bool bForceNonFastload);
 public:
 	UFortResourceItemDefinition* GetResourceItemDefinition(EFortResourceType Type)
 	{
@@ -39659,6 +39664,25 @@ public:
 	void ServerEnableSlot(EFortQuickBars InQuickBar, int32 SlotIndex);
 	void ServerRemoveItemInternal(const struct FGuid& Item, bool bFindReplacement, bool bForce);
 	void ServerSwapItemsInternal(EFortQuickBars QuickBarA, int32 SlotIndexA, EFortQuickBars QuickBarB, int32 SlotIndexB);
+	void InitializeDefaultInventory(AFortPlayerController* FortPC);
+public:
+	bool Find(const UFortItem* Item, EFortQuickBars* OutQuickBar, int* OutSlot)
+	{
+		static bool (*Find)(AFortQuickBars*, const UFortItem*, EFortQuickBars*, int*) = decltype(Find)(InSDKUtils::GetImageBase() + 0x1091B10);
+		return Find(this, Item, OutQuickBar, OutSlot);
+	}
+
+	void AddItemInternal(FGuid* ItemGuid, unsigned __int8 InQuickBar, int Slot)
+	{
+		static void (*AddItemInternal)(AFortQuickBars*, FGuid*, unsigned __int8, int) = decltype(AddItemInternal)(InSDKUtils::GetImageBase() + 0x109FE90);
+		AddItemInternal(this, ItemGuid, InQuickBar, Slot);
+	}
+
+	void ValidateQuickBars()
+	{
+		static void (*ValidateQuickBars)(AFortQuickBars*) = decltype(ValidateQuickBars)(InSDKUtils::GetImageBase() + 0x10A7DD0);
+		ValidateQuickBars(this);
+	}
 public:
 	static class UClass* StaticClass()
 	{
@@ -44060,7 +44084,12 @@ class UFortMcpProfileCampaign final : public UFortMcpProfileSubgame
 {
 public:
 	uint8                                         Pad_1F0[0xF8];                                     // 0x01F0(0x00F8)(Fixing Struct Size After Last Property [ Dumper-7 ])
-
+public:
+	FFortCampaignLoadout* GetCampaignLoadout(FFortCampaignLoadout* Result)
+	{
+		static FFortCampaignLoadout* (*GetCampaignLoadout)(UFortMcpProfileCampaign*, FFortCampaignLoadout*) = decltype(GetCampaignLoadout)(InSDKUtils::GetImageBase() + 0x11BF240);
+		return GetCampaignLoadout(this, Result);
+	}
 public:
 	void AbandonExpedition(const class FString& ExpeditionId, struct FClientUrlContext* Context);
 	void ActivateConsumable(const class FString& TargetItemId, const class FString& TargetAccountId, struct FClientUrlContext* Context);

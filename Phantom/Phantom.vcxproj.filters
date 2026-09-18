@@ -383,6 +383,12 @@
     <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Missions\FortMission.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\Items\FortQuickBars.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FortniteGame\Source\FortniteGame\Private\FortGameData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="minhook.lib" />

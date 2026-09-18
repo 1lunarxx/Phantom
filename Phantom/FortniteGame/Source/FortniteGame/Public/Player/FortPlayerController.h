@@ -4,6 +4,12 @@
 
 class FortPlayerController
 {
+	class Originals
+	{
+	public:
+		static inline void (*OnReadyToStartMatch)(AFortPlayerController* FortPlayerController);
+	};
+
 private:
 	static void ServerExecuteInventoryItem_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid);
 	static void ServerAttemptInventoryDrop_Implementation(AFortPlayerController* FortPlayerController, FGuid* ItemGuid, int Count, bool bTrash);
@@ -21,6 +27,8 @@ private:
 
 	static void ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid);
 	static void TogglePersonalVehicle_Implementation(AFortPlayerController* FortPlayerController, bool bOn);
+
+	static void OnReadyToStartMatch(AFortPlayerController* FortPlayerController);
 
 	static void DropItemsOnPawnDestruction(AFortPlayerController* FortPlayerController, AFortPlayerController::EPawnDestructionReason DestructionReason, const FGameplayTagContainer* ContextualTags, AFortPawn* DestructionPawn);
 	static bool FixUpCreateBuildingClassData(AFortPlayerController* FortPlayerController, FBuildingClassData* BuildingActorData);
