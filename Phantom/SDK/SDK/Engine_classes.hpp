@@ -11266,7 +11266,6 @@ public:
 		int64(*ReplicateActor)(UActorChannel*) = decltype(ReplicateActor)(InSDKUtils::GetImageBase() + 0x262BEE0);
 		return ReplicateActor(this);
 	}
-
 public:
 	bool IsPendingDormancy()
 	{

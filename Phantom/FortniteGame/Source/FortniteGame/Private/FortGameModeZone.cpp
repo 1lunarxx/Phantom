@@ -16,7 +16,7 @@ void FortGameModeZone::CreateAIDirector(AFortGameModeZone* FortGameModeZone)
 
 void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameModeZone, AFortWorldManager* WorldManager)
 {
-	if (WorldManager != NULL)
+/*	if (WorldManager != NULL)
 	{
 		if (AFortGameStateOutpost* FortGameStateOutpost = Cast<AFortGameStateOutpost>(FortGameModeZone->GameState))
 		{
@@ -25,7 +25,7 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 
 			FortGameModeZone->MissionGenerationManager = GWorld->SpawnActor<AFortMissionGenerationManager>(FVector(), FRotator(), AFortMissionGenerationManager::StaticClass(), FortGameModeZone);
 		}
-	}
+	}*/
 
 	FortGameModeZone->FinishWorldInitialization(WorldManager);
 	

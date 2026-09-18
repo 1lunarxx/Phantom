@@ -19,7 +19,7 @@ int32 UNetDriver::ServerReplicateActors_PrepConnections(const float DeltaSeconds
 			continue;
 		}
 
-		if (Connection->State != USOCK_Pending && Connection->State != USOCK_Open && Connection->State == USOCK_Closed)
+		if (Connection->State != USOCK_Pending && Connection->State != USOCK_Open && Connection->State != USOCK_Closed)
 		{
 			continue;
 		}
@@ -84,6 +84,13 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 
 	float TimeSeconds = UGameplayStatics::GetTimeSeconds(World);
 
+	FNetworkObjectList* NetworkObjectList = GetNetworkObjectList();
+
+	if (NetworkObjectList == NULL)
+	{
+		return;
+	}
+
 	for (const TSharedPtr<FNetworkObjectInfo>& ObjectInfo : GetNetworkObjectList()->GetActiveObjects())
 	{
 		FNetworkObjectInfo* ActorInfo = ObjectInfo.Get();
@@ -108,6 +115,7 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 
 		if (Actor->RemoteRole == ENetRole::ROLE_None)
 		{
+			ActorsToRemove.Add(Actor);
 			continue;
 		}
 
@@ -135,6 +143,7 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 		if (Actor->NetDormancy == ENetDormancy::DORM_Initial && Actor->IsNetStartupActor())
 		{
 			NumInitiallyDormant++;
+			ActorsToRemove.Add(Actor);
 			continue;
 		}
 
@@ -405,7 +414,7 @@ int32 UNetDriver::ServerReplicateActors_ProcessPrioritizedActors(UNetConnection*
 		return 0;
 	}
 
-	TSet<FName> ClientVisibleLevelNames = *(TSet<FName>*)(__int64(Connection) + 0x1768);
+	TSet<FName>& ClientVisibleLevelNames = *(TSet<FName>*)(__int64(Connection) + 0x1768);
 
 	for (int32 j = 0; j < FinalSortedCount; j++)
 	{
@@ -452,12 +461,14 @@ int32 UNetDriver::ServerReplicateActors_ProcessPrioritizedActors(UNetConnection*
 			const bool bIsRecentlyRelevant = bIsRelevant || (Channel && Time - Channel->RelevantTime < RelevantTimeout) || ActorInfo->bForceRelevantNextUpdate;
 
 			ActorInfo->bForceRelevantNextUpdate = false;
-
+			
 			if (bIsRecentlyRelevant)
 			{
 				FinalRelevantCount++;
 
-				if (Channel == NULL && GetGuidCache()->SupportsObject(Actor->Class)/* && GetGuidCache()->SupportsObject(Actor->IsNetStartupActor() ? Actor : Actor->GetArchetype())*/)
+				if (Channel == NULL &&
+					GetGuidCache()->SupportsObject(Actor->Class) &&
+					GetGuidCache()->SupportsObject(Actor->IsNetStartupActor() ? Actor : Actor->GetArchetype()))
 				{
 					if (bLevelInitializedForActor)
 					{
@@ -687,6 +698,4 @@ void NetDriver::TickFlush(UNetDriver* NetDriver, float DeltaSeconds)
 void NetDriver::Setup()
 {
 	Utils::Hook(InSDKUtils::GetImageBase() + 0x27D6330, TickFlush, (void**)&Originals::TickFlush);
-
-	Utils::Patch<uint8_t>(InSDKUtils::GetImageBase() + 0x2803FE0, 0xC3); // FNetworkObjectList::Remove crash cuz im gay?
 }

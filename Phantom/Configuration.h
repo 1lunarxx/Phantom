@@ -4,5 +4,5 @@
 class Configuration
 {
 public:
-	static inline bool bIsGameSessionsEnabled = false;
+	static inline bool bIsGameSessionsEnabled = true;
 };

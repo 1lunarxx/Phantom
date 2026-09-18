@@ -143,7 +143,7 @@ namespace UC
 
 		public:
 			FBitArray()
-				: NumBits(0), MaxBits(Data.GetNumInlineBytes() * NumBitsPerDWORD)
+				: NumBits(0), MaxBits(Data.GetNumInlineBytes()* NumBitsPerDWORD)
 			{
 			}
 
@@ -197,7 +197,7 @@ namespace UC
 
 		public:
 			friend Iterators::FSetBitIterator begin(const FBitArray& Array);
-			friend Iterators::FSetBitIterator end  (const FBitArray& Array);
+			friend Iterators::FSetBitIterator end(const FBitArray& Array);
 		};
 
 		template<typename SparseArrayType>
@@ -668,20 +668,20 @@ namespace UC
 
 			auto& Element = Data.GetUnsafe(Index);
 
-reinterpret_cast<SparseArrayElementType*>(&Element.ElementData)->~SparseArrayElementType();
+			reinterpret_cast<SparseArrayElementType*>(&Element.ElementData)->~SparseArrayElementType();
 
-Element.PrevFreeIndex = -1;
-Element.NextFreeIndex = FirstFreeIndex;
+			Element.PrevFreeIndex = -1;
+			Element.NextFreeIndex = FirstFreeIndex;
 
-if (FirstFreeIndex != -1)
-Data.GetUnsafe(FirstFreeIndex).PrevFreeIndex = Index;
+			if (FirstFreeIndex != -1)
+				Data.GetUnsafe(FirstFreeIndex).PrevFreeIndex = Index;
 
-FirstFreeIndex = Index;
-NumFreeIndices++;
+			FirstFreeIndex = Index;
+			NumFreeIndices++;
 
-AllocationFlags.Set(Index, false);
+			AllocationFlags.Set(Index, false);
 
-return true;
+			return true;
 		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return AllocationFlags; }
@@ -726,6 +726,7 @@ return true;
 	public:
 		TSet& operator=(TSet&&) = default;
 		TSet& operator=(const TSet&) = default;
+
 	private:
 		inline void VerifyIndex(int32 Index) const { if (!IsValidIndex(Index)) throw std::out_of_range("Index was out of range!"); }
 
@@ -746,58 +747,51 @@ return true;
 			return Elements.Add(Element);
 		}
 
-		bool Contains(const SetElementType& Element) const
-		{
-			for (const auto& It : *this)
-			{
-				if (It == Element)
-					return true;
-			}
-
-			return false;
-		}
-
 		inline bool Remove(int32 Index)
 		{
 			return Elements.Remove(Index);
 		}
 
-		inline bool Remove(SetElementType& Element)
+		inline bool Remove(const SetElementType& Element)
 		{
 			for (int32 i = 0; i < Elements.NumAllocated(); i++)
 			{
 				if (Elements.IsValidIndex(i) && Elements[i].Value == Element)
 				{
-					Remove(i);
-					return true;
+					return Elements.Remove(i);
 				}
 			}
 
 			return false;
 		}
+
+	public:
+		inline bool Contains(const SetElementType& Element) const
+		{
+			for (auto It = begin(*this); It != end(*this); ++It)
+			{
+				if (*It == Element)
+					return true;
+			}
+
+			return false;
+		}
+
+		Iterators::TSetIterator<SetElementType> CreateIterator();
+		Iterators::TSetIterator<SetElementType> CreateConstIterator() const;
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }
 
 	public:
-		inline       SetElementType& operator[] (int32 Index)       { return Elements[Index].Value; }
+		inline       SetElementType& operator[] (int32 Index) { return Elements[Index].Value; }
 		inline const SetElementType& operator[] (int32 Index) const { return Elements[Index].Value; }
 
 		inline bool operator==(const TSet<SetElementType>& Other) const { return Elements == Other.Elements; }
 		inline bool operator!=(const TSet<SetElementType>& Other) const { return Elements != Other.Elements; }
 
 	public:
-		inline Iterators::TSetIterator<SetElementType> CreateIterator()
-		{
-			return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
-		}
-
-		inline Iterators::TSetIterator<SetElementType> CreateConstIterator() const
-		{
-			return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
-		}
-	public:
 		template<typename T> friend Iterators::TSetIterator<T> begin(const TSet& Set);
-		template<typename T> friend Iterators::TSetIterator<T> end  (const TSet& Set);
+		template<typename T> friend Iterators::TSetIterator<T> end(const TSet& Set);
 	};
 
 	template<typename KeyElementType, typename ValueElementType>
@@ -1122,6 +1116,18 @@ return true;
 			inline bool operator==(const TContainerIterator& Other) const { return &IteratedContainer == &Other.IteratedContainer && BitIterator == Other.BitIterator; }
 			inline bool operator!=(const TContainerIterator& Other) const { return &IteratedContainer != &Other.IteratedContainer || BitIterator != Other.BitIterator; }
 		};
+	}
+
+	template<typename SetElementType>
+	inline Iterators::TSetIterator<SetElementType> TSet<SetElementType>::CreateIterator()
+	{
+		return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
+	}
+
+	template<typename SetElementType>
+	inline Iterators::TSetIterator<SetElementType> TSet<SetElementType>::CreateConstIterator() const
+	{
+		return Iterators::TSetIterator<SetElementType>(*this, GetAllocationFlags(), 0);
 	}
 
 	inline Iterators::FSetBitIterator begin(const ContainerImpl::FBitArray& Array) { return Iterators::FSetBitIterator(Array, 0); }
