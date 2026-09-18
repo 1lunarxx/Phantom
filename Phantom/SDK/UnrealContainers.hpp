@@ -668,26 +668,26 @@ namespace UC
 
 			auto& Element = Data.GetUnsafe(Index);
 
-			reinterpret_cast<SparseArrayElementType*>(&Element.ElementData)->~SparseArrayElementType();
+reinterpret_cast<SparseArrayElementType*>(&Element.ElementData)->~SparseArrayElementType();
 
-			Element.PrevFreeIndex = -1;
-			Element.NextFreeIndex = FirstFreeIndex;
+Element.PrevFreeIndex = -1;
+Element.NextFreeIndex = FirstFreeIndex;
 
-			if (FirstFreeIndex != -1)
-				Data.GetUnsafe(FirstFreeIndex).PrevFreeIndex = Index;
+if (FirstFreeIndex != -1)
+Data.GetUnsafe(FirstFreeIndex).PrevFreeIndex = Index;
 
-			FirstFreeIndex = Index;
-			NumFreeIndices++;
+FirstFreeIndex = Index;
+NumFreeIndices++;
 
-			AllocationFlags.Set(Index, false);
+AllocationFlags.Set(Index, false);
 
-			return true;
+return true;
 		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return AllocationFlags; }
 
 	public:
-		inline       SparseArrayElementType& operator[](int32 Index)       { VerifyIndex(Index); return *reinterpret_cast<SparseArrayElementType*>(&Data.GetUnsafe(Index).ElementData); }
+		inline       SparseArrayElementType& operator[](int32 Index) { VerifyIndex(Index); return *reinterpret_cast<SparseArrayElementType*>(&Data.GetUnsafe(Index).ElementData); }
 		inline const SparseArrayElementType& operator[](int32 Index) const { VerifyIndex(Index); return *reinterpret_cast<SparseArrayElementType*>(&Data.GetUnsafe(Index).ElementData); }
 
 		inline bool operator==(const TSparseArray<SparseArrayElementType>& Other) const { return Data == Other.Data; }
@@ -695,7 +695,7 @@ namespace UC
 
 	public:
 		template<typename T> friend Iterators::TSparseArrayIterator<T> begin(const TSparseArray& Array);
-		template<typename T> friend Iterators::TSparseArrayIterator<T> end  (const TSparseArray& Array);
+		template<typename T> friend Iterators::TSparseArrayIterator<T> end(const TSparseArray& Array);
 	};
 
 	template<typename SetElementType>
@@ -760,6 +760,20 @@ namespace UC
 		inline bool Remove(int32 Index)
 		{
 			return Elements.Remove(Index);
+		}
+
+		inline bool Remove(SetElementType& Element)
+		{
+			for (int32 i = 0; i < Elements.NumAllocated(); i++)
+			{
+				if (Elements.IsValidIndex(i) && Elements[i].Value == Element)
+				{
+					Remove(i);
+					return true;
+				}
+			}
+
+			return false;
 		}
 	public:
 		const ContainerImpl::FBitArray& GetAllocationFlags() const { return Elements.GetAllocationFlags(); }

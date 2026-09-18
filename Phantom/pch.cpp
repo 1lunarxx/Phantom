@@ -135,10 +135,10 @@ UActorChannel* UNetConnection::FindActorChannelRef(const TWeakObjectPtr<AActor>&
 
 void UNetConnection::RemoveDestructionInfo(FActorDestructionInfo* DestructionInfo)
 {
-	if (DestructionInfo == NULL)
-		return;
+	if (DestructionInfo != NULL)
+		GetDestroyedStartupOrDormantActorGUIDs().Remove(DestructionInfo->NetGUID);
 
-	for (int32 i = 0; i < GetDestroyedStartupOrDormantActorGUIDs().Num(); i++)
+/*	for (int32 i = 0; i < GetDestroyedStartupOrDormantActorGUIDs().Num(); i++)
 	{
 		const auto& DestroyedStartupOrDormantActorGUID = GetDestroyedStartupOrDormantActorGUIDs()[i];
 
@@ -147,7 +147,7 @@ void UNetConnection::RemoveDestructionInfo(FActorDestructionInfo* DestructionInf
 			GetDestroyedStartupOrDormantActorGUIDs().Remove(i);
 			return;
 		}
-	}
+	}*/
 }
 
 ULevel* AActor::GetLevel()

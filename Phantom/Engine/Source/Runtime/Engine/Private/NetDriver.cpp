@@ -108,7 +108,6 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 
 		if (Actor->GetRemoteRole() == ENetRole::ROLE_None)
 		{
-			ActorsToRemove.Add(Actor);
 			continue;
 		}
 
@@ -131,15 +130,18 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 		if (Actor->NetDormancy == ENetDormancy::DORM_Initial && Actor->IsNetStartupActor())
 		{
 			NumInitiallyDormant++;
-			ActorsToRemove.Add(Actor);
 			continue;
 		}
 
 		if (!Actor->NeedsLoadForClient())
-			continue; 
+		{
+			continue;
+		}
 
 		if (World != Actor->GetWorld())
+		{
 			continue;
+		}
 
 		if (ActorInfo->LastNetReplicateTime == 0)
 		{
@@ -177,7 +179,9 @@ void UNetDriver::ServerReplicateActors_BuildConsiderList(TArray<FNetworkObjectIn
 		ActorInfo->bPendingNetUpdate = false;
 
 		if (OutConsiderList.Num() > OutConsiderList.Max())
+		{
 			continue;
+		}
 
 		OutConsiderList.Add(ActorInfo);
 
@@ -443,7 +447,7 @@ int32 UNetDriver::ServerReplicateActors_ProcessPrioritizedActors(UNetConnection*
 			{
 				FinalRelevantCount++;
 
-				if (Channel == NULL && GetGuidCache()->SupportsObject(Actor->Class))
+				if (Channel == NULL && GetGuidCache()->SupportsObject(Actor->Class)/* && GetGuidCache()->SupportsObject(Actor->IsNetStartupActor() ? Actor : Actor->GetArchetype())*/)
 				{
 					if (bLevelInitializedForActor)
 					{
@@ -481,6 +485,10 @@ int32 UNetDriver::ServerReplicateActors_ProcessPrioritizedActors(UNetConnection*
 
 						ActorUpdatesThisConnection++;
 						OutUpdated++;
+					}
+					else
+					{
+						Actor->ForceNetUpdate();
 					}
 
 					if (!Connection->IsNetReady(0))
@@ -602,7 +610,6 @@ int32 UNetDriver::ServerReplicateActors(float DeltaSeconds)
 			FActorPriority** PriorityActors = NULL;
 
 			const int32 FinalSortedCount = ServerReplicateActors_PrioritizeActors(Connection, ConnectionViewers, ConsiderList, bCPUSaturated, PriorityList, PriorityActors);
-
 			const int32 LastProcessedActor = ServerReplicateActors_ProcessPrioritizedActors(Connection, ConnectionViewers, PriorityActors, FinalSortedCount, Updated);
 
 			for (int32 k = LastProcessedActor; k < FinalSortedCount; k++)

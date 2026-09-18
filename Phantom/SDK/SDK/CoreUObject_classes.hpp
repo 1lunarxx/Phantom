@@ -44,13 +44,20 @@ public:
 	template<typename T>
 	T* GetInterfaceAddress()
 	{
-		return ((T * (*)(UObject*, UClass*))(*(uint64_t*)(__readgsqword(0x60) + 0x10) + 0x19BAC70))(this, T::StaticClass());
+		T* (*GetInterfaceAddress)(UObject*, UClass*) = decltype(GetInterfaceAddress)(InSDKUtils::GetImageBase() + 0x19BAC70);
+		return GetInterfaceAddress(this, T::StaticClass());
 	}
-
+public:
 	bool NeedsLoadForClient()
 	{
 		static bool(*NeedsLoadForClient)(UObject*) = decltype(NeedsLoadForClient)(InSDKUtils::GetImageBase() + 0x1983A10);
 		return NeedsLoadForClient(this);
+	}
+
+	UObject* GetArchetype()
+	{
+		static UObject* (*GetArchetype)(UObject*) = decltype(GetArchetype)(InSDKUtils::GetImageBase() + 0x19B9390);
+		return GetArchetype(this);
 	}
 public:
 	static class UClass* FindClass(const std::string& ClassFullName)

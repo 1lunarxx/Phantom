@@ -4062,11 +4062,6 @@ public:
 public:
 	class UActorChannel* FindActorChannelRef(const TWeakObjectPtr<AActor>& Actor);
 public:
-	FName GetClientWorldPackageName()
-	{
-		return *(FName*)(__int64(this) + 0x1858);
-	}
-
 	bool IsNetReady(bool Saturate)
 	{
 		bool(*IsNetReady)(UNetConnection*, bool) = decltype(IsNetReady)(VTable[0x298 / 8]);
@@ -4226,14 +4221,14 @@ public:
 		uint64 ObjectId;
 	};
 
-	bool operator==(const FNetworkGUID& Other) const
+	inline bool operator==(const FNetworkGUID& Other) const
 	{
 		return ObjectId == Other.ObjectId;
 	}
 
-	bool operator!=(const FNetworkGUID& Other) const
+	inline bool operator!=(const FNetworkGUID& Other) const
 	{
-		return ObjectId != Other.ObjectId;
+		return !(*this == Other);
 	}
 };
 
@@ -9052,7 +9047,10 @@ public:
 public:
 	bool IsNetReady(bool Saturate)
 	{
-		return Connection->IsNetReady(Saturate);
+		if (Connection != NULL)
+			return Connection->IsNetReady(Saturate);
+
+		return false;
 	}
 public:
 	static class UClass* StaticClass()
