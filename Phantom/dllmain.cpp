@@ -121,7 +121,7 @@ DWORD WINAPI LaunchWindowsStartup(LPVOID)
     *GIsServer = true;
 
     // FortniteEmptyDedicated, Zone_Outpost_Stonewood, Athena_Terrain
-    GWorld->ServerTravel(L"FortniteEmptyDedicated", false, false);
+    GWorld->ServerTravel(L"Athena_Terrain", false, false);
 
     if (!Configuration::bIsGameSessionsEnabled)
         GWorld->OwningGameInstance->RemoveLocalPlayer();
