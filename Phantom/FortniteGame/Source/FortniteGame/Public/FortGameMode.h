@@ -12,8 +12,6 @@ class FortGameMode
 
 private:
 	static TSubclassOf<AGameSession>* GetGameSessionClass(AFortGameMode* FortGameMode, TSubclassOf<AGameSession>* Result);
-private:
-	static bool CanServerTravel(AFortGameMode* FortGameMode, FString* URL, bool bAbsolute);
 public:
 	static void Setup();
 };
