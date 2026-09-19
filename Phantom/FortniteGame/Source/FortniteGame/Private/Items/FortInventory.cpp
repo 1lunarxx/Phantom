@@ -92,7 +92,20 @@ void AFortInventory::RemoveItem(FGuid& ItemGuid, int32 Count)
 	}
 	else
 	{
-		ItemEntry->SetCount(ItemEntry->Count - Count);
+		ItemEntry->Count -= Count;
+
+		UFortWorldItem* WorldItem = FindExistingItemForDefinition(ItemEntry->ItemDefinition);
+
+		if (WorldItem != NULL)
+			WorldItem->ItemEntry.Count = ItemEntry->Count;
+
+		FFortItemEntry* ReplicatedItemEntry = GetReplicatedItemEntry(&ItemEntry->ItemGuid);
+
+		if (ReplicatedItemEntry == NULL)
+			return;
+
+		*ReplicatedItemEntry = *ItemEntry;
+		SetItemRequiresUpdate(ReplicatedItemEntry);
 	}
 }
 

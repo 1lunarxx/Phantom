@@ -7466,6 +7466,11 @@ public:
 public:
 	ULevel* GetCurrentLevelPendingVisibility() const { return CurrentLevelPendingVisibility; }
 	ULevel* GetCurrentLevelPendingInvisibility() const { return CurrentLevelPendingInvisibility; }
+
+	FString& GetNextURL()
+	{
+		return *(FString*)((uintptr_t)this + 0x5F8);
+	}
 public:
 	class AFortGameStateAthena* GetGameStateAthena();
 	class AFortGameModeAthena* GetGameModeAthena();

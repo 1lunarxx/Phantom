@@ -37416,6 +37416,12 @@ public:
 		static void (*HandleMissionEvent)(AFortMissionManager*, FFortMissionEvent) = decltype(HandleMissionEvent)(InSDKUtils::GetImageBase() + 0x10C8080);
 		HandleMissionEvent(this, MissionEvent);
 	}
+
+	void LoadFromRecord(FFortMissionManagerRecord* NewRecord)
+	{
+		static void (*LoadFromRecord)(AFortMissionManager*, FFortMissionManagerRecord*) = decltype(LoadFromRecord)(InSDKUtils::GetImageBase() + 0x10F14D0);
+		LoadFromRecord(this, NewRecord);
+	}
 public:
 	static AFortMissionManager* GetCurrent(const UObject* WorldContextObject)
 	{
