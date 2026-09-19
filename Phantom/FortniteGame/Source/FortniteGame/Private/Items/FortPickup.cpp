@@ -58,7 +58,7 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 					AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, PickupItemEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
 
 					if (Pickup != NULL)
-						Pickup->SetPawnWhoDroppedPickup(FortPlayerController->GetPlayerPawn());
+						Pickup->PawnWhoDroppedPickup = FortPlayerController->GetPlayerPawn();
 				}
 			}
 			else
@@ -72,7 +72,7 @@ void FortPickup::GivePickupTo(AFortPickup* FortPickup, IFortInventoryOwnerInterf
 					AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, CurrentWeaponEntry, FortPlayerController->GetViewTarget()->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
 
 					if (Pickup != NULL)
-						Pickup->SetPawnWhoDroppedPickup(FortPlayerController->GetPlayerPawn());
+						Pickup->PawnWhoDroppedPickup = FortPlayerController->GetPlayerPawn();
 
 					WorldInventory->AddItem(PickupItemEntry);
 				}

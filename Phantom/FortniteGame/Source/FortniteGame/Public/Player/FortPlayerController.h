@@ -24,6 +24,7 @@ private:
 	static void ServerEditBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit, TSubclassOf<ABuildingSMActor> NewBuildingClass, uint8 RotationIterations, bool bMirrored);
 	static void ServerEndEditingBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToEdit);
 	static void ServerRepairBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingSMActor* BuildingActorToRepair);
+	static void ServerUpgradeBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingActor* BuildingActorToUpgrade, int NewUpgradeLevel);
 
 	static void ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid);
 	static void TogglePersonalVehicle_Implementation(AFortPlayerController* FortPlayerController, bool bOn);

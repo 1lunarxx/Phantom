@@ -16,6 +16,7 @@ void AFortPlayerController::SpawnQuickBars()
 		if (InQuickBars != NULL)
 		{
 			QuickBars = InQuickBars;
+
 			QuickBars->InitializeDefaultInventory(this);
 		}
 	}
@@ -78,7 +79,7 @@ void FortPlayerController::ServerAttemptInventoryDrop_Implementation(AFortPlayer
 
 			if (Pickup != NULL)
 			{
-				Pickup->SetPawnWhoDroppedPickup(FortPlayerPawn);
+				Pickup->PawnWhoDroppedPickup = FortPlayerPawn;
 			}
 		}
 	}
@@ -333,6 +334,12 @@ void FortPlayerController::ServerRepairBuildingActor_Implementation(AFortPlayerC
 	}
 }
 
+void FortPlayerController::ServerUpgradeBuildingActor_Implementation(AFortPlayerController* FortPlayerController, ABuildingActor* BuildingActorToUpgrade, int NewUpgradeLevel)
+{
+	if (ABuildingSMActor* BuildingSMActor = Cast<ABuildingSMActor>(BuildingActorToUpgrade))
+		BuildingSMActor->OnServerAttemptBuildingUpgrade(FortPlayerController, NewUpgradeLevel);
+}
+
 void FortPlayerController::ServerCombineInventoryItems_Implementation(AFortPlayerController* FortPlayerController, FGuid& TargetItemGuid, FGuid& SourceItemGuid)
 {
 	IFortInventoryInterface* FortInventoryInterface = FortPlayerController->WorldInventory->GetInterfaceAddress<IFortInventoryInterface>();
@@ -431,7 +438,7 @@ void FortPlayerController::DropItemsOnPawnDestruction(AFortPlayerController* For
 				AFortPickup* Pickup = AFortPickup::CreateFromData(FortPickupCreationData(GWorld, &WorldItem->ItemEntry, DestructionPawn->K2_GetActorLocation(), FRotator(), FortPlayerController, NULL, NULL, EFortPickupSourceTypeFlag::Player, 0, true, false));
 
 				if (Pickup != NULL)
-					Pickup->SetPawnWhoDroppedPickup(DestructionPawn);
+					Pickup->PawnWhoDroppedPickup = DestructionPawn;
 			}
 		}
 	}
@@ -523,13 +530,14 @@ void FortPlayerController::Setup()
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x10B0 / 8, ServerEndEditingBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1090 / 8, ServerCreateBuildingActor_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1070 / 8, ServerRepairBuildingActor_Implementation);
+	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1080 / 8, ServerUpgradeBuildingActor_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1040 / 8, ServerCombineInventoryItems_Implementation);
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1190 / 8, TogglePersonalVehicle_Implementation);
 
 	Utils::Virtual(AFortPlayerController::GetDefaultObj(), 0x1900 / 8, DropItemsOnPawnDestruction);
 
-	Utils::Virtual<AFortPlayerController, AFortPlayerControllerZone, AFortPlayerControllerOutpost>(0x1430 / 8, OnReadyToStartMatch, (void**)&Originals::OnReadyToStartMatch);
+	//Utils::Virtual<AFortPlayerController, AFortPlayerControllerZone, AFortPlayerControllerOutpost>(0x1430 / 8, OnReadyToStartMatch, (void**)&Originals::OnReadyToStartMatch);
 
 	Utils::ExecHook(TEXT("/Script/FortniteGame.FortPlayerController.SpawnToyInstance"), SpawnToyInstance);
 }

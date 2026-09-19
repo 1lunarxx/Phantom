@@ -5,7 +5,6 @@
 void AFortQuickBars::InitializeDefaultInventory(AFortPlayerController* FortPC)
 {
 	UFortGameData* GameData = UFortGameData::Get();
-
 	TArray<FItemDefinitionAndCount>* DefaultInventory = GameData->GetDefaultInventory(FortPC, false);
 
 	if (DefaultInventory->Num() <= 0)
@@ -24,22 +23,5 @@ void AFortQuickBars::InitializeDefaultInventory(AFortPlayerController* FortPC)
 
 		if (AddedItem == NULL)
 			continue;
-
-		//FortPC->TryAddToQuickBar(AddedItem);
-
-/*		UFortWorldItem* ExistingItem = FortPC->WorldInventory->FindExistingItemForDefinition(ItemDefinition);
-
-		if (ExistingItem != NULL)
-		{
-			if (!ExistingItem->CanBeUnslotted())
-				continue;
-
-			EFortQuickBars FoundBar;
-			int FoundSlot;
-
-			if (!Find(ExistingItem, &FoundBar, &FoundSlot))
-				continue;
-		}*/
-
 	}
 }

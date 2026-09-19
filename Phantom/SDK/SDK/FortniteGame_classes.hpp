@@ -2677,6 +2677,12 @@ public:
 		return ReplaceBuildingActor(this, ReplacementType, ReplacementClass, ReplacementUpgradeLevel, RotationInterations, InbMirrored, EditingController);
 	}
 
+	void OnServerAttemptBuildingUpgrade(AFortPlayerController* PC, int UpgradeLevelDelta)
+	{
+		static void (*OnServerAttemptBuildingUpgrade)(ABuildingSMActor*, AFortPlayerController*, int) = decltype(OnServerAttemptBuildingUpgrade)(InSDKUtils::GetImageBase() + 0xDA76B0);
+		OnServerAttemptBuildingUpgrade(this, PC, UpgradeLevelDelta);
+	}
+
 	void SetEditingPlayer(AFortPlayerStateZone* NewEditingPlayer)
 	{
 		static void (*SetEditingPlayer)(ABuildingSMActor*, AFortPlayerStateZone*) = decltype(SetEditingPlayer)(InSDKUtils::GetImageBase() + 0xDABDE0);
@@ -29713,12 +29719,6 @@ public:
 	{
 		static void (*SetPickupTarget)(AFortPickup*, AFortPawn*, float, FVector) = decltype(SetPickupTarget)(InSDKUtils::GetImageBase() + 0x10A1880);
 		SetPickupTarget(this, PickupTarget, InFlyTime, InStartDirection);
-	}
-
-	void SetPawnWhoDroppedPickup(AFortPawn* InPawnWhoDroppedPickup)
-	{
-		if (InPawnWhoDroppedPickup != PawnWhoDroppedPickup)
-			PawnWhoDroppedPickup = InPawnWhoDroppedPickup;
 	}
 
 	float GetFlyTime()

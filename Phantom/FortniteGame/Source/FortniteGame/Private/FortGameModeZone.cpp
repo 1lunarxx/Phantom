@@ -18,11 +18,11 @@ void FortGameModeZone::FinishWorldInitialization(AFortGameModeZone* FortGameMode
 {
 	FortGameModeZone->FinishWorldInitialization(WorldManager);
 
-	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
+/*	if (AFortGameStateZone* FortGameStateZone = Cast<AFortGameStateZone>(FortGameModeZone->GameState))
 	{
 		if (FortGameStateZone->MissionManager == NULL)
 			FortGameStateZone->CreateMissionManager(&WorldManager->MissionManagerRecord);
-	}
+	}*/
 
 	SetConsoleTitleA("Phantom | Ready");
 }
@@ -31,6 +31,15 @@ APawn* FortGameModeZone::SpawnDefaultPawnFor_Implementation(AFortGameModeZone* F
 {
 	FTransform Transform = StartSpot->GetTransform();
 	Transform.Translation.Z += 1000; // yes im scuffed im sorry this is temp
+
+	if (AFortPlayerController* FortPlayerController = Cast<AFortPlayerController>(NewPlayer))
+	{
+		if (FortPlayerController->QuickBars == NULL)
+		{
+			FortPlayerController->SpawnQuickBars();
+			FortPlayerController->SetupQuickBars();
+		}
+	}
 
 	return FortGameModeZone->SpawnDefaultPawnAtTransform(NewPlayer, Transform);
 }
